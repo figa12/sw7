@@ -1,0 +1,35 @@
+Supervisor meeting with Hua Lu
+First meeting
+Date: 05-09-2013
+all group members are here
+
+Idea exhibitions System:
+app on android phone
+shows map of exhibitions and can guide the user around the exhibitions with route maps.
+The app should also show live updates given by the booths at the exhibitions.
+The app should not be bound to a single exhibitions, the user should be able to supscribe to different exhibitions to be able to recieve the updates.
+The app should also show a schedule of the exhibitions.
+
+
+Meeting:
+Henrik tells Hua Lu the idea.
+
+It is a very good start, the focus is clear..
+He thinks though that the whole idea could be bigger, although he thinks it is solid if we succed with every part in the idea.
+
+Henrik explains that it can easily be expanded to theme parks, if it is succesfull.
+
+Hua Lu:
+We should write a description part to help us make the idea is clear. Prototype is app on tablet.
+Hua Lu like that we focus on the route planner.
+Hua Lu suggest QR codes instead of NFC chips. jesper comes with the argument that a QR can be scanned from a far distance.(Hua lu like this argument)
+
+Hua Lu suggest infrequent meeting from the start(for the next meeting we are going to have a basic description of the idea. We are going to mail Hua Lu when we need a meeting... 2 weeks maybe?)
+
+the app should be flexible to different exhibitions
+
+Write two days before(and deliver the reading material), have a agenda ready at the meeting.
+
+Everybody should have a good understanding about this project.
+
+
