@@ -1,0 +1,86 @@
+\input{preamble}
+\input{tex/acronyms}
+
+\begin{document}
+
+\input{tex/frontpage}
+
+\thispagestyle{empty}
+\cleardoublepage
+
+\input{tex/titelblad}% Titelblad
+
+\chapter*{Signatures}
+\input{tex/signatures}
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+\chapter*{Preface}
+\thispagestyle{empty}
+\input{tex/preface}
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{1}
+
+\tableofcontents*
+
+\acresetall %resets all acronyms to not used
+
+\chapter{Introduction}\label{chap:intro}
+
+
+\bookmarksetup{startatroot}% dette skulle stoppe part, så conclusion får indryk. Problemet i skrivende øjeblik er at chapters har samme indryk uafhængigt af parts
+\addtocontents{toc}{\bigskip}%laver ekstra mellemrum
+
+\chapter{Conclusion}
+\input{tex/conclusion}\label{chap:conclusion}
+
+\chapter{Future Work}
+\input{tex/future_work}
+
+\begin{appendices}
+\chapter{First Appendix}\label{appendixStart}
+% next appendix
+\label{appendixEnd}
+\end{appendices}
+
+\cleardoublepage
+\listoffigures*
+
+%\cleardoublepage
+%\listoftables*
+
+\cleardoublepage
+\renewcommand{\lstlistlistingname}{List of Listings}%ændrer overskriften
+\lstlistoflistings
+
+% Afslut med bibliografien. Bibliografien har mærkelige sidetal og side reference. Fixed med cleardoublepage og phantomsection
+\cleardoublepage
+\phantomsection
+\label{chap:bib}% brugt i preface
+\bibliography{bib/bibliografi,tex/commonReport/bib/commonReport}
+
+\label{lastpage}% brugt i titelblad til total sidetal
+
+% hvis den sidste side er et lige sidetal så skal der indsættes en ekstra blank bagside
+\ifthenelse{\isodd{\thepage}}
+{% ulige sidetal = højre side
+% do nothing
+}
+{% lige sidetal = venstre side
+\pagebreak
+\thispagestyle{empty}
+\mbox{}
+}
+
+\end{document}
