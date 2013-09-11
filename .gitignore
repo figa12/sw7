@@ -2,6 +2,9 @@
 *.apk
 *.ap_
 
+# Android studio files
+*.iml
+
 # files for the dex VM
 *.dex
 
@@ -9,6 +12,7 @@
 *.class
 
 # generated files
+.idea/
 bin/
 gen/
 
