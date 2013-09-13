@@ -18,6 +18,8 @@ import android.os.Vibrator;
 import android.widget.TextView;
 
 import org.ndeftools.Record;
+import org.ndeftools.externaltype.AndroidApplicationRecord;
+import org.ndeftools.wellknown.TextRecord;
 
 import java.util.List;
 
@@ -95,6 +97,23 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
     public void onNewIntent(Intent intent) { // this method is called when an NFC tag is scanned
         NfcHandler handler = new NfcHandler(this.TAG, intent, this);
         List<Record> records = handler.newIntentEvent();
+
+        if (records != null) {
+            for(Record record : records) {
+
+                if(record instanceof AndroidApplicationRecord) {
+                    AndroidApplicationRecord aar = (AndroidApplicationRecord)record;
+                    Log.d(TAG, "Package is " + aar.getPackageName());
+                }
+
+                if(record instanceof TextRecord) {
+                    TextRecord hest = (TextRecord)record;
+                    Log.d(TAG, "Teksten er " + hest.getText());
+                    TextView textView = (TextView) findViewById(R.id.thetext);
+                    textView.setText(hest.getText());
+                }
+            }
+        }
     }
     
 }

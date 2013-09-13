@@ -13,6 +13,7 @@ import org.ndeftools.Record;
 import org.ndeftools.externaltype.AndroidApplicationRecord;
 import org.ndeftools.wellknown.TextRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class NfcHandler {
 
     public List<Record> newIntentEvent() {
         Parcelable[] messages = this.intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-        List<Record> foundRecords = null;
+        List<Record> foundRecords = new ArrayList<Record>();
         if (messages != null) {
             Log.d(TAG, "Found " + messages.length + " NDEF messages");
 
