@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -18,10 +17,7 @@ import android.nfc.NfcEvent;
 import android.os.Vibrator;
 import android.widget.TextView;
 
-import org.ndeftools.Message;
 import org.ndeftools.Record;
-import org.ndeftools.externaltype.AndroidApplicationRecord;
-import org.ndeftools.wellknown.TextRecord;
 
 import java.util.List;
 
@@ -95,53 +91,10 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
         nfcAdapter.disableForegroundDispatch(this);
     }
 
-    private void vibrate() {
-        Log.d(TAG, "vibrate");
-
-        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE) ;
-        vibe.vibrate(500);
-    }
-
     @Override
     public void onNewIntent(Intent intent) { // this method is called when an NFC tag is scanned
-        Parcelable[] messages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-        if (messages != null) {
-            Log.d(TAG, "Found " + messages.length + " NDEF messages");
-
-            vibrate(); // signal found messages
-
-            // parse to records
-            for (int i = 0; i < messages.length; i++) {
-                try {
-                    List<Record> records = new Message((NdefMessage)messages[i]);
-
-                    Log.d(TAG, "Found " + records.size() + " records in message " + i);
-
-                    for(int k = 0; k < records.size(); k++) {
-                        Log.d(TAG, " Record #" + k + " is of class " + records.get(k).getClass().getSimpleName());
-
-                        Record record = records.get(k);
-                        if(record instanceof AndroidApplicationRecord) {
-                            AndroidApplicationRecord aar = (AndroidApplicationRecord)record;
-                            Log.d(TAG, "Package is " + aar.getPackageName());
-                        }
-
-                        if(record instanceof TextRecord) {
-                            TextRecord hest = (TextRecord)record;
-                            Log.d(TAG, "Teksten er " + hest.getText());
-                            TextView textView = (TextView) findViewById(R.id.thetext);
-                            textView.setText(hest.getText());
-                        }
-
-
-
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Problem parsing message", e);
-                }
-
-            }
-        }
+        NfcHandler handler = new NfcHandler(this.TAG, intent, this);
+        List<Record> records = handler.newIntentEvent();
     }
     
 }
