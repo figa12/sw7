@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
                     TextRecord hest = (TextRecord)record;
                     Log.d(TAG, "Teksten er " + hest.getText());
                     TextView textView = (TextView) findViewById(R.id.thetext);
-                    textView.setText(hest.getText());
+                    textView.append(hest.getText() + "\n");
                 }
             }
         }
