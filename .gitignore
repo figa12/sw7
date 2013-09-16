@@ -17,8 +17,8 @@ bin/
 gen/
 
 # Android studio files
-gradle/*
-gradlew
+*gradle/*
+*gradlew
 .idea/
 .gradle
 /*/local.properties
