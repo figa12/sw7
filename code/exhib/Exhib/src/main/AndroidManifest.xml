@@ -8,7 +8,9 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="16" />
 
+    <!-- General permissions -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Near field communications permissions -->
     <uses-permission android:name="android.permission.NFC" />
