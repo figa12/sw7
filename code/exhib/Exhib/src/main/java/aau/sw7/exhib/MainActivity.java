@@ -55,7 +55,7 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
         setContentView(R.layout.activity_main);
 
         // initialize NFC
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        /*nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         try {
@@ -63,14 +63,14 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
             new ServerSyncService(this).execute(dummy);
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        enableForegroundMode();
+        //enableForegroundMode();
     }
 
     @Override

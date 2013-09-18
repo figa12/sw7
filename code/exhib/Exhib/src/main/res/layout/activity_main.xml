@@ -13,4 +13,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <aau.sw7.exhib.FeedLinearLayout
+        android:id="@+id/feed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
+
 </RelativeLayout>
