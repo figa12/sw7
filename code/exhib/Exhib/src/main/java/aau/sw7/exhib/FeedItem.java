@@ -1,5 +1,7 @@
 package aau.sw7.exhib;
 
+import android.graphics.drawable.Drawable;
+
 import java.util.Date;
 
 /**
@@ -7,20 +9,27 @@ import java.util.Date;
  */
 public class FeedItem {
 
-    private String header;
+    private String feedHeader;
     private String feedText;
     private Date feedDateTime;
+    private String author;
+    private Drawable feedIcon;
 
-    public FeedItem(String header, String feedText) {
-        this.header = header;
+    public FeedItem(String feedHeader, String feedText, String author) {
+        this.feedHeader = feedHeader;
         this.feedText = feedText;
+        this.feedDateTime = new Date();
     }
 
-    public String getHeader() {
-        return this.header;
+    public String getFeedHeader() {
+        return this.feedHeader;
     }
 
     public String getFeedText() {
         return this.feedText;
+    }
+
+    public Date getFeedDateTime() {
+        return this.feedDateTime;
     }
 }

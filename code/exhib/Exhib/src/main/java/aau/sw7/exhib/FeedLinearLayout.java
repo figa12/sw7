@@ -2,6 +2,7 @@ package aau.sw7.exhib;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,16 +14,33 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
     public FeedLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        super.addViewAtBottom(new FeedItem("Nr 1", "Hest"));
-        super.addViewAtBottom(new FeedItem("Nr 2", "Hest"));
-        super.addViewAtBottom(new FeedItem("Nr 3", "Hest"));
+        this.addThirty();
+    }
+
+    private int i = 1;
+
+    public void addThirty() {
+        int start = i;
+        for (i = start; i < 30 + start; i++) {
+            super.addViewAtBottom(new FeedItem("Nr " + String.valueOf(i), "Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla",
+                    "Author here"));
+        }
     }
 
     @Override
     public View makeView(FeedItem feedItem) {
-        TextView textView = new TextView(super.getContext());
-        textView.setText(feedItem.getHeader());
+        LayoutInflater layoutInflater = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View feedView = layoutInflater.inflate(R.layout.feed_list_item, null);
 
-        return textView;
+        TextView headerTextView = (TextView) feedView.findViewById(R.id.feedHeader);
+        headerTextView.setText(feedItem.getFeedHeader());
+
+        TextView summaryTextView = (TextView) feedView.findViewById(R.id.feedSummary);
+        summaryTextView.setText(feedItem.getFeedText());
+
+        TextView feedTextView = (TextView) feedView.findViewById(R.id.feedTime);
+        feedTextView.setText("Today at " + String.valueOf(feedItem.getFeedDateTime().getTime()));
+
+        return feedView;
     }
 }
