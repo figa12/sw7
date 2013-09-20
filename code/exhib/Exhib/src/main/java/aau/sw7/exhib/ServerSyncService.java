@@ -23,14 +23,15 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by figa on 9/16/13.
  */
-public class ServerSyncService extends AsyncTask<URL, Integer, String> {
+public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObject> {
 
     private Context context;
-    private String result;
+    private String serverUrl = "http://figz.dk/login.php";
 
     public ServerSyncService(Context context) {
         this.context = context;
@@ -38,12 +39,11 @@ public class ServerSyncService extends AsyncTask<URL, Integer, String> {
 
 
     @Override
-    protected String doInBackground(URL... params) {
+    protected JSONObject doInBackground(NameValuePair... pairs) {
 
-        // REST test
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("TextToSearch", "Hello World"));
+        JSONObject toReturn = null;
 
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(Arrays.asList(pairs));
         //Create the HTTP request
         HttpParams httpParameters = new BasicHttpParams();
 
@@ -52,40 +52,47 @@ public class ServerSyncService extends AsyncTask<URL, Integer, String> {
         HttpConnectionParams.setSoTimeout(httpParameters, 15000);
 
         HttpClient httpclient = new DefaultHttpClient(httpParameters);
-        HttpPost httppost = new HttpPost("http://figz.dk/login.php");
+        HttpPost httppost = new HttpPost(serverUrl);
 
         try {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
 
-        HttpResponse response = null;
+            HttpResponse response = null;
 
-        try {
             response = httpclient.execute(httppost);
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity);
 
             // Create a JSON object from the request response
             JSONObject jsonObject = new JSONObject(result);
-
             //Retrieve the data from the JSON object
-            String theText = jsonObject.getString("Text");
-            return theText;
+            toReturn = jsonObject;
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return null;
+        return toReturn;
     }
 
     @Override
-    protected void onPostExecute(String result) {
-        TextView textView = (TextView) ((MainActivity)this.context).findViewById(R.id.thetext);
-        textView.append(result + "\n");
+    protected void onPostExecute(JSONObject result) {
+        try {
+
+            Integer requestCode = Integer.parseInt(result.getString("RequestCode"));
+
+
+            if(requestCode == 1) {
+                TextView theText = (TextView)(((MainActivity)this.context).findViewById(R.id.thetext));
+                theText.setText(result.getString("Text"));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
