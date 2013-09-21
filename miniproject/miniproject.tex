@@ -128,5 +128,19 @@ The \lstinline$<xsl:template>$ element defines a template. The \lstinline$match=
 The content inside the \lstinline$<xsl:template>$ element defines some HTML to write to the output.
 \end{framed}
 
+\subsection{XML vs XSLT}
+
+XQuery and XSLT are two languages used for quering XML. We have chosen to experience a bit with both  to find out how they worked.
+
+We spent a lot of time trying to make XQuery work with PHP Zorba. Zorba is a sort of virtual machine for query processing, however we could not make it work with the newest version of PHP for some reason, so we ended up using an Eclipse plugin called  "Sausalito Tools" for the Xquery, allowing us to read an XML document and extract information but we did not connect it to our database. 
+
+It allowed us to get a general understanding of XQuery and XPath and how to extract information from an XML file using these queries. 
+
+XSLT is primarily conceived as a stylesheet language used to render XML on screen where as XQuery is conceived as a database query language and in our case our main focus is to query an XML file in our database and not styling our website. 
+
+XSLT is stronger when it comes to making small changes to a document, because it can make use of a coding pattern that involves a template that copies all nodes unchanged, modified by specific templates that modify selected nodes.
+
+XQuery does not support dynamic binding or polymorphism, but this ability is more noticeable when writing large applications, which we do not expect to be doing. 
+
 \bibliography{bibliografi}
 \end{document}
