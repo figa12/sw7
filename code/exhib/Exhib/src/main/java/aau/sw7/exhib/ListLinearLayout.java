@@ -32,7 +32,8 @@ public abstract class ListLinearLayout<ListObject> extends LinearLayout {
     }
 
     public void addViewAtTop(ListObject listObject) {
-        this.items.add(listObject);
+        //Add at index 0 in both
+        this.items.add(0, listObject);
         this.addView(this.makeView(listObject), 0);
     }
 }

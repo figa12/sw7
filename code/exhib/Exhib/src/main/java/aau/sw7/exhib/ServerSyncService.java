@@ -11,7 +11,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -20,8 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -31,7 +28,7 @@ import java.util.Arrays;
 public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObject> {
 
     private Context context;
-    private String serverUrl = "http://figz.dk/login.php";
+    private String serverUrl = "http://figz.dk/api.php";
 
     public ServerSyncService(Context context) {
         this.context = context;
