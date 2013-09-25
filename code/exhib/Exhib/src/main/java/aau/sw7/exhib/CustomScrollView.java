@@ -5,21 +5,17 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 /**
  * Created by jerian on 18-09-13.
  */
 public class CustomScrollView extends ScrollView {
 
-    private FeedLinearLayout feedLinearLayout;
-
     public CustomScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public void setFeedLinearLayout(FeedLinearLayout feedLinearLayout) {
-        this.feedLinearLayout = feedLinearLayout;
     }
 
     private boolean wait = false;
@@ -41,9 +37,14 @@ public class CustomScrollView extends ScrollView {
             this.wait = true;
 
             Log.d(this.getClass().getName(), "ScrollView: Bottom has been reached");
-            this.feedLinearLayout.addThirty();
 
-            this.handler.postDelayed(this.runnable, 1000); //TODO test kode
+            MainActivity mainActivity = (MainActivity) super.getContext();
+
+            //((FeedLinearLayout) (mainActivity.findViewById(R.id.feed))).addThirty();
+            ((ProgressBar) mainActivity.findViewById(R.id.bottomProgressCircle)).setVisibility(View.VISIBLE);
+            ((TextView) mainActivity.findViewById(R.id.scrollMessage)).setVisibility(View.INVISIBLE);
+
+            this.handler.postDelayed(this.runnable, 100); //TODO test kode
         }
         super.onScrollChanged(l, t, oldl, oldt);
     }

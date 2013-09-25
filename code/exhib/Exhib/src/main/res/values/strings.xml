@@ -3,6 +3,6 @@
 
     <string name="app_name">Exhib</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="scroll_message">Scroll down to load more items</string>
 
 </resources>

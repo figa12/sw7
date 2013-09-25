@@ -12,8 +12,9 @@ import android.widget.TextView;
  */
 public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
 
-    private Intent feedIntent;
     public static final String FEED_ITEM = "FeedItem";
+
+    private Intent feedIntent;
 
     public FeedLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
