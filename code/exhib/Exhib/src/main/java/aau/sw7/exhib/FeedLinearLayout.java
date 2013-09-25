@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  * Created by jerian on 17-09-13.
  */
@@ -21,10 +24,16 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
 
         this.feedIntent = new Intent(context, FeedItemActivity.class);
 
-        this.addThirty();
+        //this.addThirty();
     }
 
     private int i = 1;
+
+    public void addFeedItems(ArrayList<FeedItem> feedItems) {
+        for (FeedItem feedItem : feedItems) {
+            super.addViewAtBottom(feedItem);
+        }
+    }
 
     public void addThirty() {
         int start = i;
@@ -36,7 +45,7 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
             }
             str += "hest";
             FeedItem feedItem = new FeedItem("Nr " + String.valueOf(i), str,
-                    "Author here");
+                    "Author here", new Date());
             super.addViewAtBottom(feedItem);
         }
     }

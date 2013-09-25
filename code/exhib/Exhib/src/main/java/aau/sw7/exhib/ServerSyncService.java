@@ -2,7 +2,8 @@ package aau.sw7.exhib;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.TextView;
+import android.os.Message;
+import android.util.JsonReader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,18 +16,24 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by figa on 9/16/13.
  */
-public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObject> {
+public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String> {
 
+    public static final int GET_FEEDS_REQUEST = 10;
     private Context context;
     private String serverUrl = "http://figz.dk/api.php";
 
@@ -36,9 +43,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObj
 
 
     @Override
-    protected JSONObject doInBackground(NameValuePair... pairs) {
+    protected String doInBackground(NameValuePair... pairs) {
 
-        JSONObject toReturn = null;
+        String toReturn = null;
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(Arrays.asList(pairs));
         //Create the HTTP request
@@ -60,10 +67,14 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObj
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity);
 
+            toReturn = result;
+
+            /*
             // Create a JSON object from the request response
             JSONObject jsonObject = new JSONObject(result);
             //Retrieve the data from the JSON object
             toReturn = jsonObject;
+            */
 
 
 
@@ -77,8 +88,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObj
     }
 
     @Override
-    protected void onPostExecute(JSONObject result) {
+    protected void onPostExecute(String result) {
+        /*
         try {
+
 
             Integer requestCode = Integer.parseInt(result.getString("RequestCode"));
 
@@ -88,8 +101,75 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, JSONObj
                 theText.setText(result.getString("Text"));
             }
 
+            if(requestCode == ServerSyncService.GET_FEEDS_REQUEST) {
+
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        */
+
+        int startIndex = result.indexOf('[');
+
+        int requestCode = Integer.valueOf(result.substring(0, startIndex));
+        result = result.substring(startIndex);
+
+        try {
+            readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")), requestCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readJsonStream(InputStream stream, int requestCode) throws IOException {
+        JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
+        try {
+            switch (requestCode) {
+                case ServerSyncService.GET_FEEDS_REQUEST:
+                    ((FeedLinearLayout) ((MainActivity) this.context).findViewById(R.id.feed)).addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader));
+            }
+        }
+        finally {
+            reader.close();
+        }
+    }
+
+    public List readFeedItemsArray(JsonReader reader) throws IOException {
+        List feedItems = new ArrayList();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            feedItems.add(readFeedItem(reader));
+        }
+        reader.endArray();
+        return feedItems;
+    }
+
+    public FeedItem readFeedItem(JsonReader reader) throws IOException {
+        String header = "";
+        String text = "";
+        String author = "BannedNexus";
+        Date feedTime = null;
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+            if (name.equals("header")) {
+                header = reader.nextString();
+            } else if (name.equals("description")) {
+                text = reader.nextString();
+            } else if (name.equals("feedtime")) {
+                try {
+                    feedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString()); // Convert from seconds to millisconds
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return new FeedItem(header, text, author, feedTime);
     }
 }

@@ -48,9 +48,11 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         */
 
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", "1");
-        BasicNameValuePair textToSearch = new BasicNameValuePair("TextToSearch", "Hello World");
-        new ServerSyncService(this).execute(requestCode, textToSearch);
+        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
+        BasicNameValuePair getFeeds = new BasicNameValuePair("GetFeeds", "1");
+        BasicNameValuePair limit = new BasicNameValuePair("Limit", "1");
+        BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", "1");
+        new ServerSyncService(this).execute(requestCode, getFeeds, limit, timeStamp);
 
         this.feedLinearLayout = (FeedLinearLayout) super.findViewById(R.id.feed);
         this.topProgressCircle = (ProgressBar) super.findViewById(R.id.topProgressCircle);

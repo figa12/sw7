@@ -18,10 +18,11 @@ public class FeedItem implements Parcelable {
     private String author;
     private Bitmap feedIcon;
 
-    public FeedItem(String feedHeader, String feedText, String author) {
+    public FeedItem(String feedHeader, String feedText, String author, Date feedDateTime) {
         this.feedHeader = feedHeader;
         this.feedText = feedText;
-        this.feedDateTime = new Date();
+        this.author = author;
+        this.feedDateTime = feedDateTime;
     }
 
     public String getFeedHeader() {
