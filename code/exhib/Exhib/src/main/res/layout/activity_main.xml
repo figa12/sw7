@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -13,10 +14,59 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <aau.sw7.exhib.FeedLinearLayout
-        android:id="@+id/feed"
+    <FrameLayout
+        android:id="@+id/updateButtonContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        android:layout_height="wrap_content">
+        <!-- Empty, add/remove button in MainActivty.java -->
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/topProgressCircle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"/>
+
+        </FrameLayout>
+
+    <aau.sw7.exhib.CustomScrollView
+        android:id="@+id/feedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <aau.sw7.exhib.FeedLinearLayout
+                android:id="@+id/feed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginRight="3dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/scrollMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/scroll_message"/>
+
+                <ProgressBar
+                    android:id="@+id/bottomProgressCircle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@+id/scrollMessage"
+                    android:layout_alignLeft="@+id/scrollMessage"
+                    android:visibility="invisible"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </aau.sw7.exhib.CustomScrollView>
+
+</LinearLayout>
