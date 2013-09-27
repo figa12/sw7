@@ -20,19 +20,24 @@ public abstract class ListLinearLayout<ListObject> extends LinearLayout {
 
     public abstract View makeView(ListObject object);
 
-    public void removeView(int index) {
-        // Remove from both lists
-        this.removeViewAt(index);
-        this.items.remove(index);
-    }
-
     public void addViewAtBottom(ListObject listObject) {
         this.items.add(listObject);
         super.addView(this.makeView(listObject));
     }
 
     public void addViewAtTop(ListObject listObject) {
-        this.items.add(listObject);
+        //Add at index 0 in both
+        this.items.add(0, listObject);
         this.addView(this.makeView(listObject), 0);
+    }
+
+    public void removeView(int index) {
+        // Remove from both lists
+        this.removeViewAt(index);
+        this.items.remove(index);
+    }
+
+    public void removeView(ListObject listObject) {
+        this.removeView(this.items.indexOf(listObject));
     }
 }
