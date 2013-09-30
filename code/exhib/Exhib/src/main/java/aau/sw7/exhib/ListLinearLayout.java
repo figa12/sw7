@@ -18,6 +18,14 @@ public abstract class ListLinearLayout<ListObject> extends LinearLayout {
         super(context, attrs);
     }
 
+    public ListObject get(int index) {
+        return this.items.get(index);
+    }
+
+    public int getSize() {
+        return this.items.size();
+    }
+
     public abstract View makeView(ListObject object);
 
     public void addViewAtBottom(ListObject listObject) {

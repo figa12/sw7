@@ -18,14 +18,8 @@
         android:id="@+id/updateButtonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!-- Empty, add/remove button in MainActivty.java -->
 
-        <ProgressBar
-            android:id="@+id/topProgressCircle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="invisible"/>
+        <!-- Empty, add/remove button in MainActivty.java -->
 
         </FrameLayout>
 
@@ -46,16 +40,17 @@
                 android:orientation="vertical"
                 android:layout_marginRight="3dp" />
 
-            <RelativeLayout
+            <FrameLayout
+                android:id="@+id/bottomMessageContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center">
+                android:layout_height="wrap_content">
 
+                <!--
                 <TextView
                     android:id="@+id/scrollMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/scroll_message"/>
+                    android:visibility="invisible"/>
 
                 <ProgressBar
                     android:id="@+id/bottomProgressCircle"
@@ -64,7 +59,8 @@
                     android:layout_alignRight="@+id/scrollMessage"
                     android:layout_alignLeft="@+id/scrollMessage"
                     android:visibility="invisible"/>
-            </RelativeLayout>
+                    -->
+            </FrameLayout>
         </LinearLayout>
 
     </aau.sw7.exhib.CustomScrollView>

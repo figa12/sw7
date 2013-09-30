@@ -10,9 +10,12 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -27,15 +30,34 @@ import java.util.List;
 
 public class MainActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 
+    public enum TopItemsState {
+        Loading, NewItemsAvailable, Neutral
+    }
+
+    public enum BottomItemsState {
+        Loading, NoItemsAvailable, MoreItemsAvailable
+    }
+
     private static String TAG = MainActivity.class.getSimpleName();
+
+    private Handler handler = new Handler();
+    private TopItemsState topItemsState = TopItemsState.Neutral;
+    private BottomItemsState bottomItemsState = BottomItemsState.MoreItemsAvailable;
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent nfcPendingIntent;
 
     private FeedLinearLayout feedLinearLayout;
-    private FrameLayout updateButtonContainer;
+
+    /* Top information */
+    private FrameLayout updateButtonFrameLayout;
     private Button updateButton;
     private ProgressBar topProgressCircle;
+
+    /* Bottom information */
+    private FrameLayout bottomMessageFrameLayout;
+    private ProgressBar bottomProgressCircle;
+    private TextView bottomMessageTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,27 +72,117 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
 
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
         BasicNameValuePair getFeeds = new BasicNameValuePair("GetFeeds", "1");
-        BasicNameValuePair limit = new BasicNameValuePair("Limit", "1");
-        BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", "1");
-        new ServerSyncService(this).execute(requestCode, getFeeds, limit, timeStamp);
+        BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
+        new ServerSyncService(this).execute(requestCode, getFeeds, limit);
 
         this.feedLinearLayout = (FeedLinearLayout) super.findViewById(R.id.feed);
-        this.topProgressCircle = (ProgressBar) super.findViewById(R.id.topProgressCircle);
+
+        /* Set up views for information at the top */
+        this.updateButtonFrameLayout = (FrameLayout) super.findViewById(R.id.updateButtonContainer);
+
+        this.topProgressCircle = new ProgressBar(this);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER;
+        this.topProgressCircle.setLayoutParams(params);
 
         this.updateButton = new Button(this);
         this.updateButton.setText("Click to load new items");
 
-        this.updateButtonContainer = (FrameLayout) super.findViewById(R.id.updateButtonContainer);
-        this.updateButtonContainer.addView(this.updateButton);
-
         this.updateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //MainActivity.this.feedLinearLayout.addViewAtTop(new FeedItem("New item", "Tekst...", "BannedNexus"));
-                MainActivity.this.updateButtonContainer.removeView(MainActivity.this.updateButton);
-                MainActivity.this.topProgressCircle.setVisibility(View.VISIBLE);
+                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST));
+                BasicNameValuePair getFeeds = new BasicNameValuePair("GetNewFeeds", "1");
+
+                long ts = (MainActivity.this.feedLinearLayout.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
+                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
+                new ServerSyncService(MainActivity.this).execute(requestCode, getFeeds, timeStamp);
+
+                MainActivity.this.setTopMessageState(TopItemsState.Loading);
             }
         });
 
+        final Runnable checkForFeedsRunnable = new Runnable()
+        {
+            public void run()
+            {
+                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
+                BasicNameValuePair getFeeds = new BasicNameValuePair("CheckFeeds", "1");
+
+                long ts = (MainActivity.this.feedLinearLayout.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
+                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
+                new ServerSyncService(MainActivity.this).execute(requestCode, getFeeds, timeStamp);
+
+                MainActivity.this.handler.postDelayed(this, 5000);
+            }
+        };
+
+        this.handler.postDelayed(checkForFeedsRunnable, 8000);
+
+        /* Set up views for information at the bottom */
+        this.bottomMessageFrameLayout = (FrameLayout) super.findViewById(R.id.bottomMessageContainer);
+
+        this.bottomProgressCircle = new ProgressBar(this);
+        this.bottomProgressCircle.setLayoutParams(params); // 'params' is intialised above
+
+        this.bottomMessageTextView = new TextView(this);
+        this.bottomMessageTextView.setLayoutParams(params);
+        this.bottomMessageTextView.setText("No more news"); //TODO use strings from string.xml file
+
+        /* Make the TextView the same height as the ProgressBar */
+        this.bottomMessageTextView.measure(0, 0);
+        this.bottomProgressCircle.measure(0, 0);
+        int padding = (this.bottomProgressCircle.getMeasuredHeight() - this.bottomMessageTextView.getMeasuredHeight()) / 2;
+        this.bottomMessageTextView.setPadding(0, padding, 0, padding);
+    }
+
+    public void setUpdateButtonText(String text) {
+        this.updateButton.setText(text);
+    }
+
+    public TopItemsState getTopItemsState() {
+        return this.topItemsState;
+    }
+
+    public BottomItemsState getBottomItemsState() {
+        return this.bottomItemsState;
+    }
+
+    public void setTopMessageState(TopItemsState topItemsState) {
+        this.topItemsState = topItemsState;
+        this.updateButtonFrameLayout.removeAllViews();
+
+        switch (topItemsState) {
+            case Loading:
+                this.updateButtonFrameLayout.addView(this.topProgressCircle);
+                break;
+
+            case NewItemsAvailable:
+                this.updateButtonFrameLayout.addView(this.updateButton);
+                break;
+
+            case Neutral:
+                // do nothing
+                break;
+        }
+    }
+
+    public void setBottomMessageState(BottomItemsState bottomItemsState) {
+        this.bottomItemsState = bottomItemsState;
+        this.bottomMessageFrameLayout.removeAllViews();
+
+        switch (bottomItemsState) {
+            case Loading:
+                this.bottomMessageFrameLayout.addView(this.bottomProgressCircle);
+                break;
+
+            case NoItemsAvailable:
+                this.bottomMessageFrameLayout.addView(this.bottomMessageTextView);
+                break;
+
+            case MoreItemsAvailable:
+                // do nothing
+                break;
+        }
     }
 
     @Override
