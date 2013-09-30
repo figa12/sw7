@@ -34,19 +34,19 @@ import java.util.List;
 
 public class MainActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 
-    public enum TopItemsState {
+    public enum TopMessageState {
         Loading, NewItemsAvailable, Neutral
     }
 
-    public enum BottomItemsState {
+    public enum BottomMessageState {
         Loading, NoItemsAvailable, MoreItemsAvailable
     }
 
     private static String TAG = MainActivity.class.getSimpleName();
 
-    private Handler handler = new Handler();
-    private TopItemsState topItemsState = TopItemsState.Neutral;
-    private BottomItemsState bottomItemsState = BottomItemsState.MoreItemsAvailable;
+    private Handler handler = new Handler(); // Android Runnable Handler
+    private TopMessageState topItemsState = TopMessageState.Neutral;
+    private BottomMessageState bottomItemsState = BottomMessageState.MoreItemsAvailable;
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent nfcPendingIntent;
@@ -54,13 +54,13 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
     private FeedLinearLayout feedLinearLayout;
 
     /* Top information */
-    private FrameLayout updateButtonFrameLayout;
-    private Button updateButton;
-    private ProgressBar topProgressCircle;
+    private FrameLayout topMessageFrameLayout;
+    private Button topMessageUpdateButton;
+    private ProgressBar topMessageProgressCircle;
 
     /* Bottom information */
     private FrameLayout bottomMessageFrameLayout;
-    private ProgressBar bottomProgressCircle;
+    private ProgressBar bottomMessageProgressCircle;
     private TextView bottomMessageTextView;
 
     @Override
@@ -85,26 +85,28 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         */
 
+        /* Request feed items from the server */
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
         BasicNameValuePair getFeeds = new BasicNameValuePair("GetFeeds", "1");
         BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
         new ServerSyncService(this).execute(requestCode, getFeeds, limit);
 
-        this.feedLinearLayout = (FeedLinearLayout) super.findViewById(R.id.feed);
+        this.feedLinearLayout = (FeedLinearLayout) super.findViewById(R.id.feed); // save the reference to the feed linear layout.
 
-        /* Set up views for information at the top */
-        this.updateButtonFrameLayout = (FrameLayout) super.findViewById(R.id.updateButtonContainer);
+        // Set up views for information at the top
+        this.topMessageFrameLayout = (FrameLayout) super.findViewById(R.id.updateButtonContainer);
 
-        this.topProgressCircle = new ProgressBar(this);
+        this.topMessageProgressCircle = new ProgressBar(this);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER;
-        this.topProgressCircle.setLayoutParams(params);
+        this.topMessageProgressCircle.setLayoutParams(params);
 
-        this.updateButton = new Button(this);
-        this.updateButton.setText("Click to load new items");
+        this.topMessageUpdateButton = new Button(this);
+        this.topMessageUpdateButton.setText("Click to load new items");
 
-        this.updateButton.setOnClickListener(new View.OnClickListener() {
+        this.topMessageUpdateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // When the button is clicked, it request the new feeds from the server
                 BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST));
                 BasicNameValuePair getFeeds = new BasicNameValuePair("GetNewFeeds", "1");
 
@@ -112,10 +114,11 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
                 BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
                 new ServerSyncService(MainActivity.this).execute(requestCode, getFeeds, timeStamp);
 
-                MainActivity.this.setTopMessageState(TopItemsState.Loading);
+                MainActivity.this.setTopMessageState(TopMessageState.Loading);
             }
         });
 
+        // Create a Runnable (thread) that checks the server for new items
         final Runnable checkForFeedsRunnable = new Runnable()
         {
             public void run()
@@ -127,52 +130,70 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
                 BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
                 new ServerSyncService(MainActivity.this).execute(requestCode, getFeeds, timeStamp);
 
+                // Set a delay on the Runnable for when it should be run again
                 MainActivity.this.handler.postDelayed(this, 5000);
             }
         };
 
-        this.handler.postDelayed(checkForFeedsRunnable, 8000);
+        this.handler.postDelayed(checkForFeedsRunnable, 8000); // The first check after 8000 ms
 
-        /* Set up views for information at the bottom */
+        // Set up views for information at the bottom
         this.bottomMessageFrameLayout = (FrameLayout) super.findViewById(R.id.bottomMessageContainer);
 
-        this.bottomProgressCircle = new ProgressBar(this);
-        this.bottomProgressCircle.setLayoutParams(params); // 'params' is intialised above
+        this.bottomMessageProgressCircle = new ProgressBar(this);
+        this.bottomMessageProgressCircle.setLayoutParams(params); // 'params' is intialised above
 
         this.bottomMessageTextView = new TextView(this);
         this.bottomMessageTextView.setLayoutParams(params);
         this.bottomMessageTextView.setText("No more news"); //TODO use strings from string.xml file
 
-        /* Make the TextView the same height as the ProgressBar */
+        // Make the TextView the same height as the ProgressBar
         this.bottomMessageTextView.measure(0, 0);
-        this.bottomProgressCircle.measure(0, 0);
-        int padding = (this.bottomProgressCircle.getMeasuredHeight() - this.bottomMessageTextView.getMeasuredHeight()) / 2;
+        this.bottomMessageProgressCircle.measure(0, 0);
+        int padding = (this.bottomMessageProgressCircle.getMeasuredHeight() - this.bottomMessageTextView.getMeasuredHeight()) / 2;
         this.bottomMessageTextView.setPadding(0, padding, 0, padding);
     }
 
+    /**
+     * Set the text of top message button.
+     * @param text The text on the button.
+     */
     public void setUpdateButtonText(String text) {
-        this.updateButton.setText(text);
+        this.topMessageUpdateButton.setText(text);
     }
 
-    public TopItemsState getTopItemsState() {
+    /**
+     * @return The current state of the top information field.
+     * @see aau.sw7.exhib.MainActivity.TopMessageState
+     */
+    public TopMessageState getTopItemsState() {
         return this.topItemsState;
     }
 
-    public BottomItemsState getBottomItemsState() {
+    /**
+     * @return The current state of the bottom information field.
+     * @see aau.sw7.exhib.MainActivity.BottomMessageState
+     */
+    public BottomMessageState getBottomItemsState() {
         return this.bottomItemsState;
     }
 
-    public void setTopMessageState(TopItemsState topItemsState) {
+    /**
+     * Set the state of the top information field.
+     * @param topItemsState The new state.
+     * @see aau.sw7.exhib.MainActivity.TopMessageState
+     */
+    public void setTopMessageState(TopMessageState topItemsState) {
         this.topItemsState = topItemsState;
-        this.updateButtonFrameLayout.removeAllViews();
+        this.topMessageFrameLayout.removeAllViews();
 
         switch (topItemsState) {
             case Loading:
-                this.updateButtonFrameLayout.addView(this.topProgressCircle);
+                this.topMessageFrameLayout.addView(this.topMessageProgressCircle);
                 break;
 
             case NewItemsAvailable:
-                this.updateButtonFrameLayout.addView(this.updateButton);
+                this.topMessageFrameLayout.addView(this.topMessageUpdateButton);
                 break;
 
             case Neutral:
@@ -181,13 +202,18 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
         }
     }
 
-    public void setBottomMessageState(BottomItemsState bottomItemsState) {
+    /**
+     * Set the state of the bottom information field.
+     * @param bottomItemsState The new state.
+     * @see aau.sw7.exhib.MainActivity.BottomMessageState
+     */
+    public void setBottomMessageState(BottomMessageState bottomItemsState) {
         this.bottomItemsState = bottomItemsState;
         this.bottomMessageFrameLayout.removeAllViews();
 
         switch (bottomItemsState) {
             case Loading:
-                this.bottomMessageFrameLayout.addView(this.bottomProgressCircle);
+                this.bottomMessageFrameLayout.addView(this.bottomMessageProgressCircle);
                 break;
 
             case NoItemsAvailable:

@@ -105,7 +105,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
                     feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
-                    mainActivity.setTopMessageState(MainActivity.TopItemsState.Neutral);
+                    mainActivity.setTopMessageState(MainActivity.TopMessageState.Neutral);
                     break;
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
@@ -113,8 +113,8 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     if(result != 0) {
                         mainActivity.setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
 
-                        if(mainActivity.getTopItemsState() != MainActivity.TopItemsState.NewItemsAvailable) {
-                            mainActivity.setTopMessageState(MainActivity.TopItemsState.NewItemsAvailable);
+                        if(mainActivity.getTopItemsState() != MainActivity.TopMessageState.NewItemsAvailable) {
+                            mainActivity.setTopMessageState(MainActivity.TopMessageState.NewItemsAvailable);
                         }
                     }
                     break;
@@ -122,9 +122,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     ArrayList<FeedItem> feedItems = (ArrayList<FeedItem>) readFeedItemsArray(reader);
                     if(feedItems.size() > 0) {
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
-                        mainActivity.setBottomMessageState(MainActivity.BottomItemsState.MoreItemsAvailable);
+                        mainActivity.setBottomMessageState(MainActivity.BottomMessageState.MoreItemsAvailable);
                     } else {
-                        mainActivity.setBottomMessageState(MainActivity.BottomItemsState.NoItemsAvailable);
+                        mainActivity.setBottomMessageState(MainActivity.BottomMessageState.NoItemsAvailable);
                     }
                     break;
             }
