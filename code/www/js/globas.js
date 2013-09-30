@@ -22,4 +22,5 @@ var roadpath = new google.maps.Polyline({
 var roadMapGraph = makeGraph(allPoints);
 console.log(roadMapGraph);
 
+//graph used to find a route between points
 var guidePathPoints = shortestRoute("fourth", "fifth", roadMapGraph);
