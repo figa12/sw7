@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
     public enum AddAt {
         Top, Bottom
     }
+
+    /* Get the ImageLoader instance */
+    protected ImageLoader imageLoader = ImageLoader.getInstance();
 
     /** Key string to get data from bundle. */
     public static final String FEED_ITEM = "FeedItem";
@@ -72,8 +77,8 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
         feedView.findViewById(R.id.mainLayout).setOnClickListener(new FeedItemClickListener(feedItem));
 
         ImageView iconImageView = (ImageView) feedView.findViewById(R.id.feedImage);
-        // TODO fix drawable
-        //iconImageView.setImageDrawable(this.loadImageFromWebOperations("http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/439px-Microsoft_logo.svg.png"));
+
+        imageLoader.displayImage("http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/439px-Microsoft_logo.svg.png", iconImageView);
 
         return feedView;
     }
