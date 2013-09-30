@@ -2,7 +2,6 @@ package aau.sw7.exhib;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Message;
 import android.util.JsonReader;
 
 import org.apache.http.HttpEntity;
@@ -33,7 +32,13 @@ import java.util.List;
  */
 public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String> {
 
-    public static final int GET_FEEDS_REQUEST = 10;
+    public static final int GET_FEEDS_REQUEST = 1;
+    public static final int GET_NEW_FEEDS_REQUEST = 2;
+    public static final int CHECK_NEW_FEEDS_REQUEST = 3;
+    public static final int GET_MORE_FEEDS_REQUEST = 4;
+
+    public static final String ITEMS_LIMIT = "7";
+
     private Context context;
     private String serverUrl = "http://figz.dk/api.php";
 
@@ -44,8 +49,6 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected String doInBackground(NameValuePair... pairs) {
-
-        String toReturn = null;
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(Arrays.asList(pairs));
         //Create the HTTP request
@@ -58,25 +61,14 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         HttpClient httpclient = new DefaultHttpClient(httpParameters);
         HttpPost httppost = new HttpPost(serverUrl);
 
+        String result = null;
+
         try {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-            HttpResponse response = null;
-
-            response = httpclient.execute(httppost);
+            HttpResponse response = httpclient.execute(httppost);
             HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity);
-
-            toReturn = result;
-
-            /*
-            // Create a JSON object from the request response
-            JSONObject jsonObject = new JSONObject(result);
-            //Retrieve the data from the JSON object
-            toReturn = jsonObject;
-            */
-
-
+            result = EntityUtils.toString(entity);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,32 +76,11 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             e.printStackTrace();
         }
 
-        return toReturn;
+        return result;
     }
 
     @Override
     protected void onPostExecute(String result) {
-        /*
-        try {
-
-
-            Integer requestCode = Integer.parseInt(result.getString("RequestCode"));
-
-
-            if(requestCode == 1) {
-                TextView theText = (TextView)(((MainActivity)this.context).findViewById(R.id.thetext));
-                theText.setText(result.getString("Text"));
-            }
-
-            if(requestCode == ServerSyncService.GET_FEEDS_REQUEST) {
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        */
-
         int startIndex = result.indexOf('[');
 
         int requestCode = Integer.valueOf(result.substring(0, startIndex));
@@ -124,10 +95,38 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     private void readJsonStream(InputStream stream, int requestCode) throws IOException {
         JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
+        MainActivity mainActivity = (MainActivity) this.context;
+        FeedLinearLayout feedLinearLayout = ((FeedLinearLayout) mainActivity.findViewById(R.id.feed));
+
         try {
             switch (requestCode) {
                 case ServerSyncService.GET_FEEDS_REQUEST:
-                    ((FeedLinearLayout) ((MainActivity) this.context).findViewById(R.id.feed)).addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader));
+                    feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Bottom);
+                    break;
+                case ServerSyncService.GET_NEW_FEEDS_REQUEST:
+                    feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
+                    mainActivity.setTopMessageState(MainActivity.TopItemsState.Neutral);
+                    break;
+                case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
+                    int result = this.readNumberOfNewFeeds(reader);
+
+                    if(result != 0) {
+                        mainActivity.setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
+
+                        if(mainActivity.getTopItemsState() != MainActivity.TopItemsState.NewItemsAvailable) {
+                            mainActivity.setTopMessageState(MainActivity.TopItemsState.NewItemsAvailable);
+                        }
+                    }
+                    break;
+                case ServerSyncService.GET_MORE_FEEDS_REQUEST:
+                    ArrayList<FeedItem> feedItems = (ArrayList<FeedItem>) readFeedItemsArray(reader);
+                    if(feedItems.size() > 0) {
+                        feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
+                        mainActivity.setBottomMessageState(MainActivity.BottomItemsState.MoreItemsAvailable);
+                    } else {
+                        mainActivity.setBottomMessageState(MainActivity.BottomItemsState.NoItemsAvailable);
+                    }
+                    break;
             }
         }
         finally {
@@ -135,7 +134,22 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
     }
 
-    public List readFeedItemsArray(JsonReader reader) throws IOException {
+    private int readNumberOfNewFeeds(JsonReader reader) throws IOException {
+        int result = 0;
+
+        reader.beginArray();
+        reader.beginObject();
+        String name = reader.nextName();
+        if(name.equals("num")) {
+            result = reader.nextInt();
+        }
+        reader.endObject();
+        reader.endArray();
+
+        return result;
+    }
+
+    private List readFeedItemsArray(JsonReader reader) throws IOException {
         List feedItems = new ArrayList();
 
         reader.beginArray();
@@ -146,7 +160,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return feedItems;
     }
 
-    public FeedItem readFeedItem(JsonReader reader) throws IOException {
+    private FeedItem readFeedItem(JsonReader reader) throws IOException {
         String header = "";
         String text = "";
         String author = "BannedNexus";
@@ -161,7 +175,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 text = reader.nextString();
             } else if (name.equals("feedtime")) {
                 try {
-                    feedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString()); // Convert from seconds to millisconds
+                    feedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

@@ -1,4 +1,4 @@
-//Weight function.
+//Weight function(euclidean distance).
 function dist(p, q){
     var res;
     res = Math.sqrt((Math.pow(p.lng() - q.lng(),2)) + (Math.pow(p.lat() - q.lat(),2)));
@@ -13,6 +13,21 @@ function Edge(weight, from, to){
 	this.weight = weight;
 	this.from = from;
 	this.to = to;
+
+	//returns the node different from the node you are traveling from.
+	this.getNextNode = function(node){
+		if(fromNode == this.from){
+			return this.to;
+		}
+		else{
+			return this.from;
+		}
+	};
+
+	//Gets the weight of the edge
+	this.getWeight = function(){
+		return this.weight;
+	};
 }
 
 //Node object.
@@ -20,10 +35,19 @@ function Node(name, point){
 	this.name = name;
 	this.location = point;
 	this.edges = [];
-	this.numberOfEdges = 0;
 	this.addEdge = function(edge){
-		this.edges[this.numberOfEdges] = edge;
-		this.numberOfEdges = this.numberOfEdges + 1;
+		this.edges.push(edge);
+	};
+
+	this.numberOfEdges = function(){
+		return this.edges.length;
+	};
+
+	this.getEdge = function(index){
+		if(index >= 0 && index < numberOfEdges()){
+			return edges[index];
+		}
+		return false;
 	};
 }
 
@@ -95,5 +119,11 @@ function doesNodeExist(nodes, node){
 
 //Used to calculate shortest route and return the route.
 function shortestRoute(from, to, roadMapGraph){
+	var previous;
+	var dist = [];
+	for (var i = 0; i < roadMapGraph.nodes.length; i++) {
+		dist.push(9999999);
+	}
+
 	
 }
