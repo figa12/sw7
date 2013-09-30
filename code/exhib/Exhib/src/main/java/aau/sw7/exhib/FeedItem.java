@@ -9,6 +9,9 @@ import java.util.Date;
 
 /**
  * Created by jerian on 17-09-13.
+ *
+ * A class holding all information about a feed item.
+ * The feeditem is presented in {@link aau.sw7.exhib.FeedLinearLayout}
  */
 public class FeedItem implements Parcelable {
 
@@ -25,18 +28,22 @@ public class FeedItem implements Parcelable {
         this.feedDateTime = feedDateTime;
     }
 
+    /** @return The header of the feed item. */
     public String getFeedHeader() {
         return this.feedHeader;
     }
 
+    /** @return The description of the feed item. */
     public String getFeedText() {
         return this.feedText;
     }
 
+    /** @return The date when the feed item was created. */
     public Date getFeedDateTime() {
         return this.feedDateTime;
     }
 
+    /** @return The string representation of the date and time. */
     public String getDateTimeRepresentation() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
 
