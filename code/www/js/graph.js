@@ -15,7 +15,7 @@ function Edge(weight, from, to){
 	this.to = to;
 
 	//returns the node different from the node you are traveling from.
-	this.getNextNode = function(node){
+	this.getNextNode = function(fromNode){
 		if(fromNode == this.from){
 			return this.to;
 		}
@@ -35,6 +35,7 @@ function Node(name, point){
 	this.name = name;
 	this.location = point;
 	this.edges = [];
+	this.visited = false;
 	this.addEdge = function(edge){
 		this.edges.push(edge);
 	};
@@ -49,6 +50,14 @@ function Node(name, point){
 		}
 		return false;
 	};
+
+	this.getAllNeighbours = function(){
+		var neighbours = [];
+		for (var i = 0; i < this.edges.length; i++) {
+			neighbours.push(this.edges[i].getNextNode(this));
+		}
+		return neighbours;
+	};
 }
 
 //Graph object
@@ -58,14 +67,14 @@ function Graph(){
 	this.numberOfEdges = 0;
 	
 	this.addEdge = function(weight, node1, node2){
-		var indexMyNode1 = doesNodeExist(this.nodes, node1);
+		var indexMyNode1 = doesAlreadyNodeExist(this.nodes, node1);
 
 		if(indexMyNode1 == -1){
 			this.nodes.push(node1);
 			indexMyNode1 = this.nodes.indexOf(node1);
 		}
 
-		var indexMyNode2 = doesNodeExist(this.nodes, node2);
+		var indexMyNode2 = doesAlreadyNodeExist(this.nodes, node2);
 		if(indexMyNode2 == -1){
 			this.nodes.push(node2);
 			indexMyNode2 = this.nodes.indexOf(node2);
@@ -73,11 +82,26 @@ function Graph(){
 
 		var myEdge = new Edge(weight, this.nodes[indexMyNode1], this.nodes[indexMyNode2]);
 
-		if(doesEdgeExist(this.edges,myEdge) == -1){
+		if(doesAlreadyEdgeExist(this.edges,myEdge) == -1){
 			this.edges.push(myEdge);
 			this.nodes[indexMyNode1].addEdge(this.edges[this.numberOfEdges]);
 			this.nodes[indexMyNode2].addEdge(this.edges[this.numberOfEdges]);
 			this.numberOfEdges = this.numberOfEdges + 1;
+		}
+	};
+
+	this.getNodeByIndex = function(index){
+		if(index >= 0 && index < nodes.length){
+			return nodes[index];
+		}
+		return -1;
+	};
+
+	this.getNodeByName = function(name){
+		for (var i = 0; i < this.nodes.length; i++) {
+			if(this.nodes[i].name == name){
+				return this.nodes[i];
+			}
 		}
 	};
 }
@@ -96,7 +120,7 @@ function makeGraph(points){
 }
 
 //Makes sure that we don't make the same edge twice. returns the index of the edge if it found, otherwise -1.
-function doesEdgeExist(edges, edge){
+function doesAlreadyEdgeExist(edges, edge){
 	for (var i = 0; i < edges.length; i++) {
 		if(edges[i].from == edge.from && edges[i].to == edge.to || edges[i].from == edge.to && edges[i].to == edge.from ){
 			return i;
@@ -107,7 +131,7 @@ function doesEdgeExist(edges, edge){
 }
 
 //Makes sure that we don't make the same node twice, also return the index of the node if it found.
-function doesNodeExist(nodes, node){
+function doesAlreadyNodeExist(nodes, node){
 	for (var i = 0; i < nodes.length; i++) {
 		if(nodes[i].name == node.name){
 			return i;
@@ -119,11 +143,76 @@ function doesNodeExist(nodes, node){
 
 //Used to calculate shortest route and return the route.
 function shortestRoute(from, to, roadMapGraph){
-	var previous;
+	var previous = [];
 	var dist = [];
 	for (var i = 0; i < roadMapGraph.nodes.length; i++) {
 		dist.push(9999999);
+		previous.push(null);
 	}
 
-	
+	dist[roadMapGraph.nodes.indexOf(roadMapGraph.getNodeByName(from))] = 0;
+
+	var Q = [];
+	Q = Q.concat(roadMapGraph.nodes);
+
+	while (!Q.areAllNodesVisited()){
+		var u = Q.smallestDistanceNotVisited(dist);
+		var uIndex = dist.indexOf(dist.min());
+		Q[Q.indexOf(u)].visited = true;
+
+		if(dist[uIndex] == 9999999){
+			break;
+		}
+
+		for (var k = 0; k < u.getAllNeighbours().length; k++) {
+			var v = u.getAllNeighbours()[k];
+			var vIndex = roadMapGraph.nodes.indexOf(v);
+			var alt = dist[uIndex] + distBetween(u, v);
+			if(alt < dist[vIndex]){
+				dist[vIndex] = alt;
+				previous[vIndex] = u;
+
+			}
+		}
+
+	}
+	return dist;
 }
+
+function distBetween(u, v){
+	var dist = 0.00;
+
+	for (var i = 0; i < u.edges.length; i++) {
+		if(u.edges[i].getNextNode(u) == v ){
+			return u.edges[i].weight;
+		}
+	}
+}
+
+Array.prototype.areAllNodesVisited = function(){
+	var areAllvisited = true;
+	for (var i = 0; i < this.length; i++) {
+		if (!this[i].visited) {
+			areAllvisited = false;
+		}
+	}
+	return areAllvisited;
+};
+
+Array.prototype.smallestDistanceNotVisited = function(dist){
+	var min = 0;
+	for (var i = 0; i < this.length; i++) {
+		if (!this[i].visited && min >= dist[i]) {
+			min = dist[i];
+		}
+	}
+	return this[dist.indexOf(min)];
+};
+
+Array.prototype.min = function(){
+	return Math.min.apply(null, this);
+};
+
+Array.prototype.max = function(){
+	return Math.max.apply(null, this);
+};
