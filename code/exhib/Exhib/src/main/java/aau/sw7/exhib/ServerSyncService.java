@@ -163,13 +163,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     private FeedItem readFeedItem(JsonReader reader) throws IOException {
         String header = "";
         String text = "";
-        String author = "BannedNexus";
         Date feedTime = null;
+        String feedlogo = "";
 
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
-            if (name.equals("header")) {
+            if (name.equals("name")) {
                 header = reader.nextString();
             } else if (name.equals("description")) {
                 text = reader.nextString();
@@ -179,11 +179,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+            } else if (name.equals("logo")) {
+                feedlogo = "http://figz.dk/images/" + reader.nextString();
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
-        return new FeedItem(header, text, author, feedTime);
+        return new FeedItem(header, text, feedTime, feedlogo);
     }
 }

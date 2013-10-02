@@ -9,11 +9,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/thetext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <FrameLayout
         android:id="@+id/updateButtonContainer"
         android:layout_width="match_parent"
@@ -45,21 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!--
-                <TextView
-                    android:id="@+id/scrollMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"/>
+                <!-- Empty, add/remove button in MainActivty.java -->
 
-                <ProgressBar
-                    android:id="@+id/bottomProgressCircle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignRight="@+id/scrollMessage"
-                    android:layout_alignLeft="@+id/scrollMessage"
-                    android:visibility="invisible"/>
-                    -->
             </FrameLayout>
         </LinearLayout>
 

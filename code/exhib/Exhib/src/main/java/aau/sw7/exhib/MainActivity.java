@@ -21,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -69,21 +68,13 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
         setContentView(R.layout.activity_main);
 
         // Create global configuration and initialize ImageLoader with this configuration
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-        .cacheInMemory(true)
-        .cacheOnDisc(true)
-        .build();
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-                .defaultDisplayImageOptions(defaultOptions)
-                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).build();
         ImageLoader.getInstance().init(config);
 
         // initialize NFC
-        /*
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        */
 
         /* Request feed items from the server */
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
@@ -230,14 +221,14 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
     protected void onResume() {
         super.onResume();
 
-        //enableForegroundMode();
+        enableForegroundMode();
     }
 
     @Override
     protected void onPause() {
         super.onResume();
 
-        //disableForegroundMode();
+        disableForegroundMode();
     }
 
 
@@ -295,8 +286,6 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
                 if(record instanceof TextRecord) {
                     TextRecord hest = (TextRecord)record;
                     Log.d(TAG, "Teksten er " + hest.getText());
-                    TextView textView = (TextView) findViewById(R.id.thetext);
-                    textView.append(hest.getText() + "\n");
                 }
             }
         }
