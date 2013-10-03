@@ -30,8 +30,6 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback, ActionBar.TabListener {
 
-    private boolean locked = false;
-
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         this.viewPager.setCurrentItem(tab.getPosition());
@@ -52,8 +50,10 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
     private static String TAG = MainActivity.class.getSimpleName();
 
-    public CustomViewPager viewPager;
+    private CustomViewPager viewPager;
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
+
+    private boolean locked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +102,18 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 
+    }
+
+    public boolean getLock() {
+        return this.locked;
+    }
+
+    public void setLock(boolean lock) {
+        this.locked = lock;
+    }
+
+    public CustomViewPager getViewPager() {
+        return this.viewPager;
     }
 
     public FeedFragment getFeedFragment() {
