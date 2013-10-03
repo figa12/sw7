@@ -66,6 +66,8 @@ function Graph(){
 	this.nodes = [];
 	this.numberOfEdges = 0;
 	
+	/*Adds a edge with weight between two node 
+	multiple edges between the two nodes cannot exist.*/
 	this.addEdge = function(weight, node1, node2){
 		var indexMyNode1 = doesAlreadyNodeExist(this.nodes, node1);
 
@@ -90,6 +92,7 @@ function Graph(){
 		}
 	};
 
+	/*Given a index the function returns the node.*/
 	this.getNodeByIndex = function(index){
 		if(index >= 0 && index < nodes.length){
 			return nodes[index];
@@ -97,6 +100,7 @@ function Graph(){
 		return -1;
 	};
 
+	/*Given a name the function return the node*/
 	this.getNodeByName = function(name){
 		for (var i = 0; i < this.nodes.length; i++) {
 			if(this.nodes[i].name == name){
@@ -107,7 +111,8 @@ function Graph(){
 }
 
 
-//Makes a graph with edges(and weights) and node, later used to traverse. 
+/*Makes a graph with edges(and weights) 
+  and nodes, later used to traverse.*/
 function makeGraph(points){
 	var myGraph = new Graph();
 
@@ -119,7 +124,8 @@ function makeGraph(points){
 	return myGraph;
 }
 
-//Makes sure that we don't make the same edge twice. returns the index of the edge if it found, otherwise -1.
+/*Makes sure that we don't make the same edge twice. 
+  Returns the index of the edge if it found, otherwise -1.*/
 function doesAlreadyEdgeExist(edges, edge){
 	for (var i = 0; i < edges.length; i++) {
 		if(edges[i].from == edge.from && edges[i].to == edge.to || edges[i].from == edge.to && edges[i].to == edge.from ){
@@ -130,7 +136,8 @@ function doesAlreadyEdgeExist(edges, edge){
 	return -1;
 }
 
-//Makes sure that we don't make the same node twice, also return the index of the node if it found.
+/*Makes sure that we don't make the same node twice, 
+  also return the index of the node if it found.*/
 function doesAlreadyNodeExist(nodes, node){
 	for (var i = 0; i < nodes.length; i++) {
 		if(nodes[i].name == node.name){
@@ -141,7 +148,7 @@ function doesAlreadyNodeExist(nodes, node){
 	return -1;
 }
 
-//Used to calculate shortest route and return the route.
+/*Used to calculate shortest route and return the route.*/
 function shortestRoute(from, to, roadMapGraph){
 	var previous = [];
 	var dist = [];
@@ -180,17 +187,23 @@ function shortestRoute(from, to, roadMapGraph){
 	var path = makePath(target, previous, Q);
 	return path;
 }
+
+/*Creates the sortest paths, and returns it as a Array.*/
 function makePath(target, previous, Q){
 	var path = [];
 	var u = target;
 	while (previous[Q.indexOf(u)] !== null){
 		path.push(u);
-		previous.pop();
 		u = previous[Q.indexOf(u)];
 	}
+	//To get the full path we include the source
+	u = Q[Q.indexOf(u)];
+	path.push(u);
 	return path;
 }
 
+/*Gets the distance(weight) between node u and node v, returns the weight
+  of the edge.*/
 function distBetween(u, v){
 	for (var i = 0; i < u.edges.length; i++) {
 		if(u.edges[i].getNextNode(u) == v ){
