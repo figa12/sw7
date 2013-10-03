@@ -181,6 +181,7 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         }
 
         public FeedFragment feedFragment;
+        public MapFragment mapFragment;
 
         @Override
         public Fragment getItem(int i) {
@@ -191,9 +192,13 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
                     this.feedFragment = new FeedFragment();
                     return this.feedFragment;
 
+                case 1:
+                    this.mapFragment = new MapFragment();
+                    return this.mapFragment;
+
 
                 default:
-                    return new FeedFragment();
+                    return null;
 
 
             }
@@ -201,7 +206,7 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
