@@ -145,8 +145,9 @@ function doesAlreadyNodeExist(nodes, node){
 function shortestRoute(from, to, roadMapGraph){
 	var previous = [];
 	var dist = [];
+	var target = roadMapGraph.getNodeByName(to);
 	for (var i = 0; i < roadMapGraph.nodes.length; i++) {
-		dist.push(9999999);
+		dist.push(Number.MAX_VALUE);
 		previous.push(null);
 	}
 
@@ -155,12 +156,12 @@ function shortestRoute(from, to, roadMapGraph){
 	var Q = [];
 	Q = Q.concat(roadMapGraph.nodes);
 
-	while (!Q.areAllNodesVisited()){
+	while (Q.areAllNodesVisited() === false){
 		var u = Q.smallestDistanceNotVisited(dist);
-		var uIndex = dist.indexOf(dist.min());
-		Q[Q.indexOf(u)].visited = true;
+		var uIndex = Q.indexOf(u);
+		Q[uIndex].visited = true;
 
-		if(dist[uIndex] == 9999999){
+		if(dist[uIndex] == Number.MAX_VALUE){
 			break;
 		}
 
@@ -171,17 +172,26 @@ function shortestRoute(from, to, roadMapGraph){
 			if(alt < dist[vIndex]){
 				dist[vIndex] = alt;
 				previous[vIndex] = u;
-
 			}
 		}
 
 	}
-	return dist;
+
+	var path = makePath(target, previous, Q);
+	return path;
+}
+function makePath(target, previous, Q){
+	var path = [];
+	var u = target;
+	while (previous[Q.indexOf(u)] !== null){
+		path.push(u);
+		previous.pop();
+		u = previous[Q.indexOf(u)];
+	}
+	return path;
 }
 
 function distBetween(u, v){
-	var dist = 0.00;
-
 	for (var i = 0; i < u.edges.length; i++) {
 		if(u.edges[i].getNextNode(u) == v ){
 			return u.edges[i].weight;
@@ -190,19 +200,20 @@ function distBetween(u, v){
 }
 
 Array.prototype.areAllNodesVisited = function(){
-	var areAllvisited = true;
+	var visited = true;
 	for (var i = 0; i < this.length; i++) {
-		if (!this[i].visited) {
-			areAllvisited = false;
+		if (this[i].visited === false) {
+			visited = false;
+			return visited;
 		}
 	}
-	return areAllvisited;
+	return visited;
 };
 
 Array.prototype.smallestDistanceNotVisited = function(dist){
-	var min = 0;
+	var min = Number.MAX_VALUE;
 	for (var i = 0; i < this.length; i++) {
-		if (!this[i].visited && min >= dist[i]) {
+		if (this[i].visited === false && min >= dist[i]) {
 			min = dist[i];
 		}
 	}
