@@ -15,15 +15,25 @@ var roadMapPoints = [];
 for (var i = 0; i < allPoints.length; i++) {
 	roadMapPoints.push(allPoints[i].location);
 }
-var roadpath = new google.maps.Polyline({
+var roadPath = new google.maps.Polyline({
     path:roadMapPoints,
     strokeColor:"#0000FF",
-    strokeOpacity:0.8,
-    strokeWeight:1.5
+    strokeOpacity:0.5,
+    strokeWeight:4
 });
 
 var roadMapGraph = makeGraph(allPoints);
-console.log(roadMapGraph);
 
 //graph used to find a route between points
-var guidePathPoints = shortestRoute("second", "seventh", roadMapGraph);
+var guidePathPoints = shortestRoute("first", "fourth", roadMapGraph);
+
+var routeMapPoints = [];
+for (var i = 0; i < guidePathPoints.length; i++) {
+	routeMapPoints.push(guidePathPoints[i].location);
+}
+var routePath = new google.maps.Polyline({
+	path:routeMapPoints,
+	strokeColor:"#FF0000",
+    strokeOpacity:1,
+    strokeWeight:1.5
+});

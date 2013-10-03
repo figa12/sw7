@@ -82,7 +82,8 @@ map.fitBounds(new google.maps.LatLngBounds());
 google.maps.event.addListener(map, 'click', function(event) {
         placeMarker(event.latLng);
     });
-roadpath.setMap(map);
+roadPath.setMap(map);
+routePath.setMap(map);
 }
 
 
