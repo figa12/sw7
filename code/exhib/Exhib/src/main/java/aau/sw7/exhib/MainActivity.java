@@ -13,9 +13,8 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentManager;
-//import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 import android.view.View;
 
@@ -27,6 +26,8 @@ import org.ndeftools.externaltype.AndroidApplicationRecord;
 import org.ndeftools.wellknown.TextRecord;
 
 import java.util.List;
+
+//import android.support.v4.view.ViewPager;
 
 public class MainActivity extends FragmentActivity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback, ActionBar.TabListener {
 
@@ -120,6 +121,10 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         return this.appSectionsPagerAdapter.feedFragment;
     }
 
+    public ScheduleFragment getScheduleFragment() {
+        return this.appSectionsPagerAdapter.scheduleFragment;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -198,6 +203,7 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
         public FeedFragment feedFragment;
         public MapFragment mapFragment;
+        public ScheduleFragment scheduleFragment;
 
         @Override
         public Fragment getItem(int i) {
@@ -205,24 +211,22 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
                 case 0:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    this.feedFragment = new FeedFragment();
-                    return this.feedFragment;
+                    return this.feedFragment = new FeedFragment();
 
                 case 1:
-                    this.mapFragment = new MapFragment();
-                    return this.mapFragment;
+                    return this.mapFragment = new MapFragment();
 
+                case 2:
+                    return this.scheduleFragment = new ScheduleFragment();
 
                 default:
                     return null;
-
-
             }
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -233,6 +237,9 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
                 case 1:
                     return "Map";
+
+                case 2:
+                    return "Schedule";
 
                 default:
                     return null;
