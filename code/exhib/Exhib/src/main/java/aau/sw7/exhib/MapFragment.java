@@ -1,5 +1,6 @@
 package aau.sw7.exhib;
 
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,6 +9,9 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by figa on 10/3/13.
@@ -32,7 +36,7 @@ public class MapFragment extends Fragment {
         webView.getSettings().setUseWideViewPort(true);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setScrollbarFadingEnabled(false);
-        webView.loadUrl("http://www.google.com.");
+        webView.loadUrl("file:///android_asset/index.html");
 
         return rootView;
     }
