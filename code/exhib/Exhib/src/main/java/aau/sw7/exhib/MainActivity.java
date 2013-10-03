@@ -15,9 +15,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
+//import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Menu;
+import android.view.View;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -29,6 +29,8 @@ import org.ndeftools.wellknown.TextRecord;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback, ActionBar.TabListener {
+
+    private boolean locked = false;
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -50,13 +52,15 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
     private static String TAG = MainActivity.class.getSimpleName();
 
-    private ViewPager viewPager;
+    public CustomViewPager viewPager;
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.viewPager = new CustomViewPager(this);
 
         this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
 
@@ -68,9 +72,9 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        this.viewPager = (ViewPager) super.findViewById(R.id.pager);
+        this.viewPager = (CustomViewPager) super.findViewById(R.id.pager);
         this.viewPager.setAdapter(this.appSectionsPagerAdapter);
-        this.viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        this.viewPager.setOnPageChangeListener(new CustomViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
@@ -211,9 +215,31 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
+            switch (position) {
+                case 0:
+                    return "Feeds";
+
+                case 1:
+                    return "Map";
+
+                default:
+                    return null;
+
+            }
         }
 
+    }
+
+    public void onClickLockButton(View v)
+    {
+        if (this.locked == false) {
+            this.viewPager.setPagingEnabled(false);
+            this.locked = true;
+        }
+        else {
+            this.viewPager.setPagingEnabled(true);
+            this.locked = false;
+        }
     }
     
 }

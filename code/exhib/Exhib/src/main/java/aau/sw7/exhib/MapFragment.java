@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 
 /**
  * Created by figa on 10/3/13.
@@ -31,4 +32,5 @@ public class MapFragment extends Fragment {
 
         return rootView;
     }
+
 }
