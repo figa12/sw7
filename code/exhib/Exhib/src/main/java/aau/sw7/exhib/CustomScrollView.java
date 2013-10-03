@@ -39,11 +39,11 @@ public class CustomScrollView extends ScrollView {
 
         // If the difference is 0 then bottom has been reached.
         // The state of the bottom should also be 'MoreItemsAvailable'
-        if (diff == 0 && !this.wait && this.mainActivity.getBottomItemsState() == MainActivity.BottomMessageState.MoreItemsAvailable) {
+        if (diff == 0 && !this.wait && this.mainActivity.getFeedFragment().getBottomItemsState() == FeedFragment.BottomMessageState.MoreItemsAvailable) {
             this.wait = true;
 
             // Set the bottom state to 'Loading', it will then display a progress circle.
-            this.mainActivity.setBottomMessageState(MainActivity.BottomMessageState.Loading);
+            this.mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.Loading);
 
             // Request more items from the server. The server will change the bottom state accordingly.
             this.requestFeeds();

@@ -105,16 +105,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
                     feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
-                    mainActivity.setTopMessageState(MainActivity.TopMessageState.Neutral);
+                    mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
 
                     if(result != 0) {
-                        mainActivity.setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
+                        mainActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
 
-                        if(mainActivity.getTopItemsState() != MainActivity.TopMessageState.NewItemsAvailable) {
-                            mainActivity.setTopMessageState(MainActivity.TopMessageState.NewItemsAvailable);
+                        if(mainActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
+                            mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
                         }
                     }
                     break;
@@ -122,9 +122,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     ArrayList<FeedItem> feedItems = (ArrayList<FeedItem>) readFeedItemsArray(reader);
                     if(feedItems.size() > 0) {
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
-                        mainActivity.setBottomMessageState(MainActivity.BottomMessageState.MoreItemsAvailable);
+                        mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     } else {
-                        mainActivity.setBottomMessageState(MainActivity.BottomMessageState.NoItemsAvailable);
+                        mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
                     break;
             }
