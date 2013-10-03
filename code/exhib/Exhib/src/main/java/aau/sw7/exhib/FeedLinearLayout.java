@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -25,6 +26,11 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
 
     /* Get the ImageLoader instance */
     protected ImageLoader imageLoader = ImageLoader.getInstance();
+
+    DisplayImageOptions imageLoaderOptions = new DisplayImageOptions.Builder()
+            .cacheInMemory(true)
+            .cacheOnDisc(true)
+            .build();
 
     /** Key string to get data from bundle. */
     public static final String FEED_ITEM = "FeedItem";
@@ -77,6 +83,10 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
         LayoutInflater layoutInflater = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View feedView = layoutInflater.inflate(R.layout.feed_list_item, null);
 
+        // Load the the feed logo asynchronously with universal-image-loader
+        ImageView feedLogoImageView = (ImageView) feedView.findViewById(R.id.feedImage);
+        this.imageLoader.displayImage(feedItem.getFeedLogoURL(), feedLogoImageView, this.imageLoaderOptions);
+
         TextView headerTextView = (TextView) feedView.findViewById(R.id.feedHeader);
         headerTextView.setText(feedItem.getFeedHeader());
 
@@ -86,11 +96,8 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
         TextView feedTextView = (TextView) feedView.findViewById(R.id.feedTime);
         feedTextView.setText(feedItem.getDateTimeRepresentation());
 
-        // Put a click listener on the main layout
+        // Put a click listener on the activity_main layout
         feedView.findViewById(R.id.mainLayout).setOnClickListener(new FeedItemClickListener(feedItem));
-        ImageView iconImageView = (ImageView) feedView.findViewById(R.id.feedImage);
-
-        this.imageLoader.displayImage("http://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/439px-Microsoft_logo.svg.png", iconImageView);
 
         return feedView;
     }

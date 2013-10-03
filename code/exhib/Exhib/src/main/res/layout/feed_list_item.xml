@@ -9,16 +9,17 @@
         android:id="@+id/mainLayout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="107dp"
         android:focusable="false"
         android:clickable="true"
         android:background="@drawable/feed_list_background">
 
         <ImageView
             android:id="@+id/feedImage"
-            android:layout_width="102dp"
-            android:layout_height="102dp"
-            android:background="@drawable/ic_launcher" />
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:paddingRight="3dp"
+            android:scaleType="fitStart"/>
 
         <LinearLayout
             android:orientation="vertical"
@@ -29,10 +30,10 @@
                 android:id="@+id/feedHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hej"
+                android:text="Hej\n\nHest"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:maxLines="2"/>
+                android:maxLines="1" />
 
             <TextView
                 android:id="@+id/feedSummary"
@@ -41,7 +42,7 @@
                 android:layout_weight="1"
                 android:text="Hest"
                 android:textSize="16sp"
-                android:maxLines="3"/>
+                android:maxLines="3" />
 
             <TextView
                 android:id="@+id/feedTime"
@@ -49,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="Today at 3:07 PM"
                 android:textSize="12sp"
-                android:maxLines="1"/>
+                android:maxLines="1" />
         </LinearLayout>
     </LinearLayout>
 

@@ -1,8 +1,8 @@
 package aau.sw7.exhib;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,14 +18,13 @@ public class FeedItem implements Parcelable {
     private String feedHeader;
     private String feedText;
     private Date feedDateTime;
-    private String author;
-    private Bitmap feedIcon;
+    private String feedLogo;
 
-    public FeedItem(String feedHeader, String feedText, String author, Date feedDateTime) {
+    public FeedItem(String feedHeader, String feedText, Date feedDateTime, String feedLogo) {
         this.feedHeader = feedHeader;
         this.feedText = feedText;
-        this.author = author;
         this.feedDateTime = feedDateTime;
+        this.feedLogo = feedLogo;
     }
 
     /** @return The header of the feed item. */
@@ -38,6 +37,10 @@ public class FeedItem implements Parcelable {
         return this.feedText;
     }
 
+    public String getFeedLogoURL() {
+        return this.feedLogo;
+    }
+
     /** @return The date when the feed item was created. */
     public Date getFeedDateTime() {
         return this.feedDateTime;
@@ -45,9 +48,20 @@ public class FeedItem implements Parcelable {
 
     /** @return The string representation of the date and time. */
     public String getDateTimeRepresentation() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
 
-        return "Today at " + simpleDateFormat.format(this.feedDateTime);
+        if(DateUtils.isToday(this.feedDateTime.getTime())) {
+            simpleDateFormat.applyPattern("h:mm a");
+            return "Today at " + simpleDateFormat.format(this.feedDateTime);
+        } else {
+            String result;
+            simpleDateFormat.applyPattern("d-M-yyyy");
+            result = simpleDateFormat.format(this.feedDateTime);
+            result += " at ";
+            simpleDateFormat.applyPattern("h:mm a");
+            result += simpleDateFormat.format(this.feedDateTime);
+            return result;
+        }
     }
 
     @Override
@@ -60,8 +74,7 @@ public class FeedItem implements Parcelable {
         out.writeString(this.feedHeader);
         out.writeString(this.feedText);
         out.writeSerializable(this.feedDateTime);
-        out.writeString(this.author);
-        out.writeParcelable(this.feedIcon, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        out.writeString(this.feedLogo);
     }
 
     public static final Parcelable.Creator<FeedItem> CREATOR = new Parcelable.Creator<FeedItem>() {
@@ -79,8 +92,7 @@ public class FeedItem implements Parcelable {
     private FeedItem(Parcel in) {
         this.feedHeader = in.readString();
         this.feedText = in.readString();
-        this.feedDateTime = (Date) in.readSerializable(); //TODO test
-        this.author = in.readString();
-        this.feedIcon = in.readParcelable(Bitmap.class.getClassLoader()); //TODO test
+        this.feedDateTime = (Date) in.readSerializable();
+        this.feedLogo = in.readString();
     }
 }
