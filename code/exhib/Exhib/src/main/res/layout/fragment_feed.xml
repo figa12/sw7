@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/updateButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Empty, add/remove button in MainActivty.java -->
+
+        </FrameLayout>
+
+    <aau.sw7.exhib.CustomScrollView
+        android:id="@+id/feedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <aau.sw7.exhib.FeedLinearLayout
+                android:id="@+id/feed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginRight="3dp" />
+
+            <FrameLayout
+                android:id="@+id/bottomMessageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Empty, add/remove button in MainActivty.java -->
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </aau.sw7.exhib.CustomScrollView>
+
+</LinearLayout>

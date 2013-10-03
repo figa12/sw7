@@ -1,6 +1,7 @@
 package aau.sw7.exhib;
 
-import android.app.Activity;
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,201 +11,111 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import org.apache.http.message.BasicNameValuePair;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import org.ndeftools.Record;
 import org.ndeftools.externaltype.AndroidApplicationRecord;
 import org.ndeftools.wellknown.TextRecord;
 
 import java.util.List;
 
-public class MainActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
+public class MainActivity extends FragmentActivity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback, ActionBar.TabListener {
 
-    public enum TopItemsState {
-        Loading, NewItemsAvailable, Neutral
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        this.viewPager.setCurrentItem(tab.getPosition());
     }
 
-    public enum BottomItemsState {
-        Loading, NoItemsAvailable, MoreItemsAvailable
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 
-    private static String TAG = MainActivity.class.getSimpleName();
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
-    private Handler handler = new Handler();
-    private TopItemsState topItemsState = TopItemsState.Neutral;
-    private BottomItemsState bottomItemsState = BottomItemsState.MoreItemsAvailable;
+    }
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent nfcPendingIntent;
 
-    private FeedLinearLayout feedLinearLayout;
+    private static String TAG = MainActivity.class.getSimpleName();
 
-    /* Top information */
-    private FrameLayout updateButtonFrameLayout;
-    private Button updateButton;
-    private ProgressBar topProgressCircle;
-
-    /* Bottom information */
-    private FrameLayout bottomMessageFrameLayout;
-    private ProgressBar bottomProgressCircle;
-    private TextView bottomMessageTextView;
+    private ViewPager viewPager;
+    private AppSectionsPagerAdapter appSectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // initialize NFC
-        /*
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        */
+        this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
 
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("GetFeeds", "1");
-        BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
-        new ServerSyncService(this).execute(requestCode, getFeeds, limit);
+        final ActionBar actionBar = getActionBar();
+        /* Remove title bar etc. Doesn't work when applied to the style directly via the xml */
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        this.feedLinearLayout = (FeedLinearLayout) super.findViewById(R.id.feed);
-
-        /* Set up views for information at the top */
-        this.updateButtonFrameLayout = (FrameLayout) super.findViewById(R.id.updateButtonContainer);
-
-        this.topProgressCircle = new ProgressBar(this);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        this.topProgressCircle.setLayoutParams(params);
-
-        this.updateButton = new Button(this);
-        this.updateButton.setText("Click to load new items");
-
-        this.updateButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("GetNewFeeds", "1");
-
-                long ts = (MainActivity.this.feedLinearLayout.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
-                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
-                new ServerSyncService(MainActivity.this).execute(requestCode, getFeeds, timeStamp);
-
-                MainActivity.this.setTopMessageState(TopItemsState.Loading);
+        this.viewPager = (ViewPager) super.findViewById(R.id.pager);
+        this.viewPager.setAdapter(this.appSectionsPagerAdapter);
+        this.viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
             }
         });
 
-        final Runnable checkForFeedsRunnable = new Runnable()
-        {
-            public void run()
-            {
-                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("CheckFeeds", "1");
-
-                long ts = (MainActivity.this.feedLinearLayout.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
-                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
-                new ServerSyncService(MainActivity.this).execute(requestCode, getFeeds, timeStamp);
-
-                MainActivity.this.handler.postDelayed(this, 5000);
-            }
-        };
-
-        this.handler.postDelayed(checkForFeedsRunnable, 8000);
-
-        /* Set up views for information at the bottom */
-        this.bottomMessageFrameLayout = (FrameLayout) super.findViewById(R.id.bottomMessageContainer);
-
-        this.bottomProgressCircle = new ProgressBar(this);
-        this.bottomProgressCircle.setLayoutParams(params); // 'params' is intialised above
-
-        this.bottomMessageTextView = new TextView(this);
-        this.bottomMessageTextView.setLayoutParams(params);
-        this.bottomMessageTextView.setText("No more news"); //TODO use strings from string.xml file
-
-        /* Make the TextView the same height as the ProgressBar */
-        this.bottomMessageTextView.measure(0, 0);
-        this.bottomProgressCircle.measure(0, 0);
-        int padding = (this.bottomProgressCircle.getMeasuredHeight() - this.bottomMessageTextView.getMeasuredHeight()) / 2;
-        this.bottomMessageTextView.setPadding(0, padding, 0, padding);
-    }
-
-    public void setUpdateButtonText(String text) {
-        this.updateButton.setText(text);
-    }
-
-    public TopItemsState getTopItemsState() {
-        return this.topItemsState;
-    }
-
-    public BottomItemsState getBottomItemsState() {
-        return this.bottomItemsState;
-    }
-
-    public void setTopMessageState(TopItemsState topItemsState) {
-        this.topItemsState = topItemsState;
-        this.updateButtonFrameLayout.removeAllViews();
-
-        switch (topItemsState) {
-            case Loading:
-                this.updateButtonFrameLayout.addView(this.topProgressCircle);
-                break;
-
-            case NewItemsAvailable:
-                this.updateButtonFrameLayout.addView(this.updateButton);
-                break;
-
-            case Neutral:
-                // do nothing
-                break;
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < appSectionsPagerAdapter.getCount(); i++) {
+            // Create a tab with text corresponding to the page title defined by the adapter.
+            // Also specify this Activity object, which implements the TabListener interface, as the
+            // listener for when this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(appSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
         }
+
+        // Create global configuration and initialize ImageLoader with this configuration
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).build();
+        ImageLoader.getInstance().init(config);
+
+        // initialize NFC
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+
     }
 
-    public void setBottomMessageState(BottomItemsState bottomItemsState) {
-        this.bottomItemsState = bottomItemsState;
-        this.bottomMessageFrameLayout.removeAllViews();
-
-        switch (bottomItemsState) {
-            case Loading:
-                this.bottomMessageFrameLayout.addView(this.bottomProgressCircle);
-                break;
-
-            case NoItemsAvailable:
-                this.bottomMessageFrameLayout.addView(this.bottomMessageTextView);
-                break;
-
-            case MoreItemsAvailable:
-                // do nothing
-                break;
-        }
+    public FeedFragment getFeedFragment() {
+        return this.appSectionsPagerAdapter.feedFragment;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        //enableForegroundMode();
+        enableForegroundMode();
     }
 
     @Override
     protected void onPause() {
         super.onResume();
 
-        //disableForegroundMode();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        disableForegroundMode();
     }
 
     @Override
@@ -254,11 +165,55 @@ public class MainActivity extends Activity implements CreateNdefMessageCallback,
                 if(record instanceof TextRecord) {
                     TextRecord hest = (TextRecord)record;
                     Log.d(TAG, "Teksten er " + hest.getText());
-                    TextView textView = (TextView) findViewById(R.id.thetext);
-                    textView.append(hest.getText() + "\n");
                 }
             }
         }
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
+     * sections of the app.
+     */
+    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public AppSectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        public FeedFragment feedFragment;
+        public MapFragment mapFragment;
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    // The first section of the app is the most interesting -- it offers
+                    // a launchpad into the other demonstrations in this example application.
+                    this.feedFragment = new FeedFragment();
+                    return this.feedFragment;
+
+                case 1:
+                    this.mapFragment = new MapFragment();
+                    return this.mapFragment;
+
+
+                default:
+                    return null;
+
+
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Section " + (position + 1);
+        }
+
     }
     
 }

@@ -105,16 +105,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
                     feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
-                    mainActivity.setTopMessageState(MainActivity.TopItemsState.Neutral);
+                    mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
 
                     if(result != 0) {
-                        mainActivity.setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
+                        mainActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
 
-                        if(mainActivity.getTopItemsState() != MainActivity.TopItemsState.NewItemsAvailable) {
-                            mainActivity.setTopMessageState(MainActivity.TopItemsState.NewItemsAvailable);
+                        if(mainActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
+                            mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
                         }
                     }
                     break;
@@ -122,9 +122,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     ArrayList<FeedItem> feedItems = (ArrayList<FeedItem>) readFeedItemsArray(reader);
                     if(feedItems.size() > 0) {
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
-                        mainActivity.setBottomMessageState(MainActivity.BottomItemsState.MoreItemsAvailable);
+                        mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     } else {
-                        mainActivity.setBottomMessageState(MainActivity.BottomItemsState.NoItemsAvailable);
+                        mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
                     break;
             }
@@ -163,13 +163,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     private FeedItem readFeedItem(JsonReader reader) throws IOException {
         String header = "";
         String text = "";
-        String author = "BannedNexus";
         Date feedTime = null;
+        String feedlogo = "";
 
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
-            if (name.equals("header")) {
+            if (name.equals("name")) {
                 header = reader.nextString();
             } else if (name.equals("description")) {
                 text = reader.nextString();
@@ -179,11 +179,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+            } else if (name.equals("logo")) {
+                feedlogo = "http://figz.dk/images/" + reader.nextString();
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
-        return new FeedItem(header, text, author, feedTime);
+        return new FeedItem(header, text, feedTime, feedlogo);
     }
 }
