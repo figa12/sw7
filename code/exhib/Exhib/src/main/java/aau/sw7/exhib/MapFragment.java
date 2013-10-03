@@ -14,9 +14,13 @@ import android.widget.Button;
  */
 public class MapFragment extends Fragment {
 
+    private MainActivity parent;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+        this.parent = (MainActivity) getActivity();
 
         WebView webView = (WebView) rootView.findViewById(R.id.webview);
 
@@ -31,6 +35,20 @@ public class MapFragment extends Fragment {
         webView.loadUrl("http://www.google.com.");
 
         return rootView;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+            // If we are becoming invisible, then disable lock
+            if (!isVisibleToUser) {
+                this.parent.getViewPager().setPagingEnabled(true);
+                this.parent.setLock(false);
+            }
+        }
     }
 
 }
