@@ -14,9 +14,9 @@
 	        <maxLodPixels>2048</maxLodPixels>
 	      </Lod>
 	      <LatLonAltBox>
-	        <north>90.00000000000000</north>
-	        <south>-90.00000000000000</south>
-	        <east>0.00000000000000</east>
+	        <north>85.05112877980660</north>
+	        <south>-85.05112877980659</south>
+	        <east>180.00000000000000</east>
 	        <west>-180.00000000000000</west>
 	      </LatLonAltBox>
 	    </Region>
@@ -26,9 +26,9 @@
 	        <href>0.png</href>
 	      </Icon>
 	      <LatLonBox>
-	        <north>90.00000000000000</north>
-	        <south>-90.00000000000000</south>
-	        <east>0.00000000000000</east>
+	        <north>85.05112877980660</north>
+	        <south>-85.05112877980659</south>
+	        <east>180.00000000000000</east>
 	        <west>-180.00000000000000</west>
 	      </LatLonBox>
 	    </GroundOverlay>
@@ -42,8 +42,8 @@
 	        </Lod>
 	        <LatLonAltBox>
 	          <north>0.00000000000000</north>
-	          <south>-90.00000000000000</south>
-	          <east>-90.00000000000000</east>
+	          <south>-85.05112877980659</south>
+	          <east>0.00000000000000</east>
 	          <west>-180.00000000000000</west>
 	        </LatLonAltBox>
 	      </Region>
@@ -63,9 +63,9 @@
 	        </Lod>
 	        <LatLonAltBox>
 	          <north>0.00000000000000</north>
-	          <south>-90.00000000000000</south>
-	          <east>0.00000000000000</east>
-	          <west>-90.00000000000000</west>
+	          <south>-85.05112877980659</south>
+	          <east>180.00000000000000</east>
+	          <west>0.00000000000000</west>
 	        </LatLonAltBox>
 	      </Region>
 	      <Link>
@@ -83,9 +83,9 @@
 	          <maxLodPixels>-1</maxLodPixels>
 	        </Lod>
 	        <LatLonAltBox>
-	          <north>90.00000000000000</north>
+	          <north>85.05112877980660</north>
 	          <south>0.00000000000000</south>
-	          <east>-90.00000000000000</east>
+	          <east>0.00000000000000</east>
 	          <west>-180.00000000000000</west>
 	        </LatLonAltBox>
 	      </Region>
@@ -104,10 +104,10 @@
 	          <maxLodPixels>-1</maxLodPixels>
 	        </Lod>
 	        <LatLonAltBox>
-	          <north>90.00000000000000</north>
+	          <north>85.05112877980660</north>
 	          <south>0.00000000000000</south>
-	          <east>0.00000000000000</east>
-	          <west>-90.00000000000000</west>
+	          <east>180.00000000000000</east>
+	          <west>0.00000000000000</west>
 	        </LatLonAltBox>
 	      </Region>
 	      <Link>

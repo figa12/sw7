@@ -15,9 +15,9 @@
 	      </Lod>
 	      <LatLonAltBox>
 	        <north>0.00000000000000</north>
-	        <south>-5.62500000000000</south>
-	        <east>-67.50000000000000</east>
-	        <west>-73.12500000000000</west>
+	        <south>-11.17840187371177</south>
+	        <east>45.00000000000001</east>
+	        <west>33.75000000000001</west>
 	      </LatLonAltBox>
 	    </Region>
 	    <GroundOverlay>
@@ -27,9 +27,9 @@
 	      </Icon>
 	      <LatLonBox>
 	        <north>0.00000000000000</north>
-	        <south>-5.62500000000000</south>
-	        <east>-67.50000000000000</east>
-	        <west>-73.12500000000000</west>
+	        <south>-11.17840187371177</south>
+	        <east>45.00000000000001</east>
+	        <west>33.75000000000001</west>
 	      </LatLonBox>
 	    </GroundOverlay>
 		  </Document>

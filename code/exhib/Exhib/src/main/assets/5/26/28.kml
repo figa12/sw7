@@ -14,10 +14,10 @@
 	        <maxLodPixels>-1</maxLodPixels>
 	      </Lod>
 	      <LatLonAltBox>
-	        <north>73.12500000000000</north>
-	        <south>67.50000000000000</south>
-	        <east>-28.12500000000000</east>
-	        <west>-33.75000000000000</west>
+	        <north>81.09321385260837</north>
+	        <south>79.17133464081945</south>
+	        <east>123.75000000000000</east>
+	        <west>112.50000000000000</west>
 	      </LatLonAltBox>
 	    </Region>
 	    <GroundOverlay>
@@ -26,10 +26,10 @@
 	        <href>28.png</href>
 	      </Icon>
 	      <LatLonBox>
-	        <north>73.12500000000000</north>
-	        <south>67.50000000000000</south>
-	        <east>-28.12500000000000</east>
-	        <west>-33.75000000000000</west>
+	        <north>81.09321385260837</north>
+	        <south>79.17133464081945</south>
+	        <east>123.75000000000000</east>
+	        <west>112.50000000000000</west>
 	      </LatLonBox>
 	    </GroundOverlay>
 		  </Document>
