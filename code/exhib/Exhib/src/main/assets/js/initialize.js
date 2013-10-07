@@ -10,7 +10,7 @@ var floorPlanTypeOptions = {
 },
 
 tileSize: new google.maps.Size(256, 256),
-maxZoom: 2,
+maxZoom: 5,
 minZoom: 0,
 radius: 1738000,
 name: 'Floorplan'

@@ -16,7 +16,7 @@
 
         <!-- Empty, add/remove button in MainActivty.java -->
 
-        </FrameLayout>
+    </FrameLayout>
 
     <aau.sw7.exhib.CustomScrollView
         android:id="@+id/feedScrollView"

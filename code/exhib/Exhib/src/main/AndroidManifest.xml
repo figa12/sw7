@@ -33,8 +33,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="aau.sw7.exhib.ExhibitionInformation" />
-        <activity
             android:name=".FeedItemActivity"
             android:label="Feed Item"
             android:parentActivityName="aau.sw7.exhib.MainActivity"

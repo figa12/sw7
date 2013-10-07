@@ -21,6 +21,10 @@ public abstract class ListLinearLayout<ListObject> extends LinearLayout {
     /** List of {@link ListObject} */
     private ArrayList<ListObject> items = new ArrayList<ListObject>();
 
+    public ListLinearLayout(Context context) {
+        super(context);
+    }
+
     public ListLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
