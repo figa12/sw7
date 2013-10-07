@@ -163,8 +163,8 @@ function shortestRoute(from, to, roadMapGraph){
 	var Q = [];
 	Q = Q.concat(roadMapGraph.nodes);
 
-	while (Q.areAllNodesVisited() === false){
-		var u = Q.smallestDistanceNotVisited(dist);
+	while (areAllNodesVisited(Q) === false){
+		var u = smallestDistanceNotVisited(Q, dist);
 		var uIndex = Q.indexOf(u);
 		Q[uIndex].visited = true;
 
@@ -212,26 +212,27 @@ function distBetween(u, v){
 	}
 }
 
-Array.prototype.areAllNodesVisited = function(){
+/*if all nodes are visited it returns true, otherwise it returns true*/
+function areAllNodesVisited(Q){
 	var visited = true;
-	for (var i = 0; i < this.length; i++) {
-		if (this[i].visited === false) {
+	for (var i = 0; i < Q.length; i++) {
+		if (Q[i].visited === false) {
 			visited = false;
 			return visited;
 		}
 	}
 	return visited;
-};
+}
 
-Array.prototype.smallestDistanceNotVisited = function(dist){
+function smallestDistanceNotVisited(Q, dist){
 	var min = Number.MAX_VALUE;
-	for (var i = 0; i < this.length; i++) {
-		if (this[i].visited === false && min >= dist[i]) {
+	for (var i = 0; i < Q.length; i++) {
+		if (Q[i].visited === false && min >= dist[i]) {
 			min = dist[i];
 		}
 	}
-	return this[dist.indexOf(min)];
-};
+	return Q[dist.indexOf(min)];
+}
 
 Array.prototype.min = function(){
 	return Math.min.apply(null, this);
