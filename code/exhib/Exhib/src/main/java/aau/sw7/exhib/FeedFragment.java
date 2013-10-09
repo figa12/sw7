@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,8 +29,8 @@ public class FeedFragment extends Fragment {
 
 
     private Handler handler = new Handler(); // Android Runnable Handler
-    private TopMessageState topItemsState = TopMessageState.Neutral;
-    private BottomMessageState bottomItemsState = BottomMessageState.MoreItemsAvailable;
+    private TopMessageState topItemsState;
+    private BottomMessageState bottomItemsState;
 
     private FeedLinearLayout feedLinearLayout;
 
@@ -49,6 +47,9 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
+
+        this.topItemsState = TopMessageState.Neutral;
+        this.bottomItemsState = BottomMessageState.MoreItemsAvailable;
 
             /* Request feed items from the server */
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
