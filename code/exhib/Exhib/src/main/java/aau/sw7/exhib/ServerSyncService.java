@@ -3,6 +3,7 @@ package aau.sw7.exhib;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.JsonReader;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by figa on 9/16/13.
@@ -36,6 +36,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final int GET_NEW_FEEDS_REQUEST = 2;
     public static final int CHECK_NEW_FEEDS_REQUEST = 3;
     public static final int GET_MORE_FEEDS_REQUEST = 4;
+    public static final int GET_SCHEDULE = 5;
 
     public static final String ITEMS_LIMIT = "7";
 
@@ -81,6 +82,11 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected void onPostExecute(String result) {
+        if(result.equals("Could not complete query. Missing parameter") || result.equals("Missing request code!")) {
+            Log.e(ServerSyncService.class.getName(), result);
+            return;
+        }
+
         int startIndex = result.indexOf('[');
 
         int requestCode = Integer.valueOf(result.substring(0, startIndex));
@@ -101,10 +107,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         try {
             switch (requestCode) {
                 case ServerSyncService.GET_FEEDS_REQUEST:
-                    feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Bottom);
+                    feedLinearLayout.addFeedItems(readFeedItemsArray(reader), FeedLinearLayout.AddAt.Bottom);
                     break;
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
-                    feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
+                    feedLinearLayout.addFeedItems(readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
                     mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
@@ -119,13 +125,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     }
                     break;
                 case ServerSyncService.GET_MORE_FEEDS_REQUEST:
-                    ArrayList<FeedItem> feedItems = (ArrayList<FeedItem>) readFeedItemsArray(reader);
+                    ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
                     if(feedItems.size() > 0) {
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     } else {
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
+                    break;
+                case ServerSyncService.GET_SCHEDULE:
+                    mainActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
                     break;
             }
         }
@@ -149,15 +158,60 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return result;
     }
 
-    private List readFeedItemsArray(JsonReader reader) throws IOException {
-        List feedItems = new ArrayList();
+    private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws  IOException{
+        ArrayList<ScheduleItem> scheduleItems = new ArrayList<ScheduleItem>();
+
+        reader.beginArray();
+        while(reader.hasNext()) {
+            scheduleItems.add(this.readScheduleItem(reader));
+        }
+        reader.endArray();
+        return scheduleItems;
+    }
+
+    private ArrayList<FeedItem> readFeedItemsArray(JsonReader reader) throws IOException {
+        ArrayList<FeedItem> feedItems = new ArrayList<FeedItem>();
 
         reader.beginArray();
         while (reader.hasNext()) {
-            feedItems.add(readFeedItem(reader));
+            feedItems.add(this.readFeedItem(reader));
         }
         reader.endArray();
         return feedItems;
+    }
+
+    private ScheduleItem readScheduleItem(JsonReader reader) throws IOException {
+        String eventName = "";
+        String boothName = "";
+        Date startTime = null;
+        Date endTime = null;
+
+        reader.beginObject();
+        while(reader.hasNext()) {
+            String name = reader.nextName();
+            if(name.equals("eventname")) {
+                eventName = reader.nextString();
+            } else if(name.equals("boothname")) {
+                boothName = reader.nextString();
+            } else if(name.equals("starttime")) {
+                try {
+                    startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else if (name.equals("endtime")) {
+                try {
+                    endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new ScheduleItem(eventName, boothName, startTime, endTime);
     }
 
     private FeedItem readFeedItem(JsonReader reader) throws IOException {

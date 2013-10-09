@@ -64,19 +64,18 @@ function Node(name, point){
 function Graph(){
 	this.edges = [];
 	this.nodes = [];
-	this.numberOfEdges = 0;
 	
 	/*Adds a edge with weight between two node 
 	multiple edges between the two nodes cannot exist.*/
 	this.addEdge = function(weight, node1, node2){
-		var indexMyNode1 = doesAlreadyNodeExist(this.nodes, node1);
+		var indexMyNode1 = doesNodeAlreadyExist(this.nodes, node1);
 
 		if(indexMyNode1 == -1){
 			this.nodes.push(node1);
 			indexMyNode1 = this.nodes.indexOf(node1);
 		}
 
-		var indexMyNode2 = doesAlreadyNodeExist(this.nodes, node2);
+		var indexMyNode2 = doesNodeAlreadyExist(this.nodes, node2);
 		if(indexMyNode2 == -1){
 			this.nodes.push(node2);
 			indexMyNode2 = this.nodes.indexOf(node2);
@@ -84,11 +83,10 @@ function Graph(){
 
 		var myEdge = new Edge(weight, this.nodes[indexMyNode1], this.nodes[indexMyNode2]);
 
-		if(doesAlreadyEdgeExist(this.edges,myEdge) == -1){
+		if(doesEdgeAlreadyExist(this.edges,myEdge) == -1){
 			this.edges.push(myEdge);
-			this.nodes[indexMyNode1].addEdge(this.edges[this.numberOfEdges]);
-			this.nodes[indexMyNode2].addEdge(this.edges[this.numberOfEdges]);
-			this.numberOfEdges = this.numberOfEdges + 1;
+			this.nodes[indexMyNode1].addEdge(this.edges[this.edges.indexOf(myEdge)]);
+			this.nodes[indexMyNode2].addEdge(this.edges[this.edges.indexOf(myEdge)]);
 		}
 	};
 
@@ -126,7 +124,7 @@ function makeGraph(points){
 
 /*Makes sure that we don't make the same edge twice. 
   Returns the index of the edge if it found, otherwise -1.*/
-function doesAlreadyEdgeExist(edges, edge){
+function doesEdgeAlreadyExist(edges, edge){
 	for (var i = 0; i < edges.length; i++) {
 		if(edges[i].from == edge.from && edges[i].to == edge.to || edges[i].from == edge.to && edges[i].to == edge.from ){
 			return i;
@@ -138,7 +136,7 @@ function doesAlreadyEdgeExist(edges, edge){
 
 /*Makes sure that we don't make the same node twice, 
   also return the index of the node if it found.*/
-function doesAlreadyNodeExist(nodes, node){
+function doesNodeAlreadyExist(nodes, node){
 	for (var i = 0; i < nodes.length; i++) {
 		if(nodes[i].name == node.name){
 			return i;
@@ -149,25 +147,32 @@ function doesAlreadyNodeExist(nodes, node){
 }
 
 /*Used to calculate shortest route and return the route.*/
-function shortestRoute(from, to, roadMapGraph){
+function shortestRoute(source, target, roadMapGraph){
 	var previous = [];
-	var dist = [];
-	var target = roadMapGraph.getNodeByName(to);
+	var dist = []; //contains the value from the 
+	var targetNode = roadMapGraph.getNodeByName(target);
+
+	//initialize the dist and previous arrays.
 	for (var i = 0; i < roadMapGraph.nodes.length; i++) {
 		dist.push(Number.MAX_VALUE);
 		previous.push(null);
 	}
 
-	dist[roadMapGraph.nodes.indexOf(roadMapGraph.getNodeByName(from))] = 0;
+	//Used in the first run in dijkstra's
+	dist[roadMapGraph.nodes.indexOf(roadMapGraph.getNodeByName(source))] = 0;
 
+	//Q is the datastrukture that controls the visited nodes. it is identical with roadMapGraph.
 	var Q = [];
 	Q = Q.concat(roadMapGraph.nodes);
 
+
+	//Main loop in dijkstra's
 	while (areAllNodesVisited(Q) === false){
 		var u = smallestDistanceNotVisited(Q, dist);
 		var uIndex = Q.indexOf(u);
 		Q[uIndex].visited = true;
 
+		//if node is unavaible then quit the alorithm.
 		if(dist[uIndex] == Number.MAX_VALUE){
 			break;
 		}
@@ -184,7 +189,8 @@ function shortestRoute(from, to, roadMapGraph){
 
 	}
 
-	var path = makePath(target, previous, Q);
+	//Get the whole node path (from -> to)
+	var path = makePath(targetNode, previous, Q);
 	return path;
 }
 
@@ -224,6 +230,7 @@ function areAllNodesVisited(Q){
 	return visited;
 }
 
+/*Find the smallest value in dist and return the node in Q with the same index. */
 function smallestDistanceNotVisited(Q, dist){
 	var min = Number.MAX_VALUE;
 	for (var i = 0; i < Q.length; i++) {
@@ -234,10 +241,12 @@ function smallestDistanceNotVisited(Q, dist){
 	return Q[dist.indexOf(min)];
 }
 
+/*Returns the smallest value in the array*/
 Array.prototype.min = function(){
 	return Math.min.apply(null, this);
 };
 
+/*Return the maximum value in the array*/
 Array.prototype.max = function(){
 	return Math.max.apply(null, this);
 };
