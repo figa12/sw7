@@ -82,7 +82,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected void onPostExecute(String result) {
-        if(result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
+        if(result == null) {
+            Log.e(ServerSyncService.class.getName(), "No connection found-ish.");
+            return;
+        } else if(result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
             Log.e(ServerSyncService.class.getName(), result);
             return;
         }

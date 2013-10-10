@@ -31,10 +31,11 @@ public class ScheduleFragment extends Fragment {
         this.viewDestroyed = false;
 
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_SCHEDULE));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("GetSchedule", "1");
+        BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetSchedule");
+        BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
         long ts = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
         BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
-        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, timeStamp);
+        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
 
         return rootView;
     }

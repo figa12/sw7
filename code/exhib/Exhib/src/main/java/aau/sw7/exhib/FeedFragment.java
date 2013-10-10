@@ -57,9 +57,10 @@ public class FeedFragment extends Fragment {
 
             /* Request feed items from the server */
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("GetFeeds", "1");
+        BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetFeeds");
+        BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
         BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
-        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, limit);
+        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, limit, user);
 
         this.feedLinearLayout = (FeedLinearLayout) rootView.findViewById(R.id.feed); // save the reference to the feed linear layout.
 
@@ -78,9 +79,10 @@ public class FeedFragment extends Fragment {
             public void onClick(View v) {
                 // When the button is clicked, it request the new feeds from the server
                 BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("GetNewFeeds", "1");
+                BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetNewFeeds");
+                BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
                 BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest()));
-                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp);
+                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
 
                 FeedFragment.this.setTopMessageState(TopMessageState.Loading);
             }
@@ -93,9 +95,10 @@ public class FeedFragment extends Fragment {
             {
                 if(!FeedFragment.this.viewDestroyed) {
                     BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
-                    BasicNameValuePair getFeeds = new BasicNameValuePair("CheckFeeds", "1");
+                    BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "CheckFeeds");
+                    BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
                     BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest()));
-                    new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp);
+                    new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
                 }
                 // Set a delay on the Runnable for when it should be run again
                 FeedFragment.this.handler.postDelayed(this, 5000);
