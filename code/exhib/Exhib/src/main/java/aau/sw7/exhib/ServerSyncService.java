@@ -82,7 +82,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected void onPostExecute(String result) {
-        if(result.equals("Could not complete query. Missing parameter") || result.equals("Missing request code!")) {
+        if(result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
             Log.e(ServerSyncService.class.getName(), result);
             return;
         }
@@ -106,11 +106,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
         try {
             switch (requestCode) {
+                // Initial call to populate feed list, is only called in the start of the program
                 case ServerSyncService.GET_FEEDS_REQUEST:
-                    feedLinearLayout.addFeedItems(readFeedItemsArray(reader), FeedLinearLayout.AddAt.Bottom);
+                    if(feedLinearLayout == null) { break; }
+
+                    this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
                     break;
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
-                    feedLinearLayout.addFeedItems(readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
+                    if(feedLinearLayout == null) { break; }
+
+                    this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
                     mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
@@ -125,11 +130,15 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     }
                     break;
                 case ServerSyncService.GET_MORE_FEEDS_REQUEST:
+                    if(feedLinearLayout == null) { break; }
                     ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
+
                     if(feedItems.size() > 0) {
+                        // As long we get feeds from the server, we assume there are more
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     } else {
+                        // If it returned 0, then there are no more feeds available from the server
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
                     break;
@@ -143,14 +152,31 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
     }
 
+    private void addFeedItems(ArrayList<FeedItem> feedItems, FeedLinearLayout feedLinearLayout, FeedLinearLayout.AddAt addAt) {
+        if(feedItems.size() > 0) {
+            feedLinearLayout.addFeedItems(feedItems, addAt);
+
+            // We need to save the timestamp of the newest feed
+            long timestamp = (feedItems.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
+            feedLinearLayout.setTimestampForFeedRequest(timestamp);
+        } else {
+            // If the initial call didn't give any feeds we need to save the current time as the timestamp
+            long timestamp = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
+            feedLinearLayout.setTimestampForFeedRequest(timestamp);
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
     private int readNumberOfNewFeeds(JsonReader reader) throws IOException {
         int result = 0;
 
         reader.beginArray();
         reader.beginObject();
         String name = reader.nextName();
-        if(name.equals("num")) {
+        if(name != null && name.equals("num")) {
             result = reader.nextInt();
+        } else {
+            result = 0;
         }
         reader.endObject();
         reader.endArray();
@@ -189,7 +215,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.beginObject();
         while(reader.hasNext()) {
             String name = reader.nextName();
-            if(name.equals("eventname")) {
+
+            if(name == null) {
+                reader.skipValue();
+            } else if(name.equals("eventname")) {
                 eventName = reader.nextString();
             } else if(name.equals("boothname")) {
                 boothName = reader.nextString();
@@ -223,7 +252,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
-            if (name.equals("name")) {
+
+            if(name == null) {
+                reader.skipValue();
+            } else if (name.equals("name")) {
                 header = reader.nextString();
             } else if (name.equals("description")) {
                 text = reader.nextString();

@@ -21,11 +21,14 @@ public class ScheduleFragment extends Fragment {
 
     private ArrayList<ScheduleLinearLayout> scheduleLinearLayouts = new ArrayList<ScheduleLinearLayout>();
     private LinearLayout scheduleContainer;
+    private boolean viewDestroyed = true;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_schedule, container, false);
         this.scheduleContainer = (LinearLayout) rootView.findViewById(R.id.scheduleContainer);
+        this.viewDestroyed = false;
 
         BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_SCHEDULE));
         BasicNameValuePair getFeeds = new BasicNameValuePair("GetSchedule", "1");
@@ -36,7 +39,15 @@ public class ScheduleFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.viewDestroyed = true;
+    }
+
     public void setSchedule(ArrayList<ScheduleItem> scheduleItems) {
+        if(this.viewDestroyed) { return; }
+
         LayoutInflater inflater = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.addDayHeader(inflater, "Today");
@@ -44,12 +55,17 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void addDayEvents(ArrayList<ScheduleItem> scheduleItems) {
+        if(this.viewDestroyed) { return; }
+
         ScheduleLinearLayout scheduleLinearLayout = new ScheduleLinearLayout(super.getActivity(), scheduleItems);
         this.scheduleLinearLayouts.add(scheduleLinearLayout);
         this.scheduleContainer.addView(scheduleLinearLayout);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void addDayHeader(LayoutInflater inflater, String header) {
+        if(this.viewDestroyed) { return; }
+
         View scheduleDayItemView = inflater.inflate(R.layout.schedule_day_item, null);
 
         TextView dayTextView = (TextView) scheduleDayItemView.findViewById(R.id.dayText);
