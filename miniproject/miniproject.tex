@@ -142,5 +142,49 @@ XSLT is stronger when it comes to making small changes to a document, because it
 
 XQuery does not support dynamic binding or polymorphism, but this ability is more noticeable when writing large applications, which we do not expect to be doing. 
 
+\subsection{Block 4: Architecture}
+
+For the architecture we used a Model-View-Controller.
+
+This allows us to divide our application into three kinds of components;
+
+\begin{itemize}
+\item A model is a representation of some data in a domain. It is an object containing all data and behaviour, other than that used for the UI. 
+\item The view represents the display of the model in the UI. The view is only about displaying the information, any changes that might be made to the data is handled by the controller. 
+\item The controller takes user input and manipulates the model and the view is updated appropriately. 
+\end{itemize}
+
+\subsubsection*{Model}
+
+\subsubsection*{View}
+We chose to use the Template View because it is easy to implement and for our assignment we only needed to display a static HTML page because our data was also static.
+
+If we had dynamic data, it might have been more appealing to use a Transform View where we would have used the data as input and "transformed" it into HTML, thus giving us a more dynamic HTML view for different sorts of data.
+
+If we had had more than one web page, a two step view could have been appealing to use. It allows you to have a consistent look and organization across your website. 
+
+Due to the simplicity of our dataset, a template view was more than sufficient with its easy implementation it was very appealing for us. 
+
+\subsubsection*{Controller}
+
+
+\subsubsection*{Advantages and disadvantages of MVC}
+
+\paragraph{Advantages}
+\begin{itemize}
+\item It is possible to substitute and re-use views and controllers for the same model.
+\item Many views for the same model 
+\item Clear separation between presentation logic and business logic
+\item Easy to maintain code for future improvements
+\item All views are synchronized and reflect the current state of the model 
+\item It is easy to test the core of the application
+\end{itemize}
+
+\paragraph{Disadvantages}
+\begin{itemize}
+\item Increased complexity because an application can use other patterns at the same time as MVC (for example in an active model using an Observer pattern)
+\item Changes to the model require changes in the view and might require changes to the controller as well.
+\item It is very difficult to have a strict separation between view and controller. 
+\end{itemize}
 \bibliography{bibliografi}
 \end{document}
