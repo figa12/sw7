@@ -51,14 +51,14 @@ public class FeedItem implements Parcelable {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
 
         if(DateUtils.isToday(this.feedDateTime.getTime())) {
-            simpleDateFormat.applyPattern("h:mm a");
+            simpleDateFormat.applyPattern("h:mm");
             return "Today at " + simpleDateFormat.format(this.feedDateTime);
         } else {
             String result;
             simpleDateFormat.applyPattern("d-M-yyyy");
             result = simpleDateFormat.format(this.feedDateTime);
             result += " at ";
-            simpleDateFormat.applyPattern("h:mm a");
+            simpleDateFormat.applyPattern("h:mm");
             result += simpleDateFormat.format(this.feedDateTime);
             return result;
         }

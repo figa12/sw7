@@ -1,5 +1,20 @@
+\chapter{Server communication}
+This chapter describes the communication between server and client, aswell as the design choices and implementation of database. \todo{Bør database være et kapitel for sig selv?}
+
+\section{Database}
+We are using a MySQL database with the MyISAM storage engine and which is located at a remote server. \todo{info om hvor osv.?}
+
+The server is to contain all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and some basic information about the users.
+
+\begin{figure}[H]
+\centering
+\includegraphics[page=1,width=1\linewidth]{img/sw7ERD.pdf}
+\caption{Entity-relation diagram}
+\label{fig:erd}
+\end{figure}
+
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "../master"
 %%% End: 
-

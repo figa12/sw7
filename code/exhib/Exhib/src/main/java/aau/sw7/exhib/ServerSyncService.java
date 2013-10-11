@@ -3,6 +3,7 @@ package aau.sw7.exhib;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.JsonReader;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by figa on 9/16/13.
@@ -36,6 +36,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final int GET_NEW_FEEDS_REQUEST = 2;
     public static final int CHECK_NEW_FEEDS_REQUEST = 3;
     public static final int GET_MORE_FEEDS_REQUEST = 4;
+    public static final int GET_SCHEDULE = 5;
 
     public static final String ITEMS_LIMIT = "7";
 
@@ -81,6 +82,11 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected void onPostExecute(String result) {
+        if(result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
+            Log.e(ServerSyncService.class.getName(), result);
+            return;
+        }
+
         int startIndex = result.indexOf('[');
 
         int requestCode = Integer.valueOf(result.substring(0, startIndex));
@@ -100,11 +106,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
         try {
             switch (requestCode) {
+                // Initial call to populate feed list, is only called in the start of the program
                 case ServerSyncService.GET_FEEDS_REQUEST:
-                    feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Bottom);
+                    if(feedLinearLayout == null) { break; }
+
+                    this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
                     break;
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
-                    feedLinearLayout.addFeedItems((ArrayList<FeedItem>) readFeedItemsArray(reader), FeedLinearLayout.AddAt.Top);
+                    if(feedLinearLayout == null) { break; }
+
+                    this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
                     mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
@@ -119,13 +130,20 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     }
                     break;
                 case ServerSyncService.GET_MORE_FEEDS_REQUEST:
-                    ArrayList<FeedItem> feedItems = (ArrayList<FeedItem>) readFeedItemsArray(reader);
+                    if(feedLinearLayout == null) { break; }
+                    ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
+
                     if(feedItems.size() > 0) {
+                        // As long we get feeds from the server, we assume there are more
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     } else {
+                        // If it returned 0, then there are no more feeds available from the server
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
+                    break;
+                case ServerSyncService.GET_SCHEDULE:
+                    mainActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
                     break;
             }
         }
@@ -134,14 +152,31 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
     }
 
+    private void addFeedItems(ArrayList<FeedItem> feedItems, FeedLinearLayout feedLinearLayout, FeedLinearLayout.AddAt addAt) {
+        if(feedItems.size() > 0) {
+            feedLinearLayout.addFeedItems(feedItems, addAt);
+
+            // We need to save the timestamp of the newest feed
+            long timestamp = (feedItems.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
+            feedLinearLayout.setTimestampForFeedRequest(timestamp);
+        } else {
+            // If the initial call didn't give any feeds we need to save the current time as the timestamp
+            long timestamp = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
+            feedLinearLayout.setTimestampForFeedRequest(timestamp);
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
     private int readNumberOfNewFeeds(JsonReader reader) throws IOException {
         int result = 0;
 
         reader.beginArray();
         reader.beginObject();
         String name = reader.nextName();
-        if(name.equals("num")) {
+        if(name != null && name.equals("num")) {
             result = reader.nextInt();
+        } else {
+            result = 0;
         }
         reader.endObject();
         reader.endArray();
@@ -149,15 +184,63 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return result;
     }
 
-    private List readFeedItemsArray(JsonReader reader) throws IOException {
-        List feedItems = new ArrayList();
+    private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws  IOException{
+        ArrayList<ScheduleItem> scheduleItems = new ArrayList<ScheduleItem>();
+
+        reader.beginArray();
+        while(reader.hasNext()) {
+            scheduleItems.add(this.readScheduleItem(reader));
+        }
+        reader.endArray();
+        return scheduleItems;
+    }
+
+    private ArrayList<FeedItem> readFeedItemsArray(JsonReader reader) throws IOException {
+        ArrayList<FeedItem> feedItems = new ArrayList<FeedItem>();
 
         reader.beginArray();
         while (reader.hasNext()) {
-            feedItems.add(readFeedItem(reader));
+            feedItems.add(this.readFeedItem(reader));
         }
         reader.endArray();
         return feedItems;
+    }
+
+    private ScheduleItem readScheduleItem(JsonReader reader) throws IOException {
+        String eventName = "";
+        String boothName = "";
+        Date startTime = null;
+        Date endTime = null;
+
+        reader.beginObject();
+        while(reader.hasNext()) {
+            String name = reader.nextName();
+
+            if(name == null) {
+                reader.skipValue();
+            } else if(name.equals("eventname")) {
+                eventName = reader.nextString();
+            } else if(name.equals("boothname")) {
+                boothName = reader.nextString();
+            } else if(name.equals("starttime")) {
+                try {
+                    startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else if (name.equals("endtime")) {
+                try {
+                    endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new ScheduleItem(eventName, boothName, startTime, endTime);
     }
 
     private FeedItem readFeedItem(JsonReader reader) throws IOException {
@@ -169,7 +252,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
-            if (name.equals("name")) {
+
+            if(name == null) {
+                reader.skipValue();
+            } else if (name.equals("name")) {
                 header = reader.nextString();
             } else if (name.equals("description")) {
                 text = reader.nextString();
