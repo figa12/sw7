@@ -1,2 +1,17 @@
-\subsection*{Description of The Idea.}
-Our idea is to make the visit to an exhibition more informative and personalised. \todo{britisk} With a mobile application the visitor should be able to get a personalised \todo{britisk} route around the exhibition. The visitor can also get additional information about a booth by scanning a tag placed at the booth, When scanning a tag some text will appear on the mobile application which provides the visitor with more information. The mobile application should also provide a schedule for events happening around the exhibition. A live feed will also be available for the visitor, the live feed will provide the visitor with information about small events at the booths like giveaways, contest, etc. The feeds will be published by the booths, and should give the booths a place where they can make themselves attractable for the visitors.
+Our idea is to make a visit to an exhibition more informative and personalised. \todo{britisk} With our mobile application the visitor should be able to get a personalised \todo{britisk} route around the exhibition, and also get additional information about a booth by scanning a tag placed at the booth. The mobile application should also provide a schedule for events happening around the exhibition. A live news feed will also be available for the visitor, the live feed will provide the visitor with information about small events at the booths like: giveaways, contest, etc. The feed list is meant as a place where the booths can make themselves attractable for the visitors.
+The exhibition will also need to manage the information on the mobile application, provide it with a floorplan, schedule and position of booths on the floorplan. The exhibition can make use of a website to administrate all these properties.
+\subsection*{Website Application}
+\todo{Write a description to understand the website application/administration tool}
+\begin{itemize}
+\item Application to load a floorplan and make it suitable to make a map.
+\item Administration website, a place where workers of the exhibition can enter information about the booths of the exhibition and insert their locations on the floorplan.
+\end{itemize}
+\subsection*{Mobile Application}
+The mobile application is designed for the end-user, and can load any given exhibition using the system. When entering the exhibition the visitor can scan a NFC tag to subscribe to the exhibition. After subscribing to a exhibition the visitor will have to choose categories that he/she finds interesting. The visitor's floorplan will then show a route around the exhibition to the booths that is interesting. The visitor can only update his location on the floorplan by scanning NFC tags at the booths. When scanning a NFC tag the visitor will also be presented with more information about the booth. The visitor's schedule will also be filled with big events that are planned by the booths and exhibition. The visitor will also receive a live feed from booths, this will update the visitor on small current events happening at the exhibition. Below is listed some of the important implementations that have to be made.
+\begin{itemize}
+\item NFC reader, to read NFC chips around the exhibition.
+\item Time schedule of events
+\item View floorplan, for directions around the exhibition.
+\item Overview of all the feeds that will be comming from the booths that interesting to the visitor.
+\item When the application is not subscribed to any ongoing exhibitions the application should show a exhibition browser, that the visitor can use to search for more interesting exhibition.
+\end{itemize}
