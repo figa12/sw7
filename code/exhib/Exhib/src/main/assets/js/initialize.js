@@ -10,9 +10,9 @@ var floorPlanTypeOptions = {
 },
 
 tileSize: new google.maps.Size(256, 256),
-maxZoom: 5,
+maxZoom: 2,
 minZoom: 0,
-radius: 1738000,
+mapBounds: new google.maps.LatLngBounds(new google.maps.LatLng(-85.05112878, -180.0), new google.maps.LatLng(85.05112878, 179.988808672)),
 name: 'Floorplan'
 };
 
