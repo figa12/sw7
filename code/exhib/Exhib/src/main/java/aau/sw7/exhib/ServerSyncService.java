@@ -37,6 +37,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final int CHECK_NEW_FEEDS_REQUEST = 3;
     public static final int GET_MORE_FEEDS_REQUEST = 4;
     public static final int GET_SCHEDULE = 5;
+    public static final int GET_EXHIBITION_INFO = 6;
 
     public static final String ITEMS_LIMIT = "7";
 
@@ -82,7 +83,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected void onPostExecute(String result) {
-        if(result == null) {
+        if(result == null || result.equals("")) {
             Log.e(ServerSyncService.class.getName(), "No connection found-ish.");
             return;
         } else if(result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
@@ -115,12 +116,14 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
                     this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
                     break;
+
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
                     if(feedLinearLayout == null) { break; }
 
                     this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
                     mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
+
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
 
@@ -132,6 +135,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                         }
                     }
                     break;
+
                 case ServerSyncService.GET_MORE_FEEDS_REQUEST:
                     if(feedLinearLayout == null) { break; }
                     ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
@@ -145,8 +149,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                         mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
                     break;
+
                 case ServerSyncService.GET_SCHEDULE:
                     mainActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
+                    break;
+
+                case ServerSyncService.GET_EXHIBITION_INFO:
+                    this.readExhibitionInformation(reader, mainActivity);
                     break;
             }
         }
@@ -185,6 +194,35 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.endArray();
 
         return result;
+    }
+
+    private void readExhibitionInformation(JsonReader reader, MainActivity mainActivity) throws  IOException {
+        String imageUrl = "";
+        String exhibitionName = "";
+        String exhibitionDescription = "";
+
+        reader.beginArray();
+        reader.beginObject();
+        while(reader.hasNext()) {
+            String name = reader.nextName();
+
+            //TODO fix value keys
+            if(name == null) {
+                reader.skipValue();
+            } else if (name.equals("Image")) {
+                imageUrl = reader.nextString();
+            } else if (name.equals("Name")) {
+                exhibitionName = reader.nextString();
+            } else if (name.equals("Description")) {
+                exhibitionDescription = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        reader.endArray();
+
+        mainActivity.getExhibitionInfoFragment().setExhibitionInfo(imageUrl, exhibitionName, exhibitionDescription);
     }
 
     private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws  IOException{

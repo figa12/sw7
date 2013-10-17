@@ -30,6 +30,21 @@ public class FeedFragment extends Fragment {
     private boolean viewDestroyed = true;
 
     private Handler handler = new Handler(); // Android Runnable Handler
+    private Runnable checkForFeedsRunnable = new Runnable()
+    {
+        public void run()
+        {
+            if(!FeedFragment.this.viewDestroyed) {
+                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
+                BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "CheckFeeds");
+                BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
+                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest()));
+                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
+            }
+            // Set a delay on the Runnable for when it should be run again
+            FeedFragment.this.handler.postDelayed(this, 5000);
+        }
+    };
     private TopMessageState topItemsState;
     private BottomMessageState bottomItemsState;
 
@@ -88,24 +103,8 @@ public class FeedFragment extends Fragment {
             }
         });
 
-        // Create a Runnable (thread) that checks the server for new items
-        final Runnable checkForFeedsRunnable = new Runnable()
-        {
-            public void run()
-            {
-                if(!FeedFragment.this.viewDestroyed) {
-                    BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
-                    BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "CheckFeeds");
-                    BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
-                    BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest()));
-                    new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
-                }
-                // Set a delay on the Runnable for when it should be run again
-                FeedFragment.this.handler.postDelayed(this, 5000);
-            }
-        };
-
-        this.handler.postDelayed(checkForFeedsRunnable, 8000); // The first check after 8000 ms
+        // Post a Runnable (thread) that checks the server for new items
+        this.handler.postDelayed(this.checkForFeedsRunnable, 8000); // The first check after 8000 ms
 
         // Set up views for information at the bottom
         this.bottomMessageFrameLayout = (FrameLayout) rootView.findViewById(R.id.bottomMessageContainer);
@@ -130,6 +129,7 @@ public class FeedFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         this.viewDestroyed = true;
+        this.handler.removeCallbacks(this.checkForFeedsRunnable);
     }
 
     /**

@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 /**
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 public class ScheduleLinearLayout extends ListLinearLayout<ScheduleItem> {
 
     private LinearLayout scheduleContainer;
+    private ArrayList<TextView> countdownTextView = new ArrayList<TextView>();
 
     public ScheduleLinearLayout(Context context, ArrayList<ScheduleItem> scheduleItems) {
         super(context);
@@ -22,6 +25,13 @@ public class ScheduleLinearLayout extends ListLinearLayout<ScheduleItem> {
 
         for (ScheduleItem scheduleItem : scheduleItems) {
             super.addViewAtBottom(scheduleItem);
+        }
+    }
+
+    public void updateTextViews() {
+        for (TextView textView : this.countdownTextView) {
+            ScheduleItem scheduleItem = (ScheduleItem) textView.getTag();
+            textView.setText(scheduleItem.getCountdown());
         }
     }
 
@@ -42,6 +52,9 @@ public class ScheduleLinearLayout extends ListLinearLayout<ScheduleItem> {
 
         TextView countdownTextView = (TextView) scheduleItemView.findViewById(R.id.countdownText);
         countdownTextView.setText(scheduleItem.getCountdown());
+        countdownTextView.setTag(scheduleItem);
+
+        this.countdownTextView.add(countdownTextView);
 
         return scheduleItemView;
     }

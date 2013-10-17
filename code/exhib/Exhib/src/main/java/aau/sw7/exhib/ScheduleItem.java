@@ -36,7 +36,39 @@ public class ScheduleItem {
     }
 
     public String getCountdown() {
-        return "in 10 min"; //TODO: Return string saying how much time to event starts
+        long currentTime = new Date().getTime() / 1000;
+        long eventTime = this.startDateTime.getTime() / 1000;
+        long difference = eventTime - currentTime;
+
+        long days =  difference / 86400;
+        difference %= 86400;
+        long hours = difference / 3600;
+        difference %= 3600;
+        long minutes = difference / 60;
+        difference %= 60;
+
+        long seconds = difference;
+
+        // Has event started
+        if(currentTime > eventTime) {
+            return "";
+        }
+        // More than 24 hours
+        else if(days > 0) {
+            return String.format("in %d days\n%d hours", days, hours);
+        }
+        // More than 1 hour
+        else if (hours > 0) {
+            return String.format("in %d hours\n%d minutes", hours, minutes);
+        }
+        // More than 1 minute
+        else if (minutes > 0) {
+            return String.format("in %d minutes\n%d seconds", minutes, seconds);
+        }
+        // Less than a minute
+        else {
+            return "in" + String.valueOf(seconds);
+        }
     }
 
     public String getTimeInterval() {
