@@ -38,6 +38,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final int GET_MORE_FEEDS_REQUEST = 4;
     public static final int GET_SCHEDULE = 5;
     public static final int GET_EXHIBITION_INFO = 6;
+    public static final int GET_CATEGORIES = 7;
 
     public static final String ITEMS_LIMIT = "7";
 
@@ -103,10 +104,21 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void readJsonStream(InputStream stream, int requestCode) throws IOException {
         JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
-        MainActivity mainActivity = (MainActivity) this.context;
-        FeedLinearLayout feedLinearLayout = ((FeedLinearLayout) mainActivity.findViewById(R.id.feed));
+
+        MainActivity mainActivity = null;
+        FeedLinearLayout feedLinearLayout = null;
+        CategoriesActivity categoriesActivity = null;
+
+        // determine the origin of the context and cast it appropriately
+        if (this.context instanceof MainActivity) {
+            mainActivity = (MainActivity) this.context;
+            feedLinearLayout = ((FeedLinearLayout) ((MainActivity) this.context).findViewById(R.id.feed));
+        } else if (this.context instanceof CategoriesActivity) {
+            categoriesActivity = (CategoriesActivity) this.context;
+        }
 
         try {
             switch (requestCode) {
@@ -156,6 +168,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
                 case ServerSyncService.GET_EXHIBITION_INFO:
                     this.readExhibitionInformation(reader, mainActivity);
+                    break;
+
+                case ServerSyncService.GET_CATEGORIES:
+                    //TODO
                     break;
             }
         }

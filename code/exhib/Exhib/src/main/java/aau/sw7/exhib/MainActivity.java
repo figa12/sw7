@@ -61,6 +61,8 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         this.viewPager = new CustomViewPager(this);
 
         this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
@@ -103,6 +105,9 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 
+
+        // TEMPRORARY CODE:
+        super.startActivity(new Intent(this, CategoriesActivity.class));
     }
 
     public boolean getLock() {

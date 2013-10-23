@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/timeText"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="10:00-11:00"/>
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp">
+
+        <TextView
+            android:id="@+id/timeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="10:00-11:00"
+            android:textSize="6pt" />
+
+        <TextView
+            android:id="@+id/countdownText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="in 10 min 10 seconds"
+            android:textSize="6pt" />
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp">
@@ -26,20 +41,20 @@
             android:layout_height="wrap_content"
             android:text="Giveaway"
             android:textStyle="bold"
-            android:textSize="8pt"/>
+            android:textSize="10pt"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/locationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Microsoft"/>
+            android:text="Booth: Microsoft Xbox"
+            android:maxLines="1" />
+    </LinearLayout>
 
-        </LinearLayout>
-
-    <TextView
-        android:id="@+id/countdownText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="in 10 min"/>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#80000000" />
 
 </LinearLayout>

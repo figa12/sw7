@@ -1,20 +1,17 @@
 package aau.sw7.exhib;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.message.BasicNameValuePair;
-import org.w3c.dom.Text;
 
 /**
  * Created by jerian on 17-10-13.
@@ -44,10 +41,10 @@ public class ExhibitionInfoFragment extends Fragment {
 
         this.viewDestroyed = false;
 
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_EXHIBITION_INFO));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetExhibitionInfo");
-        BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
-        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, user);
+        new ServerSyncService(super.getActivity()).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_EXHIBITION_INFO)),
+                new BasicNameValuePair("Type", "GetExhibitionInfo"),
+                new BasicNameValuePair("UserId", "1"));
 
         return rootView;
     }

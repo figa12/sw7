@@ -47,12 +47,12 @@ public class ScheduleFragment extends Fragment {
         this.scheduleContainer = (LinearLayout) rootView.findViewById(R.id.scheduleContainer);
         this.viewDestroyed = false;
 
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_SCHEDULE));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetSchedule");
-        BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
         long ts = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
-        BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
-        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
+        new ServerSyncService(super.getActivity()).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_SCHEDULE)),
+                new BasicNameValuePair("Type", "GetSchedule"),
+                new BasicNameValuePair("UserId", "1"),
+                new BasicNameValuePair("TimeStamp", String.valueOf(ts)));
 
         return rootView;
     }

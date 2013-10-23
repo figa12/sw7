@@ -4,19 +4,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/feed_list_background">
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1px"
-        android:background="#80000000" />
+    android:background="@drawable/color_gradient">
 
     <TextView
         android:id="@+id/dayText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Today"
-        android:textSize="11pt"/>
+        android:textSize="12pt"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"/>
 
     <View
         android:layout_width="fill_parent"

@@ -39,6 +39,7 @@
             android:parentActivityName="aau.sw7.exhib.MainActivity"
             android:theme="@style/AppDialogTheme"
             android:screenOrientation="portrait"/>
+        <activity android:name=".CategoriesActivity" />
     </application>
 
 </manifest>

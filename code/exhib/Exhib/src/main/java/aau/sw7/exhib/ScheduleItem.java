@@ -32,7 +32,7 @@ public class ScheduleItem {
     }
 
     public String getBoothName() {
-        return this.boothName;
+        return "Booth: " + this.boothName;
     }
 
     public String getCountdown() {
@@ -55,15 +55,15 @@ public class ScheduleItem {
         }
         // More than 24 hours
         else if(days > 0) {
-            return String.format("in %d days\n%d hours", days, hours);
+            return String.format("in %d days %d hours", days, hours);
         }
         // More than 1 hour
         else if (hours > 0) {
-            return String.format("in %d hours\n%d minutes", hours, minutes);
+            return String.format("in %d hours %d minutes", hours, minutes);
         }
         // More than 1 minute
         else if (minutes > 0) {
-            return String.format("in %d minutes\n%d seconds", minutes, seconds);
+            return String.format("in %d minutes %d seconds", minutes, seconds);
         }
         // Less than a minute
         else {

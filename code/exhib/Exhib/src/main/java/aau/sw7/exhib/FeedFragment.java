@@ -35,11 +35,11 @@ public class FeedFragment extends Fragment {
         public void run()
         {
             if(!FeedFragment.this.viewDestroyed) {
-                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "CheckFeeds");
-                BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
-                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest()));
-                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
+                new ServerSyncService(FeedFragment.this.getActivity()).execute(
+                        new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST)),
+                        new BasicNameValuePair("Type", "CheckFeeds"),
+                        new BasicNameValuePair("UserId", "1"),
+                        new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
             }
             // Set a delay on the Runnable for when it should be run again
             FeedFragment.this.handler.postDelayed(this, 5000);
@@ -70,12 +70,12 @@ public class FeedFragment extends Fragment {
         this.topItemsState = TopMessageState.Neutral;
         this.bottomItemsState = BottomMessageState.MoreItemsAvailable;
 
-            /* Request feed items from the server */
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetFeeds");
-        BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
-        BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
-        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, limit, user);
+        /* Request feed items from the server */
+        new ServerSyncService(super.getActivity()).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST)),
+                new BasicNameValuePair("Type", "GetFeeds"),
+                new BasicNameValuePair("UserId", "1"),
+                new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT));
 
         this.feedLinearLayout = (FeedLinearLayout) rootView.findViewById(R.id.feed); // save the reference to the feed linear layout.
 
@@ -93,11 +93,11 @@ public class FeedFragment extends Fragment {
         this.topMessageUpdateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When the button is clicked, it request the new feeds from the server
-                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetNewFeeds");
-                BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
-                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest()));
-                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp, user);
+                new ServerSyncService(FeedFragment.this.getActivity()).execute(
+                        new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST)),
+                        new BasicNameValuePair("Type", "GetNewFeeds"),
+                        new BasicNameValuePair("UserId", "1"),
+                        new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
 
                 FeedFragment.this.setTopMessageState(TopMessageState.Loading);
             }

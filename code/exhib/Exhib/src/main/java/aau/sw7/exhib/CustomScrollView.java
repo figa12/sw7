@@ -61,10 +61,6 @@ public class CustomScrollView extends ScrollView {
     private void requestFeeds() {
         FeedLinearLayout feedLinearLayout = (FeedLinearLayout) this.mainActivity.findViewById(R.id.feed);
 
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_MORE_FEEDS_REQUEST));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("Type", "GetOldFeeds");
-        BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
-
         // Get the timestamp of the bottom most feed item
         long timestamp;
 
@@ -73,9 +69,12 @@ public class CustomScrollView extends ScrollView {
         } else {
             timestamp = (new Date().getTime() / 1000) + 7200;
         }
-        BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(timestamp));
-        BasicNameValuePair user = new BasicNameValuePair("UserId", "1");
 
-        new ServerSyncService(this.mainActivity).execute(requestCode, getFeeds, limit, timeStamp, user);
+        new ServerSyncService(this.mainActivity).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_MORE_FEEDS_REQUEST)),
+                new BasicNameValuePair("Type", "GetOldFeeds"),
+                new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT),
+                new BasicNameValuePair("TimeStamp", String.valueOf(timestamp)),
+                new BasicNameValuePair("UserId", "1"));
     }
 }
