@@ -6,15 +6,14 @@ CustomMapType.prototype.maxZoom = 2;
 
 CustomMapType.prototype.getTile = function(coord, zoom, ownerDocument) {
     var div = ownerDocument.createElement('DIV');
-    var baseURL = 'file:///C:/Users/Jacob/Documents/GitHub/sw7/code/exhib/Exhib/src/main/assets';
+    var baseURL = ownerDocument.URL.substring(0, ownerDocument.URL.lastIndexOf("/") + 1);
     var url = getTileUrl(coord, zoom);
-    baseURL += url;
     if(!url){
-        baseURL = "http://www.maptiler.org/img/none.png";
+        url = "none.png";
     }
+    baseURL += url;
     div.style.width = this.tileSize.width + 'px';
     div.style.height = this.tileSize.height + 'px';
-    div.style.backgroundColor = '#1B2D33';
     div.style.backgroundImage = 'url(' + baseURL + ')';
     return div;
 };
@@ -24,7 +23,7 @@ function getTileUrl(coord, zoom){
         if (!normalizedCoord) {
         return null;
     }
-    return '/' + zoom + '/' + normalizedCoord.x +'/'+normalizedCoord.y+'.png';
+    return '' + zoom + '/' + normalizedCoord.x +'/'+normalizedCoord.y+'.png';
 }
 
 function getNormalizedCoord(coord, zoom) {
