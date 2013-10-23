@@ -1,6 +1,5 @@
 package aau.sw7.exhib;
 
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,23 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by figa on 10/3/13.
  */
 public class MapFragment extends Fragment {
 
-    private MainActivity parent;
+    private TabActivity parent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        this.parent = (MainActivity) getActivity();
+        this.parent = (TabActivity) getActivity();
 
         WebView webView = (WebView) rootView.findViewById(R.id.webview);
 

@@ -16,14 +16,14 @@ import java.util.Date;
  */
 public class CustomScrollView extends ScrollView {
 
-    private MainActivity mainActivity;
+    private TabActivity tabActivity;
     private boolean wait = false;
     private Handler handler = new Handler();
 
     public CustomScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        this.mainActivity = (MainActivity) context;
+        this.tabActivity = (TabActivity) context;
     }
 
     private Runnable runnable = new Runnable() {
@@ -41,11 +41,11 @@ public class CustomScrollView extends ScrollView {
 
         // If the difference is 0 then bottom has been reached.
         // The state of the bottom should also be 'MoreItemsAvailable'
-        if (diff == 0 && !this.wait && this.mainActivity.getFeedFragment().getBottomItemsState() == FeedFragment.BottomMessageState.MoreItemsAvailable) {
+        if (diff == 0 && !this.wait && this.tabActivity.getFeedFragment().getBottomItemsState() == FeedFragment.BottomMessageState.MoreItemsAvailable) {
             this.wait = true;
 
             // Set the bottom state to 'Loading', it will then display a progress circle.
-            this.mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.Loading);
+            this.tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.Loading);
 
             // Request more items from the server. The server will change the bottom state accordingly.
             this.requestFeeds();
@@ -59,7 +59,7 @@ public class CustomScrollView extends ScrollView {
 
     /** A request for more feeds. */
     private void requestFeeds() {
-        FeedLinearLayout feedLinearLayout = (FeedLinearLayout) this.mainActivity.findViewById(R.id.feed);
+        FeedLinearLayout feedLinearLayout = (FeedLinearLayout) this.tabActivity.findViewById(R.id.feed);
 
         // Get the timestamp of the bottom most feed item
         long timestamp;
@@ -70,7 +70,7 @@ public class CustomScrollView extends ScrollView {
             timestamp = (new Date().getTime() / 1000) + 7200;
         }
 
-        new ServerSyncService(this.mainActivity).execute(
+        new ServerSyncService(this.tabActivity).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_MORE_FEEDS_REQUEST)),
                 new BasicNameValuePair("Type", "GetOldFeeds"),
                 new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT),

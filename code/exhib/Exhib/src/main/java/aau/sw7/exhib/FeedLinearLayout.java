@@ -106,7 +106,7 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
         TextView feedTextView = (TextView) feedView.findViewById(R.id.feedTime);
         feedTextView.setText(feedItem.getDateTimeRepresentation());
 
-        // Put a click listener on the activity_main layout
+        // Put a click listener on the activity_tab layout
         feedView.findViewById(R.id.mainLayout).setOnClickListener(new FeedItemClickListener(feedItem));
 
         return feedView;

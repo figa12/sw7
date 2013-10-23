@@ -1,4 +1,30 @@
-<aau.sw7.exhib.CustomViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="Temp button"
+        android:onClick="onClicktemp"
+        />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/nfcPicture"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="105dp"
+        android:src="@drawable/nfclogo" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="192dp"
+        android:gravity="center_horizontal"
+        android:textSize="30dp"
+        android:text="Scan an NFC tag"
+        android:id="@+id/nfcText" />
+
+</LinearLayout>

@@ -1,7 +1,9 @@
 package aau.sw7.exhib;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import org.apache.http.message.BasicNameValuePair;
@@ -19,7 +21,7 @@ public class CategoriesActivity extends Activity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_categories);
 
-        this.categoryLinearlayout = (LinearLayout) super.findViewById(R.id.categoryLayout);
+         this.categoryLinearlayout = (LinearLayout) super.findViewById(R.id.categoryLayout);
 
         new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
@@ -46,4 +48,12 @@ public class CategoriesActivity extends Activity {
             this.categoryLinearlayout.addView(category.makeView(this));
         }
     }
+
+    //temp button click to open the tab acitivity
+    public void onClicktemp (View v){
+
+        super.startActivity(new Intent(this, TabActivity.class));
+
+    }
+
 }

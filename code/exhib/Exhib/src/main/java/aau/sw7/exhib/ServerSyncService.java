@@ -108,14 +108,14 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     private void readJsonStream(InputStream stream, int requestCode) throws IOException {
         JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
 
-        MainActivity mainActivity = null;
+        TabActivity tabActivity = null;
         FeedLinearLayout feedLinearLayout = null;
         CategoriesActivity categoriesActivity = null;
 
         // determine the origin of the context and cast it appropriately
-        if (this.context instanceof MainActivity) {
-            mainActivity = (MainActivity) this.context;
-            feedLinearLayout = ((FeedLinearLayout) ((MainActivity) this.context).findViewById(R.id.feed));
+        if (this.context instanceof TabActivity) {
+            tabActivity = (TabActivity) this.context;
+            feedLinearLayout = ((FeedLinearLayout) ((TabActivity) this.context).findViewById(R.id.feed));
         } else if (this.context instanceof CategoriesActivity) {
             categoriesActivity = (CategoriesActivity) this.context;
         }
@@ -133,17 +133,17 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     if(feedLinearLayout == null) { break; }
 
                     this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
-                    mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
+                    tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
                     break;
 
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
 
                     if(result != 0) {
-                        mainActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
+                        tabActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
 
-                        if(mainActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
-                            mainActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
+                        if(tabActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
+                            tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
                         }
                     }
                     break;
@@ -155,19 +155,19 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     if(feedItems.size() > 0) {
                         // As long we get feeds from the server, we assume there are more
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
-                        mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
+                        tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     } else {
                         // If it returned 0, then there are no more feeds available from the server
-                        mainActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
+                        tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
                     }
                     break;
 
                 case ServerSyncService.GET_SCHEDULE:
-                    mainActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
+                    tabActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
                     break;
 
                 case ServerSyncService.GET_EXHIBITION_INFO:
-                    this.readExhibitionInformation(reader, mainActivity);
+                    this.readExhibitionInformation(reader, tabActivity);
                     break;
 
                 case ServerSyncService.GET_CATEGORIES:
@@ -212,7 +212,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return result;
     }
 
-    private void readExhibitionInformation(JsonReader reader, MainActivity mainActivity) throws  IOException {
+    private void readExhibitionInformation(JsonReader reader, TabActivity tabActivity) throws  IOException {
         String imageUrl = "";
         String exhibitionName = "";
         String exhibitionDescription = "";
@@ -238,7 +238,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.endObject();
         reader.endArray();
 
-        mainActivity.getExhibitionInfoFragment().setExhibitionInfo(imageUrl, exhibitionName, exhibitionDescription);
+        tabActivity.getExhibitionInfoFragment().setExhibitionInfo(imageUrl, exhibitionName, exhibitionDescription);
     }
 
     private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws  IOException{
