@@ -61,6 +61,8 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         this.viewPager = new CustomViewPager(this);
 
         this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
@@ -103,6 +105,9 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 
+
+        // TEMPRORARY CODE:
+        super.startActivity(new Intent(this, CategoriesActivity.class));
     }
 
     public boolean getLock() {
@@ -123,6 +128,10 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
     public ScheduleFragment getScheduleFragment() {
         return this.appSectionsPagerAdapter.scheduleFragment;
+    }
+
+    public ExhibitionInfoFragment getExhibitionInfoFragment() {
+        return this.appSectionsPagerAdapter.exhibitionInfoFragment;
     }
 
     @Override
@@ -201,6 +210,7 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
             super(fm);
         }
 
+        public ExhibitionInfoFragment exhibitionInfoFragment;
         public FeedFragment feedFragment;
         public MapFragment mapFragment;
         public ScheduleFragment scheduleFragment;
@@ -209,15 +219,16 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return this.feedFragment = new FeedFragment();
+                    return this.exhibitionInfoFragment = new ExhibitionInfoFragment();
 
                 case 1:
-                    return this.mapFragment = new MapFragment();
+                    return this.feedFragment = new FeedFragment();
 
                 case 2:
                     return this.scheduleFragment = new ScheduleFragment();
+
+                case 3:
+                    return this.mapFragment = new MapFragment();
 
                 default:
                     return null;
@@ -226,20 +237,23 @@ public class MainActivity extends FragmentActivity implements CreateNdefMessageC
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
+        public String getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Feeds";
+                    return "Info";
 
                 case 1:
-                    return "Map";
+                    return "Feeds";
 
                 case 2:
                     return "Schedule";
+
+                case 3:
+                    return "Map";
 
                 default:
                     return null;

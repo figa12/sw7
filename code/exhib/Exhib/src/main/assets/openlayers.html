@@ -57,12 +57,12 @@
 	                {'type': VEMapStyle.Hybrid, 'sphericalMercator': true});
 
 	            // create Yahoo layer
-	            var yahoo = new OpenLayers.Layer.Yahoo("Yahoo Street",
+	            /*var yahoo = new OpenLayers.Layer.Yahoo("Yahoo Street",
 	                {'sphericalMercator': true});
 	            var yahoosat = new OpenLayers.Layer.Yahoo("Yahoo Satellite",
 	                {'type': YAHOO_MAP_SAT, 'sphericalMercator': true});
 	            var yahoohyb = new OpenLayers.Layer.Yahoo("Yahoo Hybrid",
-	                {'type': YAHOO_MAP_HYB, 'sphericalMercator': true});
+	                {'type': YAHOO_MAP_HYB, 'sphericalMercator': true});*/
 
 	            // create OSM/OAM layer
 	            var osm = new OpenLayers.Layer.TMS( "OpenStreetMap",
@@ -72,17 +72,15 @@
 	                "http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/",
 	                { type: 'png', getURL: osm_getTileURL } );
 
-	            // create TMS Overlay layer
+	            // create TMS Overlay layer vores Layer
 	            var tmsoverlay = new OpenLayers.Layer.TMS( "TMS Overlay", "",
 	                {   // url: '', serviceVersion: '.', layername: '.',
 						type: 'png', getURL: overlay_getTileURL, alpha: true, 
-						isBaseLayer: false
+						isBaseLayer: true
 	                });
 				if (OpenLayers.Util.alphaHack() == false) { tmsoverlay.setOpacity(0.7); }
 
-	            map.addLayers([gmap, gsat, ghyb, gter, veroad, veaer, vehyb,
-	                           yahoo, yahoosat, yahoohyb, osm, oam,
-	                           tmsoverlay]);
+	            map.addLayers([tmsoverlay]);
 
 	            var switcherControl = new OpenLayers.Control.LayerSwitcher();
 	            map.addControl(switcherControl);

@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,10 +27,26 @@ public class FeedFragment extends Fragment {
         Loading, NoItemsAvailable, MoreItemsAvailable
     }
 
+    private boolean viewDestroyed = true;
 
     private Handler handler = new Handler(); // Android Runnable Handler
-    private TopMessageState topItemsState = TopMessageState.Neutral;
-    private BottomMessageState bottomItemsState = BottomMessageState.MoreItemsAvailable;
+    private Runnable checkForFeedsRunnable = new Runnable()
+    {
+        public void run()
+        {
+            if(!FeedFragment.this.viewDestroyed) {
+                new ServerSyncService(FeedFragment.this.getActivity()).execute(
+                        new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST)),
+                        new BasicNameValuePair("Type", "CheckFeeds"),
+                        new BasicNameValuePair("UserId", "1"),
+                        new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
+            }
+            // Set a delay on the Runnable for when it should be run again
+            FeedFragment.this.handler.postDelayed(this, 5000);
+        }
+    };
+    private TopMessageState topItemsState;
+    private BottomMessageState bottomItemsState;
 
     private FeedLinearLayout feedLinearLayout;
 
@@ -46,15 +60,22 @@ public class FeedFragment extends Fragment {
     private ProgressBar bottomMessageProgressCircle;
     private TextView bottomMessageTextView;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
 
-            /* Request feed items from the server */
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("GetFeeds", "1");
-        BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
-        new ServerSyncService(super.getActivity()).execute(requestCode, getFeeds, limit);
+        this.viewDestroyed = false;
+
+        this.topItemsState = TopMessageState.Neutral;
+        this.bottomItemsState = BottomMessageState.MoreItemsAvailable;
+
+        /* Request feed items from the server */
+        new ServerSyncService(super.getActivity()).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST)),
+                new BasicNameValuePair("Type", "GetFeeds"),
+                new BasicNameValuePair("UserId", "1"),
+                new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT));
 
         this.feedLinearLayout = (FeedLinearLayout) rootView.findViewById(R.id.feed); // save the reference to the feed linear layout.
 
@@ -72,35 +93,18 @@ public class FeedFragment extends Fragment {
         this.topMessageUpdateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When the button is clicked, it request the new feeds from the server
-                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("GetNewFeeds", "1");
-
-                long ts = (FeedFragment.this.feedLinearLayout.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
-                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
-                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp);
+                new ServerSyncService(FeedFragment.this.getActivity()).execute(
+                        new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST)),
+                        new BasicNameValuePair("Type", "GetNewFeeds"),
+                        new BasicNameValuePair("UserId", "1"),
+                        new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
 
                 FeedFragment.this.setTopMessageState(TopMessageState.Loading);
             }
         });
 
-        // Create a Runnable (thread) that checks the server for new items
-        final Runnable checkForFeedsRunnable = new Runnable()
-        {
-            public void run()
-            {
-                BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST));
-                BasicNameValuePair getFeeds = new BasicNameValuePair("CheckFeeds", "1");
-
-                long ts = (FeedFragment.this.feedLinearLayout.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
-                BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(ts));
-                new ServerSyncService(FeedFragment.this.getActivity()).execute(requestCode, getFeeds, timeStamp);
-
-                // Set a delay on the Runnable for when it should be run again
-                FeedFragment.this.handler.postDelayed(this, 5000);
-            }
-        };
-
-        this.handler.postDelayed(checkForFeedsRunnable, 8000); // The first check after 8000 ms
+        // Post a Runnable (thread) that checks the server for new items
+        this.handler.postDelayed(this.checkForFeedsRunnable, 8000); // The first check after 8000 ms
 
         // Set up views for information at the bottom
         this.bottomMessageFrameLayout = (FrameLayout) rootView.findViewById(R.id.bottomMessageContainer);
@@ -119,6 +123,13 @@ public class FeedFragment extends Fragment {
         this.bottomMessageTextView.setPadding(0, padding, 0, padding);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.viewDestroyed = true;
+        this.handler.removeCallbacks(this.checkForFeedsRunnable);
     }
 
     /**
@@ -151,6 +162,8 @@ public class FeedFragment extends Fragment {
      * @see aau.sw7.exhib.FeedFragment.TopMessageState
      */
     public void setTopMessageState(TopMessageState topItemsState) {
+        if(this.viewDestroyed) { return; }
+
         this.topItemsState = topItemsState;
         this.topMessageFrameLayout.removeAllViews();
 
@@ -175,6 +188,8 @@ public class FeedFragment extends Fragment {
      * @see aau.sw7.exhib.FeedFragment.BottomMessageState
      */
     public void setBottomMessageState(BottomMessageState bottomItemsState) {
+        if(this.viewDestroyed) { return; }
+
         this.bottomItemsState = bottomItemsState;
         this.bottomMessageFrameLayout.removeAllViews();
 

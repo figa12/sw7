@@ -8,6 +8,8 @@ import android.widget.ScrollView;
 
 import org.apache.http.message.BasicNameValuePair;
 
+import java.util.Date;
+
 /**
  * Created by jerian on 18-09-13.
  * A custom {@link ScrollView} which almost only overrides {@code onScrollChanged} in order to know when the bottom has been reached.
@@ -59,14 +61,20 @@ public class CustomScrollView extends ScrollView {
     private void requestFeeds() {
         FeedLinearLayout feedLinearLayout = (FeedLinearLayout) this.mainActivity.findViewById(R.id.feed);
 
-        BasicNameValuePair requestCode = new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_MORE_FEEDS_REQUEST));
-        BasicNameValuePair getFeeds = new BasicNameValuePair("GetOldFeeds", "1");
-        BasicNameValuePair limit = new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT);
-
         // Get the timestamp of the bottom most feed item
-        long timestamp = feedLinearLayout.get(feedLinearLayout.getSize() - 1).getFeedDateTime().getTime() / 1000; // get the timestamp of the last element in the list
-        BasicNameValuePair timeStamp = new BasicNameValuePair("TimeStamp", String.valueOf(timestamp));
+        long timestamp;
 
-        new ServerSyncService(this.mainActivity).execute(requestCode, getFeeds, limit, timeStamp);
+        if(feedLinearLayout.getSize() > 0) {
+            timestamp = feedLinearLayout.get(feedLinearLayout.getSize() - 1).getFeedDateTime().getTime() / 1000; // get the timestamp of the last element in the list
+        } else {
+            timestamp = (new Date().getTime() / 1000) + 7200;
+        }
+
+        new ServerSyncService(this.mainActivity).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_MORE_FEEDS_REQUEST)),
+                new BasicNameValuePair("Type", "GetOldFeeds"),
+                new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT),
+                new BasicNameValuePair("TimeStamp", String.valueOf(timestamp)),
+                new BasicNameValuePair("UserId", "1"));
     }
 }

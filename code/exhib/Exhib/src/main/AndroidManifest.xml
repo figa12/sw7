@@ -25,7 +25,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="aau.sw7.exhib.MainActivity">
+            android:name="aau.sw7.exhib.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +37,9 @@
             android:name=".FeedItemActivity"
             android:label="Feed Item"
             android:parentActivityName="aau.sw7.exhib.MainActivity"
-            android:theme="@style/AppDialogTheme"/>
+            android:theme="@style/AppDialogTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CategoriesActivity" />
     </application>
 
 </manifest>

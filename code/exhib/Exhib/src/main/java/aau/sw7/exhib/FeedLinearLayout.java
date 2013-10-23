@@ -13,6 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * Created by jerian on 17-09-13.
@@ -36,11 +37,20 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
     public static final String FEED_ITEM = "FeedItem";
 
     private Intent feedIntent;
+    private long timestampForFeedRequest = (new Date().getTime() / 1000) + 7200;
 
     public FeedLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         this.feedIntent = new Intent(context, FeedItemActivity.class);
+    }
+
+    public long getTimestampForFeedRequest() {
+        return timestampForFeedRequest;
+    }
+
+    public void setTimestampForFeedRequest(long timestampForFeedRequest) {
+        this.timestampForFeedRequest = timestampForFeedRequest;
     }
 
     /**
