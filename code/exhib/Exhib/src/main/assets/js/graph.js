@@ -98,7 +98,7 @@ function Graph(){
 		return -1;
 	};
 
-	/*Given a name the function return the node*/
+	/*Given a name the function returns the node*/
 	this.getNodeByName = function(name){
 		for (var i = 0; i < this.nodes.length; i++) {
 			if(this.nodes[i].name == name){
@@ -148,7 +148,7 @@ function doesNodeAlreadyExist(nodes, node){
 
 /*Used to calculate shortest route and return the route.*/
 function shortestRoute(source, target, roadMapGraph){
-	var previous = [];
+	var previous = []; //contains the previous node for the indexnode, previous[0] contains the node that is fastest route to Q[0].
 	var dist = []; //contains the value from the 
 	var targetNode = roadMapGraph.getNodeByName(target);
 
