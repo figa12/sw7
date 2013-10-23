@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.apache.http.message.BasicNameValuePair;
 
@@ -21,7 +22,12 @@ public class CategoriesActivity extends Activity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_categories);
 
-         this.categoryLinearlayout = (LinearLayout) super.findViewById(R.id.categoryLayout);
+        Bundle exhibIDS = getIntent().getExtras();
+
+        Integer exhibID = exhibIDS.getInt("exhibID");
+        Integer boothID = exhibIDS.getInt("boothID");
+
+        this.categoryLinearlayout = (LinearLayout) super.findViewById(R.id.categoryLayout);
 
         new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
