@@ -58,7 +58,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     }
 
     //temp button click to open the tab acitivity
-    public void onClicktemp (View v){
+    public void onClickOpenCategory (View v){
 
         super.startActivity(new Intent(this, CategoriesActivity.class));
 
@@ -133,6 +133,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
 
         AndroidApplicationRecord appRecord;
         TextRecord textRecord;
+        ArrayList<String> exhibString = new ArrayList<String>();
 
         if (records != null) {
             for (int i = 0; i < records.size(); i++) {
@@ -147,24 +148,24 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
                     textRecord = (TextRecord) records.get(i);
                     Log.d(TAG, "Text is " + textRecord.getText());
 
-                    ArrayList<String> exhibString = new ArrayList<String>();
                     exhibString.add(textRecord.getText());
-
-                    Integer exhibID = Integer.parseInt(exhibString.get(0));
-                 //   Integer boothID = Integer.parseInt(exhibString.get(1));
-
-                    Intent startCategory = new Intent(this, CategoriesActivity.class);
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("exhibID", exhibID);
-                //    bundle.putInt("boothID", boothID);
-
-                    startCategory.putExtras(bundle);
-
-                    startActivity(startCategory);
 
                 }
             }
+
+            Intent startCategory = new Intent(this, CategoriesActivity.class);
+
+            Integer exhibID = Integer.parseInt(exhibString.get(0));
+            Integer boothID = Integer.parseInt(exhibString.get(1));
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("exhibID", exhibID);
+            bundle.putInt("boothID", boothID);
+
+            startCategory.putExtras(bundle);
+
+            startActivity(startCategory);
+
         }
     }
 
