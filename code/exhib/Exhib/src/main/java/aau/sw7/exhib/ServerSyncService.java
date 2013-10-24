@@ -171,7 +171,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
 
                 case ServerSyncService.GET_CATEGORIES:
-                    //TODO
+                    categoriesActivity.setCategories(this.readCategories(reader));
                     break;
             }
         }
@@ -216,21 +216,29 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         String imageUrl = "";
         String exhibitionName = "";
         String exhibitionDescription = "";
+        String address = "";
+        int zip = 0;
+        String country = "";
 
         reader.beginArray();
         reader.beginObject();
         while(reader.hasNext()) {
             String name = reader.nextName();
 
-            //TODO fix value keys
             if(name == null) {
                 reader.skipValue();
-            } else if (name.equals("Image")) {
-                imageUrl = reader.nextString();
-            } else if (name.equals("Name")) {
+            } else if (name.equals("logo")) {
+                imageUrl = "http://figz.dk/images/" + reader.nextString();
+            } else if (name.equals("name")) {
                 exhibitionName = reader.nextString();
-            } else if (name.equals("Description")) {
+            } else if (name.equals("description")) {
                 exhibitionDescription = reader.nextString();
+            } else if (name.equals("address")) {
+                address = reader.nextString();
+            } else if (name.equals("zip")) {
+                zip = reader.nextInt();
+            } else if(name.equals("country")) {
+                country = reader.nextString();
             } else {
                 reader.skipValue();
             }
@@ -238,7 +246,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.endObject();
         reader.endArray();
 
-        tabActivity.getExhibitionInfoFragment().setExhibitionInfo(imageUrl, exhibitionName, exhibitionDescription);
+        tabActivity.getExhibitionInfoFragment().setExhibitionInfo(imageUrl, exhibitionName, exhibitionDescription, address, zip, country);
     }
 
     private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws  IOException{
@@ -250,6 +258,76 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
         reader.endArray();
         return scheduleItems;
+    }
+
+    private ArrayList<Category> readCategories(JsonReader reader) throws IOException{
+        ArrayList<Category> categories = new ArrayList<Category>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            categories.add(this.readCategory(reader));
+        }
+        reader.endArray();
+
+        return categories;
+    }
+
+    private Category readCategory(JsonReader reader) throws IOException{
+        int id = 0;
+        String categoryName = "";
+        ArrayList<BoothItem> boothItems = new ArrayList<BoothItem>();
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if(name.equals("id")) {
+                id = reader.nextInt();
+            } else if(name.equals("name")) {
+                categoryName = reader.nextString();
+            } else if (name.equals("booths")) {
+                reader.beginArray();
+                while (reader.hasNext()) {
+                    boothItems.add(this.readBoothItem(reader));
+                }
+                reader.endArray();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        Category category = new Category(id, categoryName);
+        category.setBoothItems(boothItems);
+        return category;
+    }
+
+    private BoothItem readBoothItem(JsonReader reader) throws IOException{
+        int id = 0;
+        String boothName = "";
+        String description = "";
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("id")) {
+                id = reader.nextInt();
+            } else if (name.equals("name")) {
+                boothName = reader.nextString();
+            } else if (name.equals("description")) {
+                description = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new BoothItem(id, boothName, description, null, null); //TODO read/set coordinate values
     }
 
     private ArrayList<FeedItem> readFeedItemsArray(JsonReader reader) throws IOException {

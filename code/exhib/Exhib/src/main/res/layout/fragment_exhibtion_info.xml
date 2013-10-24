@@ -13,8 +13,7 @@
         <ImageView
             android:id="@+id/exhibitionIcon"
             android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/ic_launcher" />
+            android:layout_height="100dp" />
 
         <TextView
             android:id="@+id/exhibitionName"

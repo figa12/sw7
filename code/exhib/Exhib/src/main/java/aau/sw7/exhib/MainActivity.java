@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
     }
 
     //temp button click to open the tab acitivity
-    public void onClicktemp (View v) {
+    public void onClickOpenCategory (View v) {
         super.startActivity(new Intent(this, CategoriesActivity.class));
     }
 
