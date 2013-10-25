@@ -4,14 +4,18 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
-//import android.support.v4.view.ViewPager;
+import org.ndeftools.Record;
 
-public class TabActivity extends FragmentActivity implements ActionBar.TabListener {
+import java.util.ArrayList;
+
+import NfcForeground.NfcForegroundFragment;
+
+
+public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener {
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -34,6 +38,11 @@ public class TabActivity extends FragmentActivity implements ActionBar.TabListen
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
 
     private boolean locked = false;
+
+    @Override
+    protected void onNfcScanned(ArrayList<Record> records) {
+        //TODO
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

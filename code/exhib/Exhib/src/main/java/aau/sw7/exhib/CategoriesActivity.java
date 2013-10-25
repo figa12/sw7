@@ -1,22 +1,30 @@
 package aau.sw7.exhib;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.apache.http.message.BasicNameValuePair;
+import org.ndeftools.Record;
 
 import java.util.ArrayList;
+
+import NfcForeground.NfcForegroundActivity;
 
 /**
  * Created by jerian on 23-10-13.
  */
-public class CategoriesActivity extends Activity {
+public class CategoriesActivity extends NfcForegroundActivity {
 
     private LinearLayout categoryLinearlayout;
     private ArrayList<Category> categories;
+
+    @Override
+    protected void onNfcScanned(ArrayList<Record> records) {
+        Toast.makeText(this, "Please select booths", Toast.LENGTH_SHORT).show(); //TODO change message
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,5 +93,4 @@ public class CategoriesActivity extends Activity {
     public void onClicktemp(View v) {
         super.startActivity(new Intent(this, TabActivity.class));
     }
-
 }

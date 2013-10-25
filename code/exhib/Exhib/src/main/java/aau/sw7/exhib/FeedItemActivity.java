@@ -1,6 +1,5 @@
 package aau.sw7.exhib;
 
-import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -12,10 +11,16 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.ndeftools.Record;
+
+import java.util.ArrayList;
+
+import NfcForeground.NfcForegroundActivity;
+
 /**
  * Created by jerian on 23-09-13.
  */
-public class FeedItemActivity extends Activity {
+public class FeedItemActivity extends NfcForegroundActivity {
 
     private static final int LINES_TO_INDENT = 4;
 
@@ -27,6 +32,11 @@ public class FeedItemActivity extends Activity {
             .cacheOnDisc(true)
             .build();
 
+    @Override
+    protected void onNfcScanned(ArrayList<Record> records) {
+        //TODO
+    }
+
     @SuppressWarnings("deprecation")
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +44,7 @@ public class FeedItemActivity extends Activity {
 
         Bundle extras = super.getIntent().getExtras();
 
-        if(extras != null) {
+        if (extras != null) {
             this.feedItem = extras.getParcelable(FeedLinearLayout.FEED_ITEM);
 
             ImageView feedLogoImageView = (ImageView) super.findViewById(R.id.feedImage);
@@ -75,7 +85,8 @@ public class FeedItemActivity extends Activity {
         @Override
         public void drawLeadingMargin(Canvas c, Paint p, int x, int dir,
                                       int top, int baseline, int bottom, CharSequence text,
-                                      int start, int end, boolean first, Layout layout) {}
+                                      int start, int end, boolean first, Layout layout) {
+        }
 
         @Override
         public int getLeadingMarginLineCount() {
