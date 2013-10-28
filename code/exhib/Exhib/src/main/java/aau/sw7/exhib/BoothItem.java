@@ -17,12 +17,28 @@ public class BoothItem {
     private Coordinate boothCoordinate;
     private ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
 
+    private Category parentCategory; // is set in makeView()
+
+    private CheckBox checkBox;
+
     public BoothItem(int boothId, String boothName, String description, Coordinate boothCoordinate, ArrayList<Coordinate> coordinates) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
         this.boothCoordinate = boothCoordinate;
         this.coordinates = coordinates;
+    }
+
+    public Category getParentCategory() {
+        return parentCategory;
+    }
+
+    public boolean isChecked() {
+        return this.checkBox.isChecked();
+    }
+
+    public void setChecked(boolean checked) {
+        this.checkBox.setChecked(checked);
     }
 
     public String getBoothName() {
@@ -45,9 +61,11 @@ public class BoothItem {
         return coordinates;
     }
 
-    public View makeView(Context context) {
+    public View makeView(Context context, Category category) {
         CheckBox boothCheckBox = new CheckBox(context);
+        boothCheckBox.setChecked(true);
         boothCheckBox.setText(this.boothName);
-        return boothCheckBox;
+        this.parentCategory = category;
+        return this.checkBox = boothCheckBox;
     }
 }

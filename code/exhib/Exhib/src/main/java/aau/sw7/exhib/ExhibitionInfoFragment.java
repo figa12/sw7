@@ -18,6 +18,10 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class ExhibitionInfoFragment extends Fragment {
 
+    private String address;
+    private int zip;
+    private String country;
+
     protected ImageLoader imageLoader = ImageLoader.getInstance();
     DisplayImageOptions imageLoaderOptions = new DisplayImageOptions.Builder()
             .cacheInMemory(true)
@@ -44,7 +48,7 @@ public class ExhibitionInfoFragment extends Fragment {
         new ServerSyncService(super.getActivity()).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_EXHIBITION_INFO)),
                 new BasicNameValuePair("Type", "GetExhibitionInfo"),
-                new BasicNameValuePair("UserId", "1"));
+                new BasicNameValuePair("ExhibId", "1"));
 
         return rootView;
     }
@@ -55,11 +59,15 @@ public class ExhibitionInfoFragment extends Fragment {
         this.viewDestroyed = true;
     }
 
-    public void setExhibitionInfo(String imageURL, String exhibitionName, String exhibitionDescription) {
+    public void setExhibitionInfo(String imageURL, String exhibitionName, String exhibitionDescription, String address, int zip, String country) {
         if(!this.viewDestroyed) {
-            this.imageLoader.displayImage("http://figz.dk/imageHere.png", this.exhibitionIcon, this.imageLoaderOptions);
+            this.imageLoader.displayImage(imageURL, this.exhibitionIcon, this.imageLoaderOptions);
             this.exhibitionNameTextView.setText(exhibitionName);
             this.descriptionTextView.setText(exhibitionDescription);
+
+            this.address = address;
+            this.zip = zip;
+            this.country = country;
         }
     }
 }
