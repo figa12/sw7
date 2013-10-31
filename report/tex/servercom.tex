@@ -12,20 +12,86 @@ define what the server is supposed to do. All requests must take atleast two req
 
 \textit{RequestCode} is an integer that is simply passed through the server, it is not handled in any
 way on the server. The purpose of the RequestCode parameter is to distinguish the request on the client allowing
-it to execute the related function.
+it to execute the appropriate function.
 
 \textit{Type} is used to identify the request. A typical request is to get a list of feeds, and the
-value of the \textit{Type} parameter would be ``GetFeeds'' in this case.
+value of the \textit{Type} parameter would be ``GetFeeds'' in this case.\\
 
 Depending on the \textit{Type} of the request, additional parameters may be required.\\
 
-\textit{GetFeeds} takes the following parameters: \todo{bør jeg nævne alle de forskellige requests?
-  eller kun eksempler?}
+As an example, \textit{GetFeeds} takes the following parameters:
 \begin{itemize}
 \item RequestCode
 \item UserId
 \item Limit
 \end{itemize}
+
+The approach is to process the request on the serverside, and make the right calls to the
+database. The server will then return a JSON object containing all the relevant information that was
+requested. This JSON object can easily be parsed on the client side. The reason why we chose JSON as
+a format is because it is well supported and easy to generate in both android and PHP.
+
+\begin{lstlisting}[language=php, caption=getFeeds function call]
+$requestCode = $_POST["RequestCode"];
+
+switch ($_POST['Type']) {
+        case "GetFeeds":
+            getFeeds($con, $_POST['UserId'], $_POST['Limit']);
+            break;
+}
+\end{lstlisting}
+
+\begin{description}
+\item \textbf{Line 1: }Get the \textit{RequestCode} parameter.
+\item \textbf{Lines 3-7: }If \textit{Type} equals ``GetFeeds'', call the getFeeds function.
+\end{description}
+
+\todo{Nævn de andre cases, måske her?}
+
+\begin{lstlisting}[language=php, caption=getFeeds function]
+function getFeeds($con, $userId, $limit) {
+
+    global $requestCode;
+
+    #Escape special characters to avoid SQL injection attacks
+    $userId    = $con->real_escape_string($userId);
+    $limit     = $con->real_escape_string($limit);
+
+    $query =   "SELECT feeds.id, feeds.boothid, feeds.header, feeds.description, feeds.feedtime, userbooths.userid, companies.logo, booths.name ".
+        "FROM feeds ".
+        "LEFT JOIN userbooths ".
+        "ON feeds.boothid = userbooths.boothid ".
+        "LEFT JOIN booths ".
+        "ON feeds.boothid = booths.id ".
+        "LEFT JOIN companies ".
+        "ON booths.companyid = companies.id ".
+        "WHERE userid = ".$userId." ".
+        "AND sub = 1 ".
+        "ORDER BY feeds.feedtime DESC ".
+        "LIMIT "$limit;
+
+    $result = $con->query($query);
+
+    $json = array();
+    while($row = $result->fetch_object()) {
+      array_push($json, $row);
+    }
+    echo $requestCode;
+    echo json_encode($json);
+}
+\end{lstlisting}
+
+\begin{description}
+\item \textbf{Line 1: }The function takes three parameters, the mysqli object which has a connection
+  established to the database, the user id from the client, and the limit which is also given by the client.
+\item \textbf{Line 3: }Since the \textit{RequestCode} is always a required parameter the variable is global.
+\item \textbf{Lines 6-7: }Escape special characters to avoid malicious SQL injections.
+\item \textbf{Lines 9-20: }Create the SQL query with the user id and the limit paramter.
+\item \textbf{Line 22: }Execute the query.
+\item \textbf{Lines 24-29: }Get the results from the database and push them to the json array. When
+  all of the results have been pushed to the array, the \textit{RequestCode} will be echoed and then
+  a json encoded version of the json array.
+\end{description}
 
 \section{Database}
 We are using a MySQL database with the MyISAM storage engine and which is located at a remote server. \todo{info om hvor osv.?}
