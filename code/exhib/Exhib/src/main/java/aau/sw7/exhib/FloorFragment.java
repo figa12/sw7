@@ -11,7 +11,7 @@ import android.webkit.WebViewClient;
 /**
  * Created by figa on 10/3/13.
  */
-public class MapFragment extends Fragment {
+public class FloorFragment extends Fragment {
 
     private TabActivity parent;
 
