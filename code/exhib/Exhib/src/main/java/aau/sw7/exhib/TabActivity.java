@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import org.ndeftools.Record;
 
@@ -16,6 +20,8 @@ import NfcForeground.NfcForegroundFragment;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener {
+
+    private GoogleMap map;
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -80,6 +86,16 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                             .setText(appSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+        appSectionsPagerAdapter.floorFragment = FloorFragment.create();
+        initializeMap(getFloorFragment());
+
+    }
+
+    public void initializeMap(SupportMapFragment floorFragment){
+       if (map == null) {
+            map = floorFragment.getMap();
+       }
+
     }
 
     public boolean getLock() {
@@ -106,6 +122,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         return this.appSectionsPagerAdapter.exhibitionInfoFragment;
     }
 
+    public SupportMapFragment getFloorFragment() {return this.appSectionsPagerAdapter.floorFragment;}
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -119,7 +136,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         public ExhibitionInfoFragment exhibitionInfoFragment;
         public FeedFragment feedFragment;
-        public MapFragment mapFragment;
+        public SupportMapFragment floorFragment;
         public ScheduleFragment scheduleFragment;
 
         @Override
@@ -135,7 +152,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     return this.scheduleFragment = new ScheduleFragment();
 
                 case 3:
-                    return this.mapFragment = new MapFragment();
+                    return this.floorFragment;
 
                 default:
                     return null;
