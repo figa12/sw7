@@ -48,7 +48,7 @@ public class ExhibitionInfoFragment extends Fragment {
         new ServerSyncService(super.getActivity()).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_EXHIBITION_INFO)),
                 new BasicNameValuePair("Type", "GetExhibitionInfo"),
-                new BasicNameValuePair("ExhibId", "1"));
+                new BasicNameValuePair("ExhibId", String.valueOf(((TabActivity) this.getActivity()).getExhibId())));
 
         return rootView;
     }

@@ -5,31 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="Temp button"
-        android:onClick="onClicktemp"/>
-
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="Choose Categories"
         android:textSize="17pt" />
 
-    <ScrollView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+    <FrameLayout
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
 
-        <LinearLayout
-            android:id="@+id/categoryLayout"
+        <ScrollView
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:orientation="vertical">
+            android:layout_width="match_parent">
 
-            <!-- Add programmatically -->
+            <LinearLayout
+                android:id="@+id/categoryLayout"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <!-- Add programmatically -->
 
-    </ScrollView>
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Submit"
+        android:layout_gravity="right"
+        android:onClick="onClickSubmitButton"/>
+
 </LinearLayout>

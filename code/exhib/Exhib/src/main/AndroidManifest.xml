@@ -43,7 +43,7 @@
         </activity>
         <activity
             android:name=".TabActivity"
-            android:parentActivityName="aau.sw7.exhib.CategoriesActivity"
+            android:parentActivityName="aau.sw7.exhib.MainActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
             />
@@ -54,8 +54,13 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".CategoriesActivity"
+            android:parentActivityName="aau.sw7.exhib.MainActivity"
             android:screenOrientation="portrait"
             />
+        <activity android:name=".BoothActivity"
+            android:parentActivityName="aau.sw7.exhib.TabActivity"
+            android:theme="@style/AppDialogTheme"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

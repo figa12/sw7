@@ -32,6 +32,7 @@ import java.util.Date;
  */
 public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String> {
 
+    // numbers doesn't matter, as long as they are unique
     public static final int GET_FEEDS_REQUEST = 1;
     public static final int GET_NEW_FEEDS_REQUEST = 2;
     public static final int CHECK_NEW_FEEDS_REQUEST = 3;
@@ -39,8 +40,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final int GET_SCHEDULE = 5;
     public static final int GET_EXHIBITION_INFO = 6;
     public static final int GET_CATEGORIES = 7;
+    public static final int CREATE_USER = 8;
+    public static final int SET_CATEGORIES = 9;
 
-    public static final String ITEMS_LIMIT = "7";
+    public static final String ITEMS_LIMIT = "6";
 
     private Context context;
     private String serverUrl = "http://figz.dk/api.php";
@@ -48,7 +51,6 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public ServerSyncService(Context context) {
         this.context = context;
     }
-
 
     @Override
     protected String doInBackground(NameValuePair... pairs) {
@@ -84,21 +86,32 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     @Override
     protected void onPostExecute(String result) {
-        if(result == null || result.equals("")) {
+        if (result == null || result.equals("")) {
             Log.e(ServerSyncService.class.getName(), "No connection found-ish.");
             return;
-        } else if(result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
+        } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
             Log.e(ServerSyncService.class.getName(), result);
             return;
         }
 
-        int startIndex = result.indexOf('[');
+        int objectIndex;
+        int squareBracketIndex = Integer.MAX_VALUE;
+        int curlyBracketIndex = Integer.MAX_VALUE;
 
-        int requestCode = Integer.valueOf(result.substring(0, startIndex));
-        result = result.substring(startIndex);
+        if (result.contains("[")) {
+            squareBracketIndex = result.indexOf('[');
+        }
+        if (result.contains("{")) {
+            curlyBracketIndex = result.indexOf('{');
+        }
+        objectIndex = squareBracketIndex < curlyBracketIndex ? squareBracketIndex : curlyBracketIndex;
+        objectIndex = squareBracketIndex == curlyBracketIndex ? result.length() - 1 : objectIndex; // if the return value only consists of a request code
+
+        int requestCode = Integer.valueOf(result.substring(0, objectIndex));
+        result = result.substring(objectIndex);
 
         try {
-            readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")), requestCode);
+            this.readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")), requestCode);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,6 +121,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     private void readJsonStream(InputStream stream, int requestCode) throws IOException {
         JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
 
+        MainActivity mainActivity = null;
         TabActivity tabActivity = null;
         FeedLinearLayout feedLinearLayout = null;
         CategoriesActivity categoriesActivity = null;
@@ -118,19 +132,27 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             feedLinearLayout = ((FeedLinearLayout) ((TabActivity) this.context).findViewById(R.id.feed));
         } else if (this.context instanceof CategoriesActivity) {
             categoriesActivity = (CategoriesActivity) this.context;
+        } else if (this.context instanceof MainActivity) {
+            mainActivity = (MainActivity) this.context;
+        } else {
+            return; // abort
         }
 
         try {
             switch (requestCode) {
                 // Initial call to populate feed list, is only called in the start of the program
                 case ServerSyncService.GET_FEEDS_REQUEST:
-                    if(feedLinearLayout == null) { break; }
+                    if (feedLinearLayout == null) {
+                        break;
+                    }
 
                     this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
                     break;
 
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
-                    if(feedLinearLayout == null) { break; }
+                    if (feedLinearLayout == null) {
+                        break;
+                    }
 
                     this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
                     tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
@@ -139,20 +161,22 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
 
-                    if(result != 0) {
+                    if (result != 0) {
                         tabActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
 
-                        if(tabActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
+                        if (tabActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
                             tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
                         }
                     }
                     break;
 
                 case ServerSyncService.GET_MORE_FEEDS_REQUEST:
-                    if(feedLinearLayout == null) { break; }
+                    if (feedLinearLayout == null) {
+                        break;
+                    }
                     ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
 
-                    if(feedItems.size() > 0) {
+                    if (feedItems.size() > 0) {
                         // As long we get feeds from the server, we assume there are more
                         feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
                         tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
@@ -173,15 +197,23 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 case ServerSyncService.GET_CATEGORIES:
                     categoriesActivity.setCategories(this.readCategories(reader));
                     break;
+
+                case ServerSyncService.CREATE_USER:
+                    this.readUserCreated(reader, mainActivity);
+                    break;
+
+                case ServerSyncService.SET_CATEGORIES:
+                    // Notify activity
+                    categoriesActivity.onServerBoothResponse();
+                    break;
             }
-        }
-        finally {
+        } finally {
             reader.close();
         }
     }
 
     private void addFeedItems(ArrayList<FeedItem> feedItems, FeedLinearLayout feedLinearLayout, FeedLinearLayout.AddAt addAt) {
-        if(feedItems.size() > 0) {
+        if (feedItems.size() > 0) {
             feedLinearLayout.addFeedItems(feedItems, addAt);
 
             // We need to save the timestamp of the newest feed
@@ -201,7 +233,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.beginArray();
         reader.beginObject();
         String name = reader.nextName();
-        if(name != null && name.equals("num")) {
+        if (name != null && name.equals("num")) {
             result = reader.nextInt();
         } else {
             result = 0;
@@ -212,7 +244,30 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return result;
     }
 
-    private void readExhibitionInformation(JsonReader reader, TabActivity tabActivity) throws  IOException {
+    private void readUserCreated(JsonReader reader, MainActivity mainActivity) throws IOException {
+        long userId = 0;
+        long exhibId = 0;
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("userId")) {
+                userId = reader.nextLong();
+            } else if (name.equals("exhibId")) {
+                exhibId = reader.nextLong();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        mainActivity.onUserCreated(exhibId, userId);
+    }
+
+    private void readExhibitionInformation(JsonReader reader, TabActivity tabActivity) throws IOException {
         String imageUrl = "";
         String exhibitionName = "";
         String exhibitionDescription = "";
@@ -222,10 +277,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
         reader.beginArray();
         reader.beginObject();
-        while(reader.hasNext()) {
+        while (reader.hasNext()) {
             String name = reader.nextName();
 
-            if(name == null) {
+            if (name == null) {
                 reader.skipValue();
             } else if (name.equals("logo")) {
                 imageUrl = "http://figz.dk/images/" + reader.nextString();
@@ -237,7 +292,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 address = reader.nextString();
             } else if (name.equals("zip")) {
                 zip = reader.nextInt();
-            } else if(name.equals("country")) {
+            } else if (name.equals("country")) {
                 country = reader.nextString();
             } else {
                 reader.skipValue();
@@ -249,18 +304,18 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         tabActivity.getExhibitionInfoFragment().setExhibitionInfo(imageUrl, exhibitionName, exhibitionDescription, address, zip, country);
     }
 
-    private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws  IOException{
+    private ArrayList<ScheduleItem> readScheduleItemsArray(JsonReader reader) throws IOException {
         ArrayList<ScheduleItem> scheduleItems = new ArrayList<ScheduleItem>();
 
         reader.beginArray();
-        while(reader.hasNext()) {
+        while (reader.hasNext()) {
             scheduleItems.add(this.readScheduleItem(reader));
         }
         reader.endArray();
         return scheduleItems;
     }
 
-    private ArrayList<Category> readCategories(JsonReader reader) throws IOException{
+    private ArrayList<Category> readCategories(JsonReader reader) throws IOException {
         ArrayList<Category> categories = new ArrayList<Category>();
 
         reader.beginArray();
@@ -272,7 +327,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return categories;
     }
 
-    private Category readCategory(JsonReader reader) throws IOException{
+    private Category readCategory(JsonReader reader) throws IOException {
         int id = 0;
         String categoryName = "";
         ArrayList<BoothItem> boothItems = new ArrayList<BoothItem>();
@@ -283,9 +338,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
             if (name == null) {
                 reader.skipValue();
-            } else if(name.equals("id")) {
+            } else if (name.equals("id")) {
                 id = reader.nextInt();
-            } else if(name.equals("name")) {
+            } else if (name.equals("name")) {
                 categoryName = reader.nextString();
             } else if (name.equals("booths")) {
                 reader.beginArray();
@@ -304,7 +359,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return category;
     }
 
-    private BoothItem readBoothItem(JsonReader reader) throws IOException{
+    private BoothItem readBoothItem(JsonReader reader) throws IOException {
         int id = 0;
         String boothName = "";
         String description = "";
@@ -348,16 +403,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         Date endTime = null;
 
         reader.beginObject();
-        while(reader.hasNext()) {
+        while (reader.hasNext()) {
             String name = reader.nextName();
 
-            if(name == null) {
+            if (name == null) {
                 reader.skipValue();
-            } else if(name.equals("eventname")) {
+            } else if (name.equals("eventname")) {
                 eventName = reader.nextString();
-            } else if(name.equals("boothname")) {
+            } else if (name.equals("boothname")) {
                 boothName = reader.nextString();
-            } else if(name.equals("starttime")) {
+            } else if (name.equals("starttime")) {
                 try {
                     startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(reader.nextString());
                 } catch (ParseException e) {
@@ -388,7 +443,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         while (reader.hasNext()) {
             String name = reader.nextName();
 
-            if(name == null) {
+            if (name == null) {
                 reader.skipValue();
             } else if (name.equals("name")) {
                 header = reader.nextString();

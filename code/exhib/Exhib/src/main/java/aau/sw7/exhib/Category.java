@@ -1,6 +1,8 @@
 package aau.sw7.exhib;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by jerian on 23-10-13.
  */
-public class Category {
+public class Category implements Parcelable {
 
     private int categoryId;
     private String categoryName;
@@ -69,5 +71,35 @@ public class Category {
         }
 
         return categoryView;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(this.categoryId);
+        out.writeString(this.categoryName);
+        out.writeList(this.boothItems);
+    }
+
+    public static final Creator<Category> CREATER = new Creator<Category>() {
+        @Override
+        public Category createFromParcel(Parcel in) {
+            return new Category(in);
+        }
+
+        @Override
+        public Category[] newArray(int size) {
+            return new Category[size];
+        }
+    };
+
+    private Category(Parcel in) {
+        this.categoryId = in.readInt();
+        this.categoryName = in.readString();
+        in.readList(this.boothItems, BoothItem.class.getClassLoader());
     }
 }
