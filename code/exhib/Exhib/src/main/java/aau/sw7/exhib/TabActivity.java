@@ -7,10 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
-import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
 
 import org.ndeftools.Record;
 
@@ -19,9 +21,18 @@ import java.util.ArrayList;
 import NfcForeground.NfcForegroundFragment;
 
 
-public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener {
-
-    private GoogleMap map;
+public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
+    private GoogleMap mMap;
+    @Override
+    public void onMapReady(GoogleMap map) {
+        //set options?
+        mMap = map;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+        TileOverlayOptions tileOverlayOptions = new TileOverlayOptions();
+        tileOverlayOptions.tileProvider(new FloorTileProvider("FloorPlan"));
+        //tileOverlayOptions.zIndex(3);
+        TileOverlay overlay = map.addTileOverlay(tileOverlayOptions);
+    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -86,16 +97,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                             .setText(appSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
-        appSectionsPagerAdapter.floorFragment = FloorFragment.create();
-        initializeMap(getFloorFragment());
-
-    }
-
-    public void initializeMap(SupportMapFragment floorFragment){
-       if (map == null) {
-            map = floorFragment.getMap();
-       }
-
     }
 
     public boolean getLock() {
@@ -122,7 +123,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         return this.appSectionsPagerAdapter.exhibitionInfoFragment;
     }
 
-    public SupportMapFragment getFloorFragment() {return this.appSectionsPagerAdapter.floorFragment;}
+    public FloorFragment getFloorPlanFragment() {return this.appSectionsPagerAdapter.floorFragment;}
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -136,7 +137,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         public ExhibitionInfoFragment exhibitionInfoFragment;
         public FeedFragment feedFragment;
-        public SupportMapFragment floorFragment;
+        public FloorFragment floorFragment;
         public ScheduleFragment scheduleFragment;
 
         @Override
@@ -152,7 +153,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     return this.scheduleFragment = new ScheduleFragment();
 
                 case 3:
-                    return this.floorFragment;
+                    return this.floorFragment = FloorFragment.newInstance();
 
                 default:
                     return null;
