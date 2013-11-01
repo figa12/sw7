@@ -153,6 +153,8 @@ public class MainActivity extends NfcForegroundActivity {
         bundle.putLong(MainActivity.EXHIB_ID, exhibId);
         bundle.putLong(MainActivity.USER_ID, userId);
 
+        bundle.putSerializable(TabActivity.BOOTH_ITEMS, extras.getSerializable(TabActivity.BOOTH_ITEMS));//this is not silly, this saves server load
+
         Intent intent = new Intent(this, TabActivity.class);
         intent.putExtras(bundle);
         this.startActivity(intent);
