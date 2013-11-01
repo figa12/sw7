@@ -83,10 +83,10 @@ public class BoothItem implements Parcelable {
         out.writeString(this.description);
         out.writeParcelable(this.boothCoordinate, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
         out.writeList(this.coordinates);
-        out.writeParcelable(this.parentCategory, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        // don't save category, results in stackOverflow
     }
 
-    public static final Creator<BoothItem> CREATER = new Creator<BoothItem>() {
+    public static final Creator<BoothItem> CREATOR = new Creator<BoothItem>() {
         @Override
         public BoothItem createFromParcel(Parcel in) {
             return new BoothItem(in);
@@ -104,6 +104,5 @@ public class BoothItem implements Parcelable {
         this.description = in.readString();
         this.boothCoordinate = in.readParcelable(Coordinate.class.getClassLoader());
         in.readList(this.coordinates, Coordinate.class.getClassLoader());
-        this.parentCategory = in.readParcelable(Category.class.getClassLoader());
     }
 }

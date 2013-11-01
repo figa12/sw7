@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
 
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ import java.util.ArrayList;
 import NfcForeground.NfcForegroundFragment;
 
 
-public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener {
+public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, ICategoriesReceiver {
 
-    private static String TAG = TabActivity.class.getSimpleName();
+    public static final String BOOTH_ITEMS = "boothItems";
 
     private CustomViewPager viewPager;
     private AppSectionsPagerAdapter appSectionsPagerAdapter;
@@ -26,6 +27,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     private long exhibId = 0;
     private long userId = 0;
+    private ArrayList<BoothItem> boothItems;
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -67,6 +69,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             // getInt returns 0 if there isn't any mapping to them
             this.exhibId = extras.getLong(MainActivity.EXHIB_ID);
             this.userId = extras.getLong(MainActivity.USER_ID);
+            this.boothItems = (ArrayList<BoothItem>) extras.getSerializable(TabActivity.BOOTH_ITEMS);
             boothId = extras.getLong(MainActivity.BOOTH_ID);
         } else {
             this.exhibId = 1L;
@@ -77,6 +80,13 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             // Then the initial NFC tag contained a boothId
             // Open the map and show the booth on the map and open a booth acitivty on top of it
             // consider not showing map, and only opening booth acivity
+        }
+
+        if(this.boothItems == null) {
+            new ServerSyncService(this).execute(
+                    new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
+                    new BasicNameValuePair("Type", "GetCategories"),
+                    new BasicNameValuePair("ExhibId", String.valueOf(this.exhibId)));
         }
 
         this.viewPager = new CustomViewPager(this);
@@ -134,6 +144,15 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     public ExhibitionInfoFragment getExhibitionInfoFragment() {
         return this.appSectionsPagerAdapter.exhibitionInfoFragment;
+    }
+
+    @Override
+    public void setCategories(ArrayList<Category> categories) {
+        this.boothItems = new ArrayList<BoothItem>();
+
+        for (Category category : categories) {
+            this.boothItems.addAll(category.getBoothItems());
+        }
     }
 
 

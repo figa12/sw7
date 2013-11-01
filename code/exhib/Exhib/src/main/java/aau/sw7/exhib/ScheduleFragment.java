@@ -26,11 +26,9 @@ public class ScheduleFragment extends Fragment {
     private boolean viewDestroyed = true;
 
     private Handler handler = new Handler(); // Android Runnable Handler
-    private Runnable updateCountdownRunnable = new Runnable()
-    {
-        public void run()
-        {
-            if(!ScheduleFragment.this.viewDestroyed) {
+    private Runnable updateCountdownRunnable = new Runnable() {
+        public void run() {
+            if (!ScheduleFragment.this.viewDestroyed) {
                 for (ScheduleLinearLayout scheduleLinearLayout : ScheduleFragment.this.scheduleLinearLayouts) {
                     scheduleLinearLayout.updateTextViews();
                 }
@@ -65,13 +63,18 @@ public class ScheduleFragment extends Fragment {
     }
 
     public void setSchedule(ArrayList<ScheduleItem> scheduleItems) {
-        if(this.viewDestroyed) { return; }
-
-        LayoutInflater inflater = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if(scheduleItems.size() == 0) {
+        if (this.viewDestroyed) {
             return;
         }
+
+        if (scheduleItems.size() == 0) {
+            return;
+        }
+
+        this.scheduleLinearLayouts.clear();
+        this.scheduleContainer.removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         // initial values
         ScheduleItem previousScheduleItem = scheduleItems.get(0);
@@ -104,7 +107,7 @@ public class ScheduleFragment extends Fragment {
 
     private String dayString(ScheduleItem scheduleItem) {
         Date date = scheduleItem.getStartDateTime();
-        if(this.sameDay(date, new Date())) {
+        if (this.sameDay(date, new Date())) {
             return "Today";
         } else {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE dd. MMM");
@@ -113,7 +116,9 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void addDayEvents(ArrayList<ScheduleItem> scheduleItems) {
-        if(this.viewDestroyed) { return; }
+        if (this.viewDestroyed) {
+            return;
+        }
 
         ScheduleLinearLayout scheduleLinearLayout = new ScheduleLinearLayout(super.getActivity(), scheduleItems);
         this.scheduleLinearLayouts.add(scheduleLinearLayout);
@@ -122,7 +127,9 @@ public class ScheduleFragment extends Fragment {
 
     @SuppressWarnings("ConstantConditions")
     private void addDayHeader(LayoutInflater inflater, String header) {
-        if(this.viewDestroyed) { return; }
+        if (this.viewDestroyed) {
+            return;
+        }
 
         View scheduleDayItemView = inflater.inflate(R.layout.schedule_day_item, null);
 

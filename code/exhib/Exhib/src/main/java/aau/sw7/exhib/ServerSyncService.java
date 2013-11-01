@@ -105,7 +105,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             curlyBracketIndex = result.indexOf('{');
         }
         objectIndex = squareBracketIndex < curlyBracketIndex ? squareBracketIndex : curlyBracketIndex;
-        objectIndex = squareBracketIndex == curlyBracketIndex ? result.length() - 1 : objectIndex; // if the return value only consists of a request code
+        objectIndex = squareBracketIndex == curlyBracketIndex ? result.length() : objectIndex; // if the return value only consists of a request code
 
         int requestCode = Integer.valueOf(result.substring(0, objectIndex));
         result = result.substring(objectIndex);
@@ -125,6 +125,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         TabActivity tabActivity = null;
         FeedLinearLayout feedLinearLayout = null;
         CategoriesActivity categoriesActivity = null;
+        ICategoriesReceiver categoriesReceiver = null;
 
         // determine the origin of the context and cast it appropriately
         if (this.context instanceof TabActivity) {
@@ -136,6 +137,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             mainActivity = (MainActivity) this.context;
         } else {
             return; // abort
+        }
+
+        if(this.context instanceof ICategoriesReceiver) {
+            categoriesReceiver = (ICategoriesReceiver) this.context;
         }
 
         try {
@@ -195,7 +200,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
 
                 case ServerSyncService.GET_CATEGORIES:
-                    categoriesActivity.setCategories(this.readCategories(reader));
+                    categoriesReceiver.setCategories(this.readCategories(reader));
                     break;
 
                 case ServerSyncService.CREATE_USER:
