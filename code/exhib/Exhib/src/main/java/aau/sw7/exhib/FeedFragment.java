@@ -38,7 +38,7 @@ public class FeedFragment extends Fragment {
                 new ServerSyncService(FeedFragment.this.getActivity()).execute(
                         new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.CHECK_NEW_FEEDS_REQUEST)),
                         new BasicNameValuePair("Type", "CheckFeeds"),
-                        new BasicNameValuePair("UserId", "1"),
+                        new BasicNameValuePair("UserId", String.valueOf(((TabActivity) FeedFragment.this.getActivity()).getUserId())),
                         new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
             }
             // Set a delay on the Runnable for when it should be run again
@@ -74,7 +74,7 @@ public class FeedFragment extends Fragment {
         new ServerSyncService(super.getActivity()).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST)),
                 new BasicNameValuePair("Type", "GetFeeds"),
-                new BasicNameValuePair("UserId", "1"),
+                new BasicNameValuePair("UserId", String.valueOf(((TabActivity) this.getActivity()).getUserId())),
                 new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT));
 
         this.feedLinearLayout = (FeedLinearLayout) rootView.findViewById(R.id.feed); // save the reference to the feed linear layout.
@@ -96,7 +96,7 @@ public class FeedFragment extends Fragment {
                 new ServerSyncService(FeedFragment.this.getActivity()).execute(
                         new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_NEW_FEEDS_REQUEST)),
                         new BasicNameValuePair("Type", "GetNewFeeds"),
-                        new BasicNameValuePair("UserId", "1"),
+                        new BasicNameValuePair("UserId", String.valueOf(((TabActivity) FeedFragment.this.getActivity()).getUserId())),
                         new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
 
                 FeedFragment.this.setTopMessageState(TopMessageState.Loading);
@@ -114,7 +114,7 @@ public class FeedFragment extends Fragment {
 
         this.bottomMessageTextView = new TextView(super.getActivity());
         this.bottomMessageTextView.setLayoutParams(params);
-        this.bottomMessageTextView.setText("No more news"); //TODO use strings from string.xml file
+        this.bottomMessageTextView.setText("No more news");
 
         // Make the TextView the same height as the ProgressBar
         this.bottomMessageTextView.measure(0, 0);
@@ -207,7 +207,6 @@ public class FeedFragment extends Fragment {
                 break;
         }
     }
-
 }
 
 

@@ -34,6 +34,16 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         TileOverlay overlay = map.addTileOverlay(tileOverlayOptions);
     }
 
+    private static String TAG = TabActivity.class.getSimpleName();
+
+    private CustomViewPager viewPager;
+    private AppSectionsPagerAdapter appSectionsPagerAdapter;
+
+    private boolean locked = false;
+
+    private long exhibId = 0;
+    private long userId = 0;
+
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         this.viewPager.setCurrentItem(tab.getPosition());
@@ -49,22 +59,42 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     }
 
-    private static String TAG = TabActivity.class.getSimpleName();
-
-    private CustomViewPager viewPager;
-    private AppSectionsPagerAdapter appSectionsPagerAdapter;
-
-    private boolean locked = false;
-
     @Override
     protected void onNfcScanned(ArrayList<Record> records) {
-        //TODO
+        //TODO if a new exhibition id is scanned, then open the app again with the package
+    }
+
+    public long getExhibId() {
+        return exhibId;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
+
+        Bundle extras = getIntent().getExtras();
+        long boothId = 0L;
+
+        if (extras != null) {
+            // getInt returns 0 if there isn't any mapping to them
+            this.exhibId = extras.getLong(MainActivity.EXHIB_ID);
+            this.userId = extras.getLong(MainActivity.USER_ID);
+            boothId = extras.getLong(MainActivity.BOOTH_ID);
+        } else {
+            this.exhibId = 1L;
+            this.userId = 1L;
+        }
+
+        if(boothId != 0L) {
+            // Then the initial NFC tag contained a boothId
+            // Open the map and show the booth on the map and open a booth acitivty on top of it
+            // consider not showing map, and only opening booth acivity
+        }
 
         this.viewPager = new CustomViewPager(this);
 
@@ -182,10 +212,8 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
                 default:
                     return null;
-
             }
         }
-
     }
 
     public void onClickLockButton(View v)

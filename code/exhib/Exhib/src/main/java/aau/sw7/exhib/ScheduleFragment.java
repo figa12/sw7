@@ -51,7 +51,7 @@ public class ScheduleFragment extends Fragment {
         new ServerSyncService(super.getActivity()).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_SCHEDULE)),
                 new BasicNameValuePair("Type", "GetSchedule"),
-                new BasicNameValuePair("UserId", "1"),
+                new BasicNameValuePair("UserId", String.valueOf(((TabActivity) this.getActivity()).getUserId())),
                 new BasicNameValuePair("TimeStamp", String.valueOf(ts)));
 
         return rootView;
@@ -68,6 +68,10 @@ public class ScheduleFragment extends Fragment {
         if(this.viewDestroyed) { return; }
 
         LayoutInflater inflater = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if(scheduleItems.size() == 0) {
+            return;
+        }
 
         // initial values
         ScheduleItem previousScheduleItem = scheduleItems.get(0);

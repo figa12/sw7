@@ -75,6 +75,6 @@ public class CustomScrollView extends ScrollView {
                 new BasicNameValuePair("Type", "GetOldFeeds"),
                 new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT),
                 new BasicNameValuePair("TimeStamp", String.valueOf(timestamp)),
-                new BasicNameValuePair("UserId", "1"));
+                new BasicNameValuePair("UserId", String.valueOf(this.tabActivity.getUserId())));
     }
 }

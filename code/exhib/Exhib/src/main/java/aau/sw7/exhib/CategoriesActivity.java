@@ -1,8 +1,13 @@
 package aau.sw7.exhib;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -18,8 +23,14 @@ import NfcForeground.NfcForegroundActivity;
  */
 public class CategoriesActivity extends NfcForegroundActivity {
 
+    private AlertDialog backAlertDialog;
+
     private LinearLayout categoryLinearlayout;
     private ArrayList<Category> categories;
+
+    // id 0 should not exist!
+    private long exhibId = 0;
+    private long userId = 0;
 
     @Override
     protected void onNfcScanned(ArrayList<Record> records) {
@@ -30,11 +41,15 @@ public class CategoriesActivity extends NfcForegroundActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_categories);
 
-        Bundle exhibIDS = getIntent().getExtras();
+        Bundle extras = getIntent().getExtras();
 
-        if (exhibIDS != null) {
-            Integer exhibID = exhibIDS.getInt("exhibID");
-            Integer boothID = exhibIDS.getInt("boothID");
+        if (extras != null) {
+            // getInt returns 0 if there isn't any mapping to them
+            this.exhibId = extras.getLong(MainActivity.EXHIB_ID);
+            this.userId = extras.getLong(MainActivity.USER_ID);
+        } else {
+            // Error, we should always have id's
+            ((Button) super.findViewById(R.id.submitButton)).setEnabled(false);
         }
 
         this.categoryLinearlayout = (LinearLayout) super.findViewById(R.id.categoryLayout);
@@ -42,30 +57,43 @@ public class CategoriesActivity extends NfcForegroundActivity {
         new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
                 new BasicNameValuePair("Type", "GetCategories"),
-                new BasicNameValuePair("ExhibId", "1"));
+                new BasicNameValuePair("ExhibId", String.valueOf(this.exhibId)));
 
-        /*BoothItem booth1 = new BoothItem(2, "Microsoft Xbox", "Det er godt", null, null);
-        BoothItem booth2 = new BoothItem(2, "Microsoft Xbox", "Det er godt", null, null);
-        BoothItem booth3 = new BoothItem(2, "Microsoft Xbox", "Det er godt", null, null);
-        BoothItem booth4 = new BoothItem(2, "Microsoft Xbox", "Det er godt", null, null);
-        ArrayList<BoothItem> booths = new ArrayList<BoothItem>();
-        booths.add(booth1);
-        booths.add(booth2);
+        this.backAlertDialog = this.createAlertDialog();
+    }
 
-        ArrayList<BoothItem> booths2 = new ArrayList<BoothItem>();
-        booths2.add(booth3);
-        booths2.add(booth4);
+    private AlertDialog createAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        //myAlertDialog.setTitle("Title");
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setMessage("Your booth selection will not be saved");
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent result = new Intent();
+                result.putExtra(MainActivity.USER_ID, CategoriesActivity.this.userId);
+                result.putExtra(MainActivity.EXHIB_ID, CategoriesActivity.this.exhibId);
 
-        Category category1 = new Category(1, "Software");
-        category1.setBoothItems(booths);
-        Category category2 = new Category(2, "Hardware");
-        category2.setBoothItems(booths2);
+                CategoriesActivity.super.setResult(Activity.RESULT_CANCELED, result);
+                CategoriesActivity.super.finish();
+                CategoriesActivity.this.finish();
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                // do nothing
+            }
+        });
+        return alertDialogBuilder.create();
+    }
 
-        ArrayList<Category> categories = new ArrayList<Category>();
-        categories.add(category1);
-        categories.add(category2);
-
-        this.setCategories(categories);*/
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Stop the user from unexpected back presses
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            this.backAlertDialog.show();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void setCategories(ArrayList<Category> categories) {
@@ -89,8 +117,28 @@ public class CategoriesActivity extends NfcForegroundActivity {
         return boothItems;
     }
 
-    //temp button click to open the tab acitivity
-    public void onClicktemp(View v) {
-        super.startActivity(new Intent(this, TabActivity.class));
+    public void onClickSubmitButton(View v) {
+        String boothIds = "";
+
+        ArrayList<BoothItem> checkedBoothItems = this.getCheckedBooths();
+        for (int i = 0; i < checkedBoothItems.size(); i++) {
+            boothIds += checkedBoothItems.get(i).getBoothId();
+            boothIds += i != checkedBoothItems.size()-1 ? "," : "";
+        }
+
+        new ServerSyncService(this).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.SET_CATEGORIES)),
+                new BasicNameValuePair("Type", "SetCategories"),
+                new BasicNameValuePair("BoothIds", boothIds),
+                new BasicNameValuePair("UserId", String.valueOf(this.userId)));
+    }
+
+    public void onServerBoothResponse() {
+        Intent result = new Intent();
+        result.putExtra(MainActivity.USER_ID, this.userId);
+        result.putExtra(MainActivity.EXHIB_ID, this.exhibId);
+
+        super.setResult(Activity.RESULT_OK, result);
+        super.finish();
     }
 }

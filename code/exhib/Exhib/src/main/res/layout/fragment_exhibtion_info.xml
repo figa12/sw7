@@ -20,8 +20,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="DSSE Messe"
-            android:textSize="35sp"/>
+            android:textSize="35sp"
+            android:maxLines="2"/>
     </LinearLayout>
 
     <ScrollView
@@ -33,7 +33,6 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Masse messe om masse messe messe"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"/>
 
