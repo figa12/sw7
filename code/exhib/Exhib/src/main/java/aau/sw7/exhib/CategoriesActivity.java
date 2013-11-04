@@ -57,7 +57,7 @@ public class CategoriesActivity extends NfcForegroundActivity implements ICatego
         new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
                 new BasicNameValuePair("Type", "GetCategories"),
-                new BasicNameValuePair("ExhibId", String.valueOf(this.exhibId)));
+                new BasicNameValuePair("UserId", String.valueOf(this.userId)));
 
         this.backAlertDialog = this.createAlertDialog();
     }

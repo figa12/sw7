@@ -2,10 +2,14 @@ package aau.sw7.exhib;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -13,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
@@ -75,6 +80,35 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_tab_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_categories:
+                onActionCategorySelected();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onActionCategorySelected() {
+        Intent categoriesIntent = new Intent(this, CategoriesActivity.class);
+
+        categoriesIntent.putExtra(MainActivity.EXHIB_ID, this.exhibId);
+        categoriesIntent.putExtra(MainActivity.USER_ID, this.userId);
+
+        this.startActivity(categoriesIntent);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
@@ -112,10 +146,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         final ActionBar actionBar = getActionBar();
         /* Remove title bar etc. Doesn't work when applied to the style directly via the xml */
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         this.viewPager = (CustomViewPager) super.findViewById(R.id.pager);
@@ -185,7 +219,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         public ExhibitionInfoFragment exhibitionInfoFragment;
         public FeedFragment feedFragment;
-        public FloorFragment floorFragment;
+        public aau.sw7.exhib.FloorFragment floorFragment;
         public ScheduleFragment scheduleFragment;
 
         @Override
@@ -201,7 +235,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     return this.scheduleFragment = new ScheduleFragment();
 
                 case 3:
-                    return this.floorFragment = FloorFragment.newInstance();
+                    return this.floorFragment = new aau.sw7.exhib.FloorFragment();
 
                 default:
                     return null;

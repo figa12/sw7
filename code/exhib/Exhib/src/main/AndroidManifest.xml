@@ -3,7 +3,7 @@
     package="aau.sw7.exhib"
     android:versionCode="1"
     android:versionName="1.0" >
-
+/home/figa/git/sw7/code
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="16" />
@@ -29,6 +29,7 @@
     <uses-permission android:name="aau.sw7.exhib.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <!-- Required to show current location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -44,6 +45,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <uses-library android:required="true" android:name="com.google.android.maps" />
+        <meta-data android:name="com.google.android.gms.version" android:value="3266136" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDR__0M_eSsY_joYb19vvXTlRvf3ptsGPk" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -81,9 +87,6 @@
             android:parentActivityName="aau.sw7.exhib.TabActivity"
             android:theme="@style/AppDialogTheme"
             android:screenOrientation="portrait"/>
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAtKpwFoLr_S_PHYfhO-6smK2JyblOJY4Y" />
     </application>
 
 </manifest>
