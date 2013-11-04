@@ -151,6 +151,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                         break;
                     }
 
+                    tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
                     this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
                     break;
 

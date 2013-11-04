@@ -74,7 +74,6 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".CategoriesActivity"
-            android:parentActivityName="aau.sw7.exhib.MainActivity"
             android:screenOrientation="portrait"
             />
         <activity android:name=".BoothActivity"
@@ -84,6 +83,9 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAtKpwFoLr_S_PHYfhO-6smK2JyblOJY4Y" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="4030500" />
     </application>
 
 </manifest>

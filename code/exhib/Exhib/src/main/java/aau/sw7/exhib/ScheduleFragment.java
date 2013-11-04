@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.http.message.BasicNameValuePair;
@@ -23,6 +24,7 @@ public class ScheduleFragment extends Fragment {
 
     private ArrayList<ScheduleLinearLayout> scheduleLinearLayouts = new ArrayList<ScheduleLinearLayout>();
     private LinearLayout scheduleContainer;
+    private ProgressBar progressCircle;
     private boolean viewDestroyed = true;
 
     private Handler handler = new Handler(); // Android Runnable Handler
@@ -43,6 +45,7 @@ public class ScheduleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_schedule, container, false);
         this.scheduleContainer = (LinearLayout) rootView.findViewById(R.id.scheduleContainer);
+        this.progressCircle = (ProgressBar) rootView.findViewById(R.id.progressCircle);
         this.viewDestroyed = false;
 
         long ts = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
@@ -60,6 +63,7 @@ public class ScheduleFragment extends Fragment {
         super.onDestroyView();
         this.viewDestroyed = true;
         this.handler.removeCallbacks(this.updateCountdownRunnable);
+        this.progressCircle.setVisibility(View.VISIBLE);
     }
 
     public void setSchedule(ArrayList<ScheduleItem> scheduleItems) {
@@ -70,6 +74,8 @@ public class ScheduleFragment extends Fragment {
         if (scheduleItems.size() == 0) {
             return;
         }
+
+        this.progressCircle.setVisibility(View.GONE);
 
         this.scheduleLinearLayouts.clear();
         this.scheduleContainer.removeAllViews();
