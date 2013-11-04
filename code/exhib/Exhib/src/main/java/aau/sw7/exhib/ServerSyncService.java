@@ -387,7 +387,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             } else if(name.equals("logo")) {
                 companyLogo = reader.nextString();
             } else if(name.equals("sub")) {
-                sub = Boolean.valueOf(reader.nextString());
+                sub = reader.nextBoolean();
             } else {
                 reader.skipValue();
             }
