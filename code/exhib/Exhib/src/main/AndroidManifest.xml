@@ -3,7 +3,7 @@
     package="aau.sw7.exhib"
     android:versionCode="1"
     android:versionName="1.0" >
-/home/figa/git/sw7/code
+
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="16" />
@@ -80,13 +80,15 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".CategoriesActivity"
-            android:parentActivityName="aau.sw7.exhib.MainActivity"
             android:screenOrientation="portrait"
             />
         <activity android:name=".BoothActivity"
             android:parentActivityName="aau.sw7.exhib.TabActivity"
             android:theme="@style/AppDialogTheme"
             android:screenOrientation="portrait"/>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyAtKpwFoLr_S_PHYfhO-6smK2JyblOJY4Y" />
     </application>
 
 </manifest>

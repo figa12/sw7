@@ -12,9 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -29,6 +27,7 @@ import NfcForeground.NfcForegroundFragment;
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, ICategoriesReceiver, FloorFragment.OnFloorFragmentListener {
     private GoogleMap mMap;
+
     @Override
     public void onMapReady(GoogleMap map) {
         //set options?
@@ -127,13 +126,24 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.userId = 1L;
         }
 
-        if(boothId != 0L) {
+        if (boothId != 0L) {
             // Then the initial NFC tag contained a boothId
             // Open the map and show the booth on the map and open a booth acitivty on top of it
             // consider not showing map, and only opening booth acivity
+
+            if (this.boothItems != null) {
+                for (BoothItem boothItem : this.boothItems) {
+                    if (boothItem.getBoothId() == boothId) {
+                        Intent intent = new Intent(this, BoothActivity.class);
+                        intent.putExtra(BoothActivity.BOOTH_ITEM, boothItem);
+                        this.startActivity(intent);
+                        break;
+                    }
+                }
+            }
         }
 
-        if(this.boothItems == null) {
+        if (this.boothItems == null) {
             new ServerSyncService(this).execute(
                     new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
                     new BasicNameValuePair("Type", "GetCategories"),
@@ -268,16 +278,14 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         }
     }
 
-    public void onClickLockButton(View v)
-    {
+    public void onClickLockButton(View v) {
         if (this.locked == false) {
             this.viewPager.setPagingEnabled(false);
             this.locked = true;
-        }
-        else {
+        } else {
             this.viewPager.setPagingEnabled(true);
             this.locked = false;
         }
     }
-    
+
 }

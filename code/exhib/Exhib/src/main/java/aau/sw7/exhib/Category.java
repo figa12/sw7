@@ -75,7 +75,7 @@ public class Category implements Parcelable {
 
     @Override
     public int describeContents() {
-        return 1;
+        return 0;
     }
 
     @Override
