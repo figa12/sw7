@@ -157,7 +157,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         final ActionBar actionBar = getActionBar();
         /* Remove title bar etc. Doesn't work when applied to the style directly via the xml */
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

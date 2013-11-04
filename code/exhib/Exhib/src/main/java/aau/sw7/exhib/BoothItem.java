@@ -49,7 +49,7 @@ public class BoothItem implements Parcelable {
     }
 
     public boolean isSubscribed() {
-        return subscribed;
+        return this.subscribed;
     }
 
     public String getBoothName() {

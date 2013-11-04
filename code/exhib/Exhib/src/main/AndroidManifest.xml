@@ -69,13 +69,11 @@
         </activity>
         <activity
             android:name=".TabActivity"
-            android:parentActivityName="aau.sw7.exhib.MainActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
             />
         <activity
             android:name=".FeedItemActivity"
-            android:parentActivityName="aau.sw7.exhib.TabActivity"
             android:theme="@style/AppDialogTheme"
             android:screenOrientation="portrait"/>
         <activity
@@ -83,7 +81,6 @@
             android:screenOrientation="portrait"
             />
         <activity android:name=".BoothActivity"
-            android:parentActivityName="aau.sw7.exhib.TabActivity"
             android:theme="@style/AppDialogTheme"
             android:screenOrientation="portrait"/>
         <meta-data
