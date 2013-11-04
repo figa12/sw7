@@ -37,6 +37,7 @@ public class MainActivity extends NfcForegroundActivity {
     public static final String USER_ID = "userId";
 
     private boolean waitingServerResponse = false;
+    private long currentBoothId = 0L;
 
     @SuppressWarnings("ConstantConditions")
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +70,8 @@ public class MainActivity extends NfcForegroundActivity {
         }
 
         // ID 0 is not a valid ID
-        long exhibId = 0;
-        long boothId = 0;
+        long exhibId = 0L;
+        this.currentBoothId = 0L;
 
         for (int i = 0; i < records.size(); i++) {
 
@@ -82,21 +83,23 @@ public class MainActivity extends NfcForegroundActivity {
                 if (i == 0) {
                     exhibId = Long.valueOf(textRecord.getText());
                 } else if (i == 1 && records.size() > 2) {
-                    boothId = Long.valueOf(textRecord.getText());
+                    this.currentBoothId = Long.valueOf(textRecord.getText());
                 }
             }
         }
 
         Long userId = this.findUserId(this.readIdFile(), exhibId);
 
-        if(exhibId == 0) {
+        if(exhibId == 0L) {
             // The tag does not contain valid data
             return;
         } else if(userId != null) {
             Bundle bundle = new Bundle();
             bundle.putLong(MainActivity.EXHIB_ID, exhibId);
-            bundle.putLong(MainActivity.BOOTH_ID, boothId);
+            bundle.putLong(MainActivity.BOOTH_ID, this.currentBoothId);
             bundle.putLong(MainActivity.USER_ID, userId);
+
+            this.currentBoothId = 0L;
 
             Intent intent = new Intent(this, TabActivity.class);
             intent.putExtras(bundle);
@@ -152,6 +155,9 @@ public class MainActivity extends NfcForegroundActivity {
         Bundle bundle = new Bundle();
         bundle.putLong(MainActivity.EXHIB_ID, exhibId);
         bundle.putLong(MainActivity.USER_ID, userId);
+        bundle.putLong(MainActivity.BOOTH_ID, this.currentBoothId);
+
+        this.currentBoothId = 0L;
 
         bundle.putSerializable(TabActivity.BOOTH_ITEMS, extras.getSerializable(TabActivity.BOOTH_ITEMS));//this is not silly, this saves server load
 

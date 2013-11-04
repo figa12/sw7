@@ -369,6 +369,8 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         int id = 0;
         String boothName = "";
         String description = "";
+        String companyLogo = "";
+        boolean sub = true;
 
         reader.beginObject();
         while (reader.hasNext()) {
@@ -382,13 +384,17 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 boothName = reader.nextString();
             } else if (name.equals("description")) {
                 description = reader.nextString();
+            } else if(name.equals("logo")) {
+                companyLogo = reader.nextString();
+            } else if(name.equals("sub")) {
+                sub = Boolean.valueOf(reader.nextString());
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
 
-        return new BoothItem(id, boothName, description, null, null); //TODO read/set coordinate values
+        return new BoothItem(id, boothName, description, companyLogo, sub, null, null); //TODO read/set coordinate values
     }
 
     private ArrayList<FeedItem> readFeedItemsArray(JsonReader reader) throws IOException {
