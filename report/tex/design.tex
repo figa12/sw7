@@ -1,7 +1,7 @@
 \chapter{Design}
 This chapter describes the design of our application, ... \todo{Other things than the application?}
 
-\section{Application Design}
+\section{Application Design}\label{sec:appdesign}
 In \chapref{chap:intro} we explained the idea of our application and what the application should be able to do. Based on this we need the following Android activities\todo{activities/fragments /windows? Har vi et afsnit der forklarer Android komponenter? Nødvendigt?}:
 
 \begin{description}
@@ -11,13 +11,16 @@ In \chapref{chap:intro} we explained the idea of our application and what the ap
 \item[Booth information] Shows information about a booth, such as name, description, and subscribe button.
 \item[Exhibition schedule] Is a schedule for the exhibition which shows major events happening at the exhibition.
 \item[Exhibition feeds] Is a list of news feeds based on the users subscriptions.
+\item[Feed item] Shows the feed item when it is clicked from the feed list.
 \item[Category list] Is a list of categories, e.g. hardware, software.
 \end{description}\todo{Change to actual activity names when all are created.}
 
 \subsection*{Story}
 Julie opens our application \todo{insert actual app name}. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the map button which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, map of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the map she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
 
-\subsection*{Prototype Design}
+\section{Prototype Design}
+
+Here we show our first revision of a prototype for our application. We created this together to reflect, visualise, and agree on the design. The prototype varies a little from the design discussion in \secref{sec:appdesign} but it is still the general idea.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -33,6 +36,12 @@ Julie opens our application \todo{insert actual app name}. She is presented with
 \end{minipage}
 \end{figure}
 
+\autoref{fig:start} shows the application start screen. The user is told to scan an \ac{nfc} tag. When a tag is scanned the application checks if the user has visited the exhibition before. If the user has visited before then the exhibition information is opened, if not, then the user is asked to choose categories.
+
+From the start screen you can also open a small menu in the bottom left corner where the user can browse for exhibitions and also pick recently visited exhibitions.
+
+\autoref{fig:categories} is where you pick categories by clicking the check boxes. Although not present in the picture, the user should click submit in the bottom of the activity.
+
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
 \centering
@@ -46,6 +55,10 @@ Julie opens our application \todo{insert actual app name}. She is presented with
 \caption{Feed list\label{fig:feedlist}}
 \end{minipage}
 \end{figure}
+
+When you are successfully registered at the exhibition, then you get to the core of the application. Here you can swipe between the different tabs, and also access a specific tab by clicking on it in the top menu. \autoref{fig:exhibition} shows the first tab. This is a simple welcome screen showing the exhibition icon, exhibition name, and an exhibition description.
+
+\autoref{fig:feedlist} shows the feed list associated with the exhibition. The user receives feeds based on the chosen subscriptions that was submitted with the activity in \autoref{fig:categories}.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -61,6 +74,10 @@ Julie opens our application \todo{insert actual app name}. She is presented with
 \end{minipage}
 \end{figure}
 
+\autoref{fig:feeditem} is the activity shown when you click a feed item from the feed list. A feed item consists of a headline, a feed description, and it shows the icon attached to the booth which is associated with the feed item.
+
+\autoref{fig:schedule} shows the schedule of the exhibition. The schedule items are grouped by days. Each schedule item shows the time interval of the event, a title, a location, and it shows a continuously updated countdown to the event.
+
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
 \centering
@@ -74,6 +91,8 @@ Julie opens our application \todo{insert actual app name}. She is presented with
 \caption{Booth information\label{fig:booth}}
 \end{minipage}
 \end{figure}
+
+\autoref{fig:map} shows the tab displaying the map of the exhibition. Below the map there is a lock button, which locks the user to navigating the map e.g. swiping left and right on the map. If it is not locked then swiping right will change to the schedule tab. Inside the map there should be pinned booths which can be clicked on. When clicking the booths the activity shown in \autoref{fig:booth} is opened. The booth activity shows its attached icon, a name, and information concerning the booth.\todo{Booth prototype lacks subscribe button}
 
 \pagebreak
 \section{Final Application Design}
