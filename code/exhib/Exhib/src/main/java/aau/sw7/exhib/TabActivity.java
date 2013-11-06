@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -104,8 +105,17 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         categoriesIntent.putExtra(MainActivity.EXHIB_ID, this.exhibId);
         categoriesIntent.putExtra(MainActivity.USER_ID, this.userId);
 
-        this.startActivity(categoriesIntent);
+        this.startActivityForResult(categoriesIntent, 0);
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        this.appSectionsPagerAdapter.notifyDataSetChanged();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +231,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
-    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+    public class AppSectionsPagerAdapter extends ViewPagerAdapter {
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
