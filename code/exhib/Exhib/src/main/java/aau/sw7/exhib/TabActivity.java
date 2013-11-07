@@ -17,6 +17,7 @@ import org.ndeftools.Record;
 
 import java.util.ArrayList;
 import NfcForeground.NfcForegroundFragment;
+import map.MapController;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, ICategoriesReceiver, FloorFragment.OnFloorFragmentListener {
@@ -24,6 +25,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     @Override
     public void onMapReady(GoogleMap map) {
         this.mapController = new MapController(map);
+        this.mapController.initialize();
     }
 
     public static final String BOOTH_ITEMS = "boothItems";

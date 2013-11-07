@@ -1,10 +1,5 @@
-package aau.sw7.exhib;
-
-import android.graphics.Bitmap;
-import android.util.Log;
-
+package map;
 import com.google.android.gms.maps.model.UrlTileProvider;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -39,10 +34,8 @@ public class FloorTileProvider extends UrlTileProvider {
         try {
             int reversedY = (1 << z) - y - 1;
             String surl = String.format(TILEURL, this.mapIdentifier, z,x,reversedY);
-            //String lol = "http://figz.dk/dl/" + this.mapIdentifier + "/" + z + "/" + x + "/" + reversedY + ".png";
             URL testurl = new URL(surl);
             return testurl ;
-
         }
         catch (MalformedURLException e) {
             return ErrorURL;
