@@ -2,6 +2,7 @@ package aau.sw7.exhib;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ public class CategoriesActivity extends NfcForegroundActivity implements ICatego
 
     private AlertDialog backAlertDialog;
 
+    private ProgressDialog progressDialog;
     private LinearLayout categoryLinearlayout;
     private ArrayList<Category> categories;
 
@@ -54,10 +56,15 @@ public class CategoriesActivity extends NfcForegroundActivity implements ICatego
 
         this.categoryLinearlayout = (LinearLayout) super.findViewById(R.id.categoryLayout);
 
+        this.progressDialog = new ProgressDialog(this);
+        this.progressDialog.setMessage("Getting categories");
+        this.progressDialog.setCancelable(false);
+        this.progressDialog.show();
+
         new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
                 new BasicNameValuePair("Type", "GetCategories"),
-                new BasicNameValuePair("ExhibId", String.valueOf(this.exhibId)));
+                new BasicNameValuePair("UserId", String.valueOf(this.userId)));
 
         this.backAlertDialog = this.createAlertDialog();
     }
@@ -103,6 +110,7 @@ public class CategoriesActivity extends NfcForegroundActivity implements ICatego
         for (Category category : this.categories) {
             this.categoryLinearlayout.addView(category.makeView(this));
         }
+        this.progressDialog.dismiss();
     }
 
     private ArrayList<BoothItem> getCheckedBooths() {

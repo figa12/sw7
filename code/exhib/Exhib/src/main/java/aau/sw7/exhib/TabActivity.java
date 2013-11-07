@@ -2,26 +2,20 @@ package aau.sw7.exhib;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.location.Location;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.TileOverlay;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
 
 import java.util.ArrayList;
-
 import NfcForeground.NfcForegroundFragment;
 
 
@@ -72,6 +66,44 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_tab_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_categories:
+                onActionCategorySelected();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onActionCategorySelected() {
+        Intent categoriesIntent = new Intent(this, CategoriesActivity.class);
+
+        categoriesIntent.putExtra(MainActivity.EXHIB_ID, this.exhibId);
+        categoriesIntent.putExtra(MainActivity.USER_ID, this.userId);
+
+        this.startActivityForResult(categoriesIntent, 0);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        this.appSectionsPagerAdapter.notifyDataSetChanged();
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
@@ -90,13 +122,24 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.userId = 1L;
         }
 
-        if(boothId != 0L) {
+        if (boothId != 0L) {
             // Then the initial NFC tag contained a boothId
             // Open the map and show the booth on the map and open a booth acitivty on top of it
             // consider not showing map, and only opening booth acivity
+
+            if (this.boothItems != null) {
+                for (BoothItem boothItem : this.boothItems) {
+                    if (boothItem.getBoothId() == boothId) {
+                        Intent intent = new Intent(this, BoothActivity.class);
+                        intent.putExtra(BoothActivity.BOOTH_ITEM, boothItem);
+                        this.startActivity(intent);
+                        break;
+                    }
+                }
+            }
         }
 
-        if(this.boothItems == null) {
+        if (this.boothItems == null) {
             new ServerSyncService(this).execute(
                     new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
                     new BasicNameValuePair("Type", "GetCategories"),
@@ -109,10 +152,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         final ActionBar actionBar = getActionBar();
         /* Remove title bar etc. Doesn't work when applied to the style directly via the xml */
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         this.viewPager = (CustomViewPager) super.findViewById(R.id.pager);
@@ -174,7 +217,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
-    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+    public class AppSectionsPagerAdapter extends ViewPagerAdapter {
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -182,7 +225,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         public ExhibitionInfoFragment exhibitionInfoFragment;
         public FeedFragment feedFragment;
-        public FloorFragment floorFragment;
+        public aau.sw7.exhib.FloorFragment floorFragment;
         public ScheduleFragment scheduleFragment;
 
         @Override
@@ -198,7 +241,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     return this.scheduleFragment = new ScheduleFragment();
 
                 case 3:
-                    return this.floorFragment = FloorFragment.newInstance();
+                    return this.floorFragment = new aau.sw7.exhib.FloorFragment();
 
                 default:
                     return null;
@@ -231,16 +274,14 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         }
     }
 
-    public void onClickLockButton(View v)
-    {
+    public void onClickLockButton(View v) {
         if (this.locked == false) {
             this.viewPager.setPagingEnabled(false);
             this.locked = true;
-        }
-        else {
+        } else {
             this.viewPager.setPagingEnabled(true);
             this.locked = false;
         }
     }
-    
+
 }

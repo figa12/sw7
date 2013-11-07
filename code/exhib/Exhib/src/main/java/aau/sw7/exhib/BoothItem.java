@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,8 @@ public class BoothItem implements Parcelable {
     private int boothId;
     private String boothName;
     private String description;
+    private String companyLogo;
+    private boolean subscribed;
     private Coordinate boothCoordinate;
     private ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
 
@@ -23,10 +26,12 @@ public class BoothItem implements Parcelable {
 
     private CheckBox checkBox;
 
-    public BoothItem(int boothId, String boothName, String description, Coordinate boothCoordinate, ArrayList<Coordinate> coordinates) {
+    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Coordinate boothCoordinate, ArrayList<Coordinate> coordinates) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
+        this.companyLogo = companyLogo;
+        this.subscribed = subscribed;
         this.boothCoordinate = boothCoordinate;
         this.coordinates = coordinates;
     }
@@ -43,6 +48,10 @@ public class BoothItem implements Parcelable {
         this.checkBox.setChecked(checked);
     }
 
+    public boolean isSubscribed() {
+        return this.subscribed;
+    }
+
     public String getBoothName() {
         return boothName;
     }
@@ -55,6 +64,10 @@ public class BoothItem implements Parcelable {
         return boothId;
     }
 
+    public String getCompanyLogo() {
+        return companyLogo;
+    }
+
     public Coordinate getBoothCoordinate() {
         return boothCoordinate;
     }
@@ -65,8 +78,14 @@ public class BoothItem implements Parcelable {
 
     public View makeView(Context context, Category category) {
         CheckBox boothCheckBox = new CheckBox(context);
-        boothCheckBox.setChecked(true);
+        boothCheckBox.setChecked(this.isSubscribed());
         boothCheckBox.setText(this.boothName);
+        boothCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                BoothItem.this.subscribed = isChecked;
+            }
+        });
         this.parentCategory = category;
         return this.checkBox = boothCheckBox;
     }

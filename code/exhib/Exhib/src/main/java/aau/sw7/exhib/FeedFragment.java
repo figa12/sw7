@@ -1,5 +1,6 @@
 package aau.sw7.exhib;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -60,6 +61,8 @@ public class FeedFragment extends Fragment {
     private ProgressBar bottomMessageProgressCircle;
     private TextView bottomMessageTextView;
 
+    public ProgressDialog progressDialog;
+
     @SuppressWarnings("ConstantConditions")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,13 +72,6 @@ public class FeedFragment extends Fragment {
 
         this.topItemsState = TopMessageState.Neutral;
         this.bottomItemsState = BottomMessageState.MoreItemsAvailable;
-
-        /* Request feed items from the server */
-        new ServerSyncService(super.getActivity()).execute(
-                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST)),
-                new BasicNameValuePair("Type", "GetFeeds"),
-                new BasicNameValuePair("UserId", String.valueOf(((TabActivity) this.getActivity()).getUserId())),
-                new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT));
 
         this.feedLinearLayout = (FeedLinearLayout) rootView.findViewById(R.id.feed); // save the reference to the feed linear layout.
 
@@ -121,6 +117,15 @@ public class FeedFragment extends Fragment {
         this.bottomMessageProgressCircle.measure(0, 0);
         int padding = (this.bottomMessageProgressCircle.getMeasuredHeight() - this.bottomMessageTextView.getMeasuredHeight()) / 2;
         this.bottomMessageTextView.setPadding(0, padding, 0, padding);
+
+        this.setBottomMessageState(BottomMessageState.Loading);
+
+        /* Request feed items from the server */
+        new ServerSyncService(super.getActivity()).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FEEDS_REQUEST)),
+                new BasicNameValuePair("Type", "GetFeeds"),
+                new BasicNameValuePair("UserId", String.valueOf(((TabActivity) this.getActivity()).getUserId())),
+                new BasicNameValuePair("Limit", ServerSyncService.ITEMS_LIMIT));
 
         return rootView;
     }

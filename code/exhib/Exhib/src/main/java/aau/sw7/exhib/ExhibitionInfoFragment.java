@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -33,6 +34,7 @@ public class ExhibitionInfoFragment extends Fragment {
     private ImageView exhibitionIcon;
     private TextView exhibitionNameTextView;
     private TextView descriptionTextView;
+    private ProgressBar progressCircle;
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -42,6 +44,7 @@ public class ExhibitionInfoFragment extends Fragment {
         this.exhibitionIcon = (ImageView) rootView.findViewById(R.id.exhibitionIcon);
         this.exhibitionNameTextView = (TextView) rootView.findViewById(R.id.exhibitionName);
         this.descriptionTextView = (TextView) rootView.findViewById(R.id.description);
+        this.progressCircle = (ProgressBar) rootView.findViewById(R.id.progressCircle);
 
         this.viewDestroyed = false;
 
@@ -57,10 +60,13 @@ public class ExhibitionInfoFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         this.viewDestroyed = true;
+        this.progressCircle.setVisibility(View.VISIBLE);
     }
 
     public void setExhibitionInfo(String imageURL, String exhibitionName, String exhibitionDescription, String address, int zip, String country) {
         if(!this.viewDestroyed) {
+            this.progressCircle.setVisibility(View.GONE);
+
             this.imageLoader.displayImage(imageURL, this.exhibitionIcon, this.imageLoaderOptions);
             this.exhibitionNameTextView.setText(exhibitionName);
             this.descriptionTextView.setText(exhibitionDescription);
