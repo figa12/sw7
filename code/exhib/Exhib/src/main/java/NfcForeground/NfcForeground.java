@@ -29,6 +29,12 @@ public class NfcForeground {
     protected NfcAdapter nfcAdapter;
     protected PendingIntent nfcPendingIntent;
 
+    public void onDestroy() {
+        this.context = null;
+        this.nfcAdapter = null;
+        this.nfcPendingIntent = null;
+    }
+
     public NfcForeground(Context context) {
         this.context = context;
 

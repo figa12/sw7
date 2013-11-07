@@ -69,6 +69,17 @@ public class CategoriesActivity extends NfcForegroundActivity implements ICatego
         this.backAlertDialog = this.createAlertDialog();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        this.backAlertDialog = null;
+        this.progressDialog = null;
+        this.categoryLinearlayout.removeAllViews();
+        this.categoryLinearlayout = null;
+        this.categories = null;
+    }
+
     private AlertDialog createAlertDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         //myAlertDialog.setTitle("Title");

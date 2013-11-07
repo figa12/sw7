@@ -53,6 +53,13 @@ public abstract class NfcForegroundFragment extends FragmentActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.nfcForeground.onDestroy();
+        this.nfcForeground = null;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean("USED", true);
         super.onSaveInstanceState(outState);

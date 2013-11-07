@@ -41,9 +41,9 @@ public class FeedFragment extends Fragment {
                         new BasicNameValuePair("Type", "CheckFeeds"),
                         new BasicNameValuePair("UserId", String.valueOf(((TabActivity) FeedFragment.this.getActivity()).getUserId())),
                         new BasicNameValuePair("TimeStamp", String.valueOf(FeedFragment.this.feedLinearLayout.getTimestampForFeedRequest())));
+                // Set a delay on the Runnable for when it should be run again
+                FeedFragment.this.handler.postDelayed(this, 5000);
             }
-            // Set a delay on the Runnable for when it should be run again
-            FeedFragment.this.handler.postDelayed(this, 5000);
         }
     };
     private TopMessageState topItemsState;
@@ -135,6 +135,19 @@ public class FeedFragment extends Fragment {
         super.onDestroyView();
         this.viewDestroyed = true;
         this.handler.removeCallbacks(this.checkForFeedsRunnable);
+
+        this.topItemsState = null;
+        this.bottomItemsState = null;
+        this.feedLinearLayout.removeAllViews();
+        this.feedLinearLayout = null;
+        this.topMessageFrameLayout.removeAllViews();
+        this.topMessageFrameLayout = null;
+        this.topMessageUpdateButton = null;
+        this.topMessageProgressCircle = null;
+        this.bottomMessageFrameLayout.removeAllViews();
+        this.bottomMessageFrameLayout = null;
+        this.bottomMessageProgressCircle = null;
+        this.bottomMessageTextView = null;
     }
 
     /**

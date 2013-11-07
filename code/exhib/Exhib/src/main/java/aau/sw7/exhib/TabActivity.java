@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,9 +15,7 @@ import android.view.View;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.android.gms.maps.SupportMapFragment;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
 
 import java.util.ArrayList;
@@ -116,6 +113,30 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.appSectionsPagerAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(MainActivity.EXHIB_ID, this.exhibId);
+        outState.putLong(MainActivity.USER_ID, this.userId);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        this.exhibId = savedInstanceState.getLong(MainActivity.EXHIB_ID);
+        this.userId = savedInstanceState.getLong(MainActivity.USER_ID);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        this.mMap = null;
+        this.appSectionsPagerAdapter.onDestroy();
+        this.appSectionsPagerAdapter = null;
+        this.viewPager = null;
+        this.boothItems = null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,26 +162,9 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             // Open the map and show the booth on the map and open a booth acitivty on top of it
             // consider not showing map, and only opening booth acivity
 
-            if (this.boothItems != null) {
-                for (BoothItem boothItem : this.boothItems) {
-                    if (boothItem.getBoothId() == boothId) {
-                        Intent intent = new Intent(this, BoothActivity.class);
-                        intent.putExtra(BoothActivity.BOOTH_ITEM, boothItem);
-                        this.startActivity(intent);
-                        break;
-                    }
-                }
-            }
+            // send booth items to the FloorFragment
+            // if not present, getBoothItems in the FloorFragment
         }
-
-        if (this.boothItems == null) {
-            new ServerSyncService(this).execute(
-                    new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_CATEGORIES)),
-                    new BasicNameValuePair("Type", "GetCategories"),
-                    new BasicNameValuePair("ExhibId", String.valueOf(this.exhibId)));
-        }
-
-        this.viewPager = new CustomViewPager(this);
 
         this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
 
@@ -231,7 +235,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
-    public class AppSectionsPagerAdapter extends ViewPagerAdapter {
+    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -241,6 +245,13 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         public FeedFragment feedFragment;
         public aau.sw7.exhib.FloorFragment floorFragment;
         public ScheduleFragment scheduleFragment;
+
+        public void onDestroy() {
+            this.exhibitionInfoFragment = null;
+            this.feedFragment = null;
+            this.floorFragment = null;
+            this.scheduleFragment = null;
+        }
 
         @Override
         public Fragment getItem(int i) {
@@ -265,6 +276,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         @Override
         public int getCount() {
             return 4;
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
 
         @Override

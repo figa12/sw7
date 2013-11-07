@@ -59,8 +59,15 @@ public class ExhibitionInfoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         this.viewDestroyed = true;
         this.progressCircle.setVisibility(View.VISIBLE);
+
+        // Clean up references
+        this.exhibitionIcon = null;
+        this.exhibitionNameTextView = null;
+        this.descriptionTextView = null;
+        this.progressCircle = null;
     }
 
     public void setExhibitionInfo(String imageURL, String exhibitionName, String exhibitionDescription, String address, int zip, String country) {

@@ -22,7 +22,7 @@ import java.util.Date;
  */
 public class ScheduleFragment extends Fragment {
 
-    private ArrayList<ScheduleLinearLayout> scheduleLinearLayouts = new ArrayList<ScheduleLinearLayout>();
+    private ArrayList<ScheduleLinearLayout> scheduleLinearLayouts;
     private LinearLayout scheduleContainer;
     private ProgressBar progressCircle;
     private boolean viewDestroyed = true;
@@ -34,9 +34,9 @@ public class ScheduleFragment extends Fragment {
                 for (ScheduleLinearLayout scheduleLinearLayout : ScheduleFragment.this.scheduleLinearLayouts) {
                     scheduleLinearLayout.updateTextViews();
                 }
+                // Set a delay on the Runnable for when it should be run again
+                ScheduleFragment.this.handler.postDelayed(this, 10000);
             }
-            // Set a delay on the Runnable for when it should be run again
-            ScheduleFragment.this.handler.postDelayed(this, 10000);
         }
     };
 
@@ -44,6 +44,9 @@ public class ScheduleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_schedule, container, false);
+
+        this.scheduleLinearLayouts =  new ArrayList<ScheduleLinearLayout>();
+
         this.scheduleContainer = (LinearLayout) rootView.findViewById(R.id.scheduleContainer);
         this.progressCircle = (ProgressBar) rootView.findViewById(R.id.progressCircle);
         this.viewDestroyed = false;
@@ -64,6 +67,15 @@ public class ScheduleFragment extends Fragment {
         this.viewDestroyed = true;
         this.handler.removeCallbacks(this.updateCountdownRunnable);
         this.progressCircle.setVisibility(View.VISIBLE);
+
+        for (ScheduleLinearLayout scheduleLinearLayout : this.scheduleLinearLayouts) {
+            scheduleLinearLayout.onDestroy();
+            scheduleLinearLayout.removeAllViews();
+        }
+        this.scheduleLinearLayouts = null;
+        this.scheduleContainer.removeAllViews();
+        this.scheduleContainer = null;
+        this.progressCircle = null;
     }
 
     public void setSchedule(ArrayList<ScheduleItem> scheduleItems) {
