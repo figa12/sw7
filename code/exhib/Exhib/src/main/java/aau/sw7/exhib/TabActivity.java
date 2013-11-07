@@ -2,15 +2,18 @@ package aau.sw7.exhib;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
-import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
@@ -23,16 +26,10 @@ import NfcForeground.NfcForegroundFragment;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, ICategoriesReceiver, FloorFragment.OnFloorFragmentListener {
-    private GoogleMap mMap;
+    private MapController mapController;
     @Override
     public void onMapReady(GoogleMap map) {
-        //set options?
-        mMap = map;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-        TileOverlayOptions tileOverlayOptions = new TileOverlayOptions();
-        tileOverlayOptions.tileProvider(new FloorTileProvider("FloorPlan"));
-        //tileOverlayOptions.zIndex(3);
-        TileOverlay overlay = map.addTileOverlay(tileOverlayOptions);
+        this.mapController = new MapController(map);
     }
 
     public static final String BOOTH_ITEMS = "boothItems";

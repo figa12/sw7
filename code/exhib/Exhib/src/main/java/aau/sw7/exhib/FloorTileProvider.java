@@ -1,5 +1,8 @@
 package aau.sw7.exhib;
 
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.UrlTileProvider;
 
 import java.net.MalformedURLException;
@@ -9,25 +12,42 @@ import java.net.URL;
  * Created by Jacob on 31-10-13.
  */
 public class FloorTileProvider extends UrlTileProvider {
-    private static final String FORMAT;
-    private String mMapIdentifier;
+    private static final String TILEURL;
+    private static final String ERRORURL;
+    private String mapIdentifier;
+    private URL ErrorURL;
     static {
-        FORMAT = "http://figz.dk/dl/%s/%d/%d/%d.png";
+        TILEURL = "http://figz.dk/dl/%s/%d/%d/%d.png";
+        ERRORURL = "http://figz.dk/dl/%s/none.png";
     }
+
 
     public FloorTileProvider(String mapIdentifier) {
         super(256, 256);
-
-        this.mMapIdentifier = mapIdentifier;
+        this.mapIdentifier = mapIdentifier;
+        try {
+            String sError = String.format(ERRORURL, this.mapIdentifier);
+            this.ErrorURL = new URL(sError);
+        }
+        catch(MalformedURLException e) {
+            this.ErrorURL = null;
+        }
     }
 
     @Override
     public URL getTileUrl(int x, int y, int z) {
         try {
-            return new URL(String.format(FORMAT, this.mMapIdentifier, z, x, y));
+            int reversedY = (1 << z) - y - 1;
+            String surl = String.format(TILEURL, this.mapIdentifier, z,x,reversedY);
+            //String lol = "http://figz.dk/dl/" + this.mapIdentifier + "/" + z + "/" + x + "/" + reversedY + ".png";
+            URL testurl = new URL(surl);
+            return testurl ;
+
         }
         catch (MalformedURLException e) {
-            return null;
+            return ErrorURL;
         }
     }
+
+
 }
