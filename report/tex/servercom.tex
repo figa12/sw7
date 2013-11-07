@@ -77,7 +77,7 @@ function getFeeds($con, $userId, $limit) {
       array_push($json, $row);
     }
     echo $requestCode;
-    echo json_encode($json);
+    echo json_encode($json);$
 }
 \end{lstlisting}
 
@@ -93,6 +93,29 @@ function getFeeds($con, $userId, $limit) {
   a json encoded version of the json array.
 \end{description}
 
+All of the requests to the server follows this principle. A request is made, the query is run and data is gathered, and lastly the result is returned as a JSON object that the client reads.\\\\
+Our types of requests are as follows:
+\begin{itemize}
+\item \textbf{GetFeeds}\\
+ Will return all the necessary data about a certain number of feeds. They are sorted to return the newest feed first and then the next number of feeds that coresponds to the given limit parameter.
+\item \textbf{CreateUser}\\
+  Creates a new user in the database and returns the userid.
+\item \textbf{GetNewFeeds}\\
+  Returns data about all new feeds since the last update. This means that the user can manually fetch all new feeds.
+\item \textbf{CheckFeeds}\\
+  Check if any need feeds are available, and if such the number of new feeds will be returned.
+\item \textbf{GetOldFeeds}\\
+  Load a certain number of feeds that are older than the current oldest feed showing. This allows the user to load the next batch of feeds.
+\item \textbf{GetSchedule}\\
+  Returns relevant data about the schedule of the exhibition. Used for the schedule tab on the android application.
+\item \textbf{GetExhibitionInfo}\\
+  Returns all information about the exhibition, such as the description and logo.
+\item \textbf{GetCategories}\\
+  Returns a list of categories, and the booths of this category, that are associated with the current exhibition. It also contains a flag that shows whether the user is currently subscribed to a booth or not.
+\item \textbf{SetCategories}\\
+  This request is run when the ``submit'' button is pressed in the category chooser. This updates the booths that the user is subscribed to in the databse.
+\end{itemize}
+
 \section{Database}
 We are using a MySQL database with the MyISAM storage engine and which is located at a remote server. \todo{info om hvor osv.?}
 
@@ -104,6 +127,7 @@ The server is to contain all data about each exhibition, the companies at the ex
 \caption{Entity-relation diagram}
 \label{fig:erd}
 \end{figure}
+\todo{ERD skal opdateres!!}
 
 %%% Local Variables: 
 %%% mode: latex
