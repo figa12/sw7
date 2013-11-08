@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 /**
@@ -19,21 +21,30 @@ public class BoothItem implements Parcelable {
     private String description;
     private String companyLogo;
     private boolean subscribed;
-    private Coordinate boothCoordinate;
-    private ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
+    private LatLng boothCoordinateCenter;
+    private ArrayList<LatLng> coordinates = new ArrayList<LatLng>();
 
     private Category parentCategory; // is set in makeView()
 
     private CheckBox checkBox;
 
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Coordinate boothCoordinate, ArrayList<Coordinate> coordinates) {
+    /***
+     * boothCoordinate should be: bottomLeft, bottomRight, upperRight, upperLeft
+     * @param boothId
+     * @param boothName
+     * @param description
+     * @param companyLogo
+     * @param subscribed
+     * @param coordinates
+     */
+    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, ArrayList<LatLng> coordinates) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
         this.companyLogo = companyLogo;
         this.subscribed = subscribed;
-        this.boothCoordinate = boothCoordinate;
         this.coordinates = coordinates;
+        this.boothCoordinateCenter = calculateCenter(this.coordinates.get(0), this.coordinates.get(2));
     }
 
     public Category getParentCategory() {
@@ -68,12 +79,23 @@ public class BoothItem implements Parcelable {
         return companyLogo;
     }
 
-    public Coordinate getBoothCoordinate() {
-        return boothCoordinate;
+    public LatLng getBoothCoordinate() {
+        return boothCoordinateCenter;
     }
 
-    public ArrayList<Coordinate> getCoordinates() {
+    public ArrayList<LatLng> getCoordinates() {
         return coordinates;
+    }
+
+    private LatLng calculateCenter(LatLng p1, LatLng p2){
+        if(this.coordinates.size() == 4){
+            LatLng difference = new LatLng(p2.latitude - p1.latitude, p2.longitude - p2.longitude);
+            LatLng offset = new LatLng(difference.latitude/2, difference.longitude/2);
+            return new LatLng(this.getCoordinates().get(0).latitude + offset.latitude, this.getCoordinates().get(0).longitude + offset.latitude); //bottomRight.latitude + offset.latitude, bottomright.longitude + offset.longitude
+        }
+        else{
+            return null;
+        }
     }
 
     public View makeView(Context context, Category category) {
@@ -100,7 +122,7 @@ public class BoothItem implements Parcelable {
         out.writeInt(this.boothId);
         out.writeString(this.boothName);
         out.writeString(this.description);
-        out.writeParcelable(this.boothCoordinate, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        out.writeParcelable(this.boothCoordinateCenter, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
         out.writeList(this.coordinates);
         // don't save category, results in stackOverflow
     }
@@ -121,7 +143,7 @@ public class BoothItem implements Parcelable {
         this.boothId = in.readInt();
         this.boothName = in.readString();
         this.description = in.readString();
-        this.boothCoordinate = in.readParcelable(Coordinate.class.getClassLoader());
-        in.readList(this.coordinates, Coordinate.class.getClassLoader());
+        this.boothCoordinateCenter = in.readParcelable(LatLng.class.getClassLoader());
+        in.readList(this.coordinates, LatLng.class.getClassLoader());
     }
 }
