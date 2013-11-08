@@ -66,7 +66,7 @@ public class Graph {
         return false;
     }
 
-    public makeGraph(ArrayList<Node> nodes){
+    public void makeGraph(ArrayList<Node> nodes){
 
     }
 }
