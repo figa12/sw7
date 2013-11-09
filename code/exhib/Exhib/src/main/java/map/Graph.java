@@ -1,5 +1,7 @@
 package map;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 /**
@@ -14,21 +16,36 @@ public class Graph {
         this.nodes = new ArrayList<Node>();
     }
 
-    public void addEdge(double weight, Node node1, Node node2){
-        if(!this.ExistsNode(node1)){
-            this.nodes.add(node1);
-        }
+    /***
+     * Makes a graph from a polyline array.
+     * @param allPolyNodes
+     */
+    public Graph(ArrayList<Node> allPolyNodes) {
+        this.nodes = this.distinct(allPolyNodes);
+        this.edges = this.addEdges(allPolyNodes);
+    }
 
-        if(!this.ExistsNode(node2)){
-            this.nodes.add(node2);
-        }
+    /***
+     * Makes a graph with all data available
+     * @param nodes
+     * @param edges
+     */
+    public Graph(ArrayList<Node> nodes, ArrayList<Edge> edges){
+        this.edges = edges;
+        this.nodes = nodes;
+    }
 
-        Edge myEdge = new Edge(weight, this.nodes.get(this.nodes.indexOf(node1)), this.nodes.get(this.nodes.indexOf(node2)));
-        if(!this.ExistEdge(myEdge)){
-            this.edges.add(myEdge);
-            this.nodes.get(this.nodes.indexOf(node1)).addEdge(this.edges.get(this.edges.indexOf(myEdge)));
-            this.nodes.get(this.nodes.indexOf(node2)).addEdge(this.edges.get(this.edges.indexOf(myEdge)));
+    private ArrayList<Edge> addEdges(ArrayList<Node> allPolyNodes){
+        ArrayList<Edge> newArray = new ArrayList<Edge>();
+        for(int i = 0; i < allPolyNodes.size() - 1; i++){
+            Edge edge = new Edge(calcWeight(allPolyNodes.get(i).getPosition(), allPolyNodes.get(i+1).getPosition()), nodes.get(nodes.indexOf(allPolyNodes.get(i))), nodes.get(nodes.indexOf(allPolyNodes.get(i+1))));
+            if (!existEdge(newArray, edge)){
+                newArray.add(edge);
+                this.nodes.get(nodes.indexOf(allPolyNodes.get(i))).addEdge(newArray.get(newArray.indexOf(edge)));
+                this.nodes.get(nodes.indexOf(allPolyNodes.get(i+1))).addEdge(newArray.get(newArray.indexOf(edge)));
+            }
         }
+        return newArray;
     }
 
     public Node getNodeByIndex(int index){
@@ -47,8 +64,24 @@ public class Graph {
         return null;
     }
 
-    public boolean ExistEdge(Edge edge){ //TODO: do we need this, maybe contains will work?
-        for(Edge e : this.edges){
+    private double calcWeight(LatLng p, LatLng q){
+        double res = 0.0;
+        res = Math.sqrt((Math.pow(p.longitude - q.longitude, 2)) + (Math.pow(p.latitude - q.latitude, 2)));
+        return res;
+    }
+
+    private <T> ArrayList<T> distinct(ArrayList<T> arrayList){
+        ArrayList<T> newArray = new ArrayList<T>();
+        for(T item : arrayList){
+            if(!newArray.contains(item)){
+                newArray.add(item);
+            }
+        }
+        return newArray;
+    }
+
+    public boolean existEdge(ArrayList<Edge> edges, Edge edge){ //contains will not work, we need this.
+        for(Edge e : edges){
             if(e.getFrom() == edge.getFrom() && e.getTo() == edge.getTo() ||
                     e.getFrom() == edge.getTo() && e.getTo() == edge.getFrom()){
                 return true;
@@ -57,16 +90,12 @@ public class Graph {
         return false;
     }
 
-    public boolean ExistsNode (Node node){ //TODO: do we need this, maybe contains will work?
+    public boolean existsNode (Node node){ //TODO: do we need this, maybe contains will work?
         for(Node n : this.nodes){
             if (n.getName().equals(node.getName())){
                 return true;
             }
         }
         return false;
-    }
-
-    public void makeGraph(ArrayList<Node> nodes){
-
     }
 }

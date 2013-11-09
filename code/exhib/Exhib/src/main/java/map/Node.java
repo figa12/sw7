@@ -13,6 +13,11 @@ public class Node {
     private ArrayList<Edge> edges;
     private boolean visited = false; //only used for djiktras
 
+    /***
+     * Contructor
+     * @param position
+     * @param name
+     */
     public Node(LatLng position, String name) {
         this.position = position;
         this.name = name;
@@ -49,7 +54,7 @@ public class Node {
     public ArrayList<Node> getAllNeighboursNodes(){
         ArrayList<Node> neighbours = new ArrayList<Node>();
         for(Edge edge : this.edges){
-            neighbours.add(edge.getNextNode(this));
+            neighbours.add(edge.getAdjacentNode(this));
         }
         return neighbours;
     }

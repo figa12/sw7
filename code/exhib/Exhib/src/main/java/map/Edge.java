@@ -22,7 +22,7 @@ public class Edge {
         return to;
     }
 
-    public Node getNextNode(Node fromNode){
+    public Node getAdjacentNode(Node fromNode){
         if(fromNode == this.from){
             return this.to;
         }

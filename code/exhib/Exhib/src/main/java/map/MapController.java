@@ -43,7 +43,7 @@ public class MapController {
      * @param title
      * @param snippet
      */
-    public void drawMarker(LatLng latLng, String title, String snippet){
+    public void drawMarker(LatLng latLng, String title, String snippet){ //TODO implement picture
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(title)
@@ -120,12 +120,21 @@ public class MapController {
      * initialize the map...
      */
     public void initialize(){
+        Node hest1 = new Node(new LatLng(15,15), "hest1");
+        Node hest2 = new Node(new LatLng(25,15), "hest2");
+        Node hest3 = new Node(new LatLng(45,20), "hest3");
+        Node hest4 = new Node(new LatLng(-10,5), "hest4");
+        Node hest5 = new Node(new LatLng(-20,-5), "hest5");
+        ArrayList<Node> PolyNodes = new ArrayList<Node>(Arrays.asList(hest1, hest2, hest1, hest3, hest4, hest5, hest1));
+
+        Graph graph = new Graph(PolyNodes);
+
         this.drawMarker(new LatLng(0, 0), "0,0", "snippet");
         this.drawPolyline(new ArrayList<LatLng>(Arrays.asList(new LatLng(0, 0), new LatLng(0, 10), new LatLng(10, 10), new LatLng(10, 0))), 5, Color.RED, 2);
         this.moveCamera(new LatLng(0,0), 3);
         //this.drawPolygon(new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(20,25), new LatLng(25,25),new LatLng(25,20)) ), 5, Color.BLACK, Color.GREEN, 2);
-        ArrayList<LatLng> hest  = new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(25,20), new LatLng(25,25), new LatLng(20,25)));
-        BoothItem booth = new BoothItem(12, "Tha Shit Booth", "We got it all you name it", "don't know yet", false, hest);
+        ArrayList<LatLng> sqaureBounds  = new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(25,20), new LatLng(25,25), new LatLng(20,25)));
+        BoothItem booth = new BoothItem(12, "Tha Shit Booth", "We got it all you name it", "don't know yet", false, sqaureBounds);
         this.drawBooth(booth);
     }
 
