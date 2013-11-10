@@ -79,6 +79,7 @@ public class MapController {
         //this.polylineList.add(polyline);
     }
 
+
     public void drawPolygon(List<LatLng> latLngs, float strokeWidth, int strokeColor, int fillColor, int zIndex){
         PolygonOptions polygonOptions = new PolygonOptions()
                 .addAll(latLngs)
@@ -98,9 +99,36 @@ public class MapController {
 
     public void drawBooth(BoothItem boothItem) {
         //add shape
-        drawPolygon(boothItem.getCoordinates(), 5, Color.DKGRAY, Color.GREEN, 2);
-        drawMarker(boothItem.getBoothCoordinate(), boothItem.getBoothName(), boothItem.getDescription());
+        drawPolygon(boothItem.getSquareBounds(), 5, Color.DKGRAY, Color.GREEN, 2);
         //add add marker with
+        drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
+    }
+
+    public void drawGraph(Graph graph){
+        ArrayList<Node> poly = new ArrayList<Node>();
+
+        for(Edge edge : graph.getEdges()){
+            if(poly.indexOf(edge.getFrom()) != -1 ){
+                poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
+                poly.add(poly.indexOf(edge.getTo())+1,edge.getFrom());
+            }
+            else if(poly.indexOf(edge.getTo()) != -1){
+                poly.add(poly.indexOf(edge.getTo())+1,edge.getFrom());
+                poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
+            }
+            else{
+                poly.add(edge.getFrom());
+                poly.add(edge.getTo());
+            }
+        }
+
+        ArrayList<LatLng> polyLine = new ArrayList<LatLng>();
+        for(Node n : poly){
+            polyLine.add(n.getPosition());
+        }
+
+        drawPolyline(polyLine,5, Color.BLUE,2);
+
     }
 
     /***
@@ -112,10 +140,6 @@ public class MapController {
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
-    public LatLng vector(LatLng p1, LatLng p2){
-        return new LatLng(p2.latitude - p1.latitude, p2.longitude - p2.longitude);
-    }
-
     /***
      * initialize the map...
      */
@@ -125,16 +149,16 @@ public class MapController {
         Node hest3 = new Node(new LatLng(45,20), "hest3");
         Node hest4 = new Node(new LatLng(-10,5), "hest4");
         Node hest5 = new Node(new LatLng(-20,-5), "hest5");
-        ArrayList<Node> PolyNodes = new ArrayList<Node>(Arrays.asList(hest1, hest2, hest1, hest3, hest4, hest5, hest1));
+        ArrayList<Node> PolyNodes = new ArrayList<Node>(Arrays.asList(hest1, hest2, hest1, hest5, hest4, hest2, hest3));
 
         Graph graph = new Graph(PolyNodes);
 
+        drawGraph(graph);
         this.drawMarker(new LatLng(0, 0), "0,0", "snippet");
         this.drawPolyline(new ArrayList<LatLng>(Arrays.asList(new LatLng(0, 0), new LatLng(0, 10), new LatLng(10, 10), new LatLng(10, 0))), 5, Color.RED, 2);
         this.moveCamera(new LatLng(0,0), 3);
         //this.drawPolygon(new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(20,25), new LatLng(25,25),new LatLng(25,20)) ), 5, Color.BLACK, Color.GREEN, 2);
-        ArrayList<LatLng> sqaureBounds  = new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(25,20), new LatLng(25,25), new LatLng(20,25)));
-        BoothItem booth = new BoothItem(12, "Tha Shit Booth", "We got it all you name it", "don't know yet", false, sqaureBounds);
+        BoothItem booth = new BoothItem(12, "Tha Shit Booth", "We got it all you name it", "don't know yet", false, new Square(new LatLng(20,25), new LatLng(25,20)));
         this.drawBooth(booth);
     }
 

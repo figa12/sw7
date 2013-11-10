@@ -40,6 +40,10 @@ public class Node {
         this.edges.add(edge);
     }
 
+    public ArrayList<Edge> getEdges(){
+        return this.edges;
+    }
+
     public Edge getEdge(int index){
         if(index >= 0 && index < numberOfEdges()){
             return edges.get(index);

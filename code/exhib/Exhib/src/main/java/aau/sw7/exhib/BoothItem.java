@@ -11,6 +11,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import map.Node;
+import map.Square;
+
 /**
  * Created by jerian on 23-10-13.
  */
@@ -21,30 +24,29 @@ public class BoothItem implements Parcelable {
     private String description;
     private String companyLogo;
     private boolean subscribed;
-    private LatLng boothCoordinateCenter;
-    private ArrayList<LatLng> coordinates = new ArrayList<LatLng>();
+    private Square square;
+    private ArrayList<Node> boothWaypoints;
 
     private Category parentCategory; // is set in makeView()
 
     private CheckBox checkBox;
 
     /***
-     * boothCoordinate should be: bottomLeft, bottomRight, upperRight, upperLeft
+     * boothCoordinate should be: BottomRight, TopLeft
      * @param boothId
      * @param boothName
      * @param description
      * @param companyLogo
      * @param subscribed
-     * @param coordinates
+     * @param square
      */
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, ArrayList<LatLng> coordinates) {
+    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
         this.companyLogo = companyLogo;
         this.subscribed = subscribed;
-        this.coordinates = coordinates;
-        this.boothCoordinateCenter = calculateCenter(this.coordinates.get(0), this.coordinates.get(2));
+        this.square = square;
     }
 
     public Category getParentCategory() {
@@ -64,38 +66,31 @@ public class BoothItem implements Parcelable {
     }
 
     public String getBoothName() {
-        return boothName;
+        return this.boothName;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public int getBoothId() {
-        return boothId;
+        return this.boothId;
     }
 
     public String getCompanyLogo() {
-        return companyLogo;
+        return this.companyLogo;
     }
 
-    public LatLng getBoothCoordinate() {
-        return boothCoordinateCenter;
+    public LatLng getSquareCenter() {
+        return this.square.getCenter();
     }
 
-    public ArrayList<LatLng> getCoordinates() {
-        return coordinates;
+    public ArrayList<LatLng> getSquareBounds(){
+        return this.square.getSqaureBounds();
     }
 
-    private LatLng calculateCenter(LatLng p1, LatLng p2){
-        if(this.coordinates.size() == 4){
-            LatLng difference = new LatLng(p2.latitude - p1.latitude, p2.longitude - p2.longitude);
-            LatLng offset = new LatLng(difference.latitude/2, difference.longitude/2);
-            return new LatLng(this.getCoordinates().get(0).latitude + offset.latitude, this.getCoordinates().get(0).longitude + offset.latitude); //bottomRight.latitude + offset.latitude, bottomright.longitude + offset.longitude
-        }
-        else{
-            return null;
-        }
+    public Square getSquare() {
+        return this.square;
     }
 
     public View makeView(Context context, Category category) {
@@ -122,8 +117,7 @@ public class BoothItem implements Parcelable {
         out.writeInt(this.boothId);
         out.writeString(this.boothName);
         out.writeString(this.description);
-        out.writeParcelable(this.boothCoordinateCenter, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
-        out.writeList(this.coordinates);
+        out.writeList(this.square.toList());
         // don't save category, results in stackOverflow
     }
 
@@ -143,7 +137,6 @@ public class BoothItem implements Parcelable {
         this.boothId = in.readInt();
         this.boothName = in.readString();
         this.description = in.readString();
-        this.boothCoordinateCenter = in.readParcelable(LatLng.class.getClassLoader());
-        in.readList(this.coordinates, LatLng.class.getClassLoader());
+        in.readList(this.square.toList(), LatLng.class.getClassLoader());
     }
 }

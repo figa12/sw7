@@ -8,8 +8,8 @@ import java.util.ArrayList;
  * Created by Jacob on 08-11-13.
  */
 public class Graph {
-    ArrayList<Edge> edges;
-    ArrayList<Node> nodes;
+    private ArrayList<Edge> edges;
+    private ArrayList<Node> nodes;
 
     public Graph() {
         this.edges = new ArrayList<Edge>();
@@ -33,6 +33,14 @@ public class Graph {
     public Graph(ArrayList<Node> nodes, ArrayList<Edge> edges){
         this.edges = edges;
         this.nodes = nodes;
+    }
+
+    public ArrayList<Edge> getEdges() {
+        return edges;
+    }
+
+    public ArrayList<Node> getNodes() {
+        return nodes;
     }
 
     private ArrayList<Edge> addEdges(ArrayList<Node> allPolyNodes){
