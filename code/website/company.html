@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+	<header align="center">
+		<ul class="nav nav-tabs">
+			<li><a href="feed.html">Feeds</a></li>
+			<li class="active"><a href="company.html">Company</a></li>
+			<li><a href="booth.html">Booth</a></li>
+			<li><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li><a href="exhib.html">Exhib</a></li>
+		</ul>
+	</header>
+
+	<h2> Input your information :) </h2>
+
+	<script type = "text/javascript">
+
+	// Validate the user input
+	function validateSubmit()
+	{
+		// if header is empty, give an alert
+		var x = document.forms["inputForm"]["name"].value;
+		if (x == null || x == "")
+		  {
+		  alert("Company name must be filled out");
+		  return false;
+		  }
+		  
+		 var x = document.forms["inputForm"]["name"].value;
+		if (y == null || y == "")
+		  {
+		  alert("You must choose afile");
+		  return false;
+		  }
+	}
+	
+	
+	</script>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<!-- Sets up the form to be used for typing in the information -->
+		<form name="inputForm" action="companySide.php" method="post" onsubmit = "return validateSubmit();"
+      		  enctype = "multipart/form-data">
+
+			<table border ="0">
+			<tr>
+				<td>Company name:</td>
+				<td><input style="width:100%" type="text" name="name"><br></td>
+				</tr>
+
+				<td>Logo:</td>
+				<td><input style="width:100%" type="hidden" name="size" value="35000">
+				    <input type="file" name="logo"><br></td>
+				</tr>
+
+				<td><button type="submit" class="btn" value="Submit">Submit</td>
+				</tr>
+		</form>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

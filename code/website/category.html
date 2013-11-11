@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+<header align="center">
+		<ul class="nav nav-tabs">
+			<li><a href="feed.html">Feeds</a></li>
+			<li><a href="company.html">Company</a></li>
+			<li><a href="booth.html">Booth</a></li>
+			<li class="active"><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li><a href="exhib.html">Exhib</a></li>
+		</ul>
+	</header>
+
+	<h2> Input Category information: </h2>
+
+	<script type = "text/javascript">
+
+	// Validate the user input
+	function validateSubmit()
+	{
+		var z = document.forms["inputForm"]["name"].value;
+		if (z == null || z == "")
+		 {
+			alert("Please supply a name");
+			return false;
+		 }
+	}
+	
+	
+	
+	</script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<!-- Sets up the form to be used for typing in the information -->
+		<form name="inputForm" action="categorySide.php" method="post" onsubmit = "return validateSubmit();"
+      		  enctype = "multipart/form-data">
+
+			<table border ="0">
+			<tr>
+				<td>Name:</td>
+				<td><input style="width:100%" type="text" name="name"><br></td>
+				</tr>
+				
+				<td><button type="submit" class="btn">Submit</td>
+				</tr>
+		</form>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

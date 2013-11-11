@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	
+<header align="center">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="feed.html">Feeds</a></li>
+			<li><a href="company.html">Company</a></li>
+			<li><a href="booth.html">Booth</a></li>
+			<li><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li><a href="exhib.html">Exhib</a></li>
+		</ul>
+	</header>
+
+	<h2> Input your information :) </h2>
+
+	<script type = "text/javascript">
+
+	// Validate the user input
+	function validateSubmit()
+	{
+		// if header is empty, give an alert
+		var x = document.forms["inputForm"]["header"].value;
+		if (x == null || x == "")
+		{
+			alert("Header must be filled out");
+			return false;
+		}
+		  
+		// if description is empty, give an alert
+		var y = document.forms["inputForm"]["description"].value;
+		if (y == null || y == "")
+		{
+			alert("Description must be filled out");
+			return false;
+		}
+		  
+		var intRegex = /^\d+$/
+		
+		var z = document.forms["inputForm"]["id"].value;
+		if (z == null || z == "")
+		 {
+			alert("Booth ID must be chosen");
+			return false;
+		 } 
+		 
+		if(!intRegex.test(z))
+		{
+			alert("Booth ID must be a number");
+			return false;
+		} 
+	}
+	
+	
+	
+	</script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<!-- Sets up the form to be used for typing in the information -->
+		<form name="inputForm" action="feedSide.php" method="post" onsubmit = "return validateSubmit();"
+      		  enctype = "multipart/form-data">
+
+			<table border ="0">
+			<tr>
+				<td>Header:</td>
+				<td><input style="width:100%" type="text" name="header"><br></td>
+				</tr>
+
+				<td>Decription:</td>
+				<td><input style="width:100%" type="text" name="description"><br></td>
+				</tr>
+
+				<td>Booth ID:</td>
+				<td><input style="width:100%" type="text" name="id"><br></td>
+				</tr>
+				
+				<td><button type="submit" class="btn">Submit</td>
+				</tr>
+		</form>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>
