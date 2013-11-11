@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+	<header align="center">
+		<ul class="nav nav-tabs">
+			<li><a href="feed.html">Feeds</a></li>
+			<li><a href="company.html">Company</a></li>
+			<li><a href="booth.html">Booth</a></li>
+			<li><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li class="active"><a href="exhib.html">Exhib</a></li>
+		</ul>
+	</header>
+
+	<h2> Input Exhib information: </h2>
+
+	<script type = "text/javascript">
+
+	// Validate the user input
+	function validateSubmit()
+	{
+		var x = document.forms["inputForm"]["name"].value;
+		if (x == null || x == "")
+		 {
+			alert("Please supply a name");
+			return false;
+		 }
+
+		var y = document.forms["inputForm"]["address"].value;
+		if (y == null || y == "")
+		 {
+			alert("Please supply a address");
+			return false;
+		 }
+
+		var z = document.forms["inputForm"]["country"].value;
+		if (z == null || z == "")
+		 {
+			alert("Please supply a country");
+			return false;
+		 }
+
+		var w = document.forms["inputForm"]["zip"].value;
+		if (w == null || w == "")
+		 {
+			alert("Please supply a zip");
+			return false;
+		 }
+
+		var q = document.forms["inputForm"]["description"].value;
+		if (q == null || q == "")
+		 {
+			alert("Please supply a description");
+			return false;
+		 }
+	}
+	
+	
+	
+	</script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<!-- Sets up the form to be used for typing in the information -->
+		<form name="inputForm" action="exhibSide.php" method="post" onsubmit = "return validateSubmit();"
+      		  enctype = "multipart/form-data">
+
+			<table border ="0">
+			<tr>
+				<td>Name:</td>
+				<td><input style="width:100%" type="text" name="name"><br></td>
+				</tr>
+				<td>Address:</td>
+				<td><input style="width:100%" type="text" name="address"><br></td>
+				</tr>
+				<td>Zip:</td>
+				<td><input style="width:100%" type="text" name="zip"><br></td>
+				</tr>
+				<td>Country:</td>
+				<td><input style="width:100%" type="text" name="country"><br></td>
+				</tr>
+				<td>Description:</td>
+				<td><input style="width:100%" type="text" name="description"><br></td>
+				</tr>
+				
+				<td><button type="submit" class="btn">Submit</td>
+				</tr>
+		</form>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

@@ -398,7 +398,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
         reader.endObject();
 
-        return new BoothItem(id, boothName, description, companyLogo, sub, null, null); //TODO read/set coordinate values
+        return new BoothItem(id, boothName, description, companyLogo, sub, null); //TODO read/set coordinate values
     }
 
     private ArrayList<FeedItem> readFeedItemsArray(JsonReader reader) throws IOException {

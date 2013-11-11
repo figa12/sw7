@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+	<header align="center">
+		<ul class="nav nav-tabs">
+			<li><a href="feed.html">Feeds</a></li>
+			<li><a href="company.html">Company</a></li>
+			<li><a href="booth.html">Booth</a></li>
+			<li><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li><a href="exhib.html">Exhib</a></li>
+			<li class="active"><a href="map.html">Map</a></li>
+		</ul>
+	</header>
+
+	<h2> Map: </h2>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link href="http://code.google.com//apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/globas.js" type="text/javascript"></script>
+    <script src="js/initialize.js"></script>
+    <script>google.maps.event.addDomListener(window, 'load', initialize);</script>
+	</head>
+
+	<body>
+		<select id="typeSelect">
+			<option value="marker">Marker</option>
+			<option value="booth">Booth</option>
+		</select>
+		<div id="map-canvas"></div>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

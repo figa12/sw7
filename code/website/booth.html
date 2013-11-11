@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+<header align="center">
+		<ul class="nav nav-tabs">
+			<li><a href="feed.html">Feeds</a></li>
+			<li><a href="company.html">Company</a></li>
+			<li class="active"><a href="booth.html">Booth</a></li>
+			<li><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li><a href="exhib.html">Exhib</a></li>
+		</ul>
+	</header>
+
+	<h2> Input booth information: </h2>
+
+	<script type = "text/javascript">
+
+	// Validate the user input
+	function validateSubmit()
+	{
+		// if header is empty, give an alert
+		var x = document.forms["inputForm"]["categoryid"].value;
+		if (x == null || x == "")
+		{
+			alert("Category must be filled out");
+			return false;
+		}
+		if(!intRegex.test(x))
+		{
+			alert("Category id must be a number");
+			return false;
+		} 
+		  
+		// if description is empty, give an alert
+		var y = document.forms["inputForm"]["companyid"].value;
+		if (y == null || y == "")
+		{
+			alert("Company must be filled out");
+			return false;
+		}
+		if(!intRegex.test(y))
+		{
+			alert("Company id must be a number");
+			return false;
+		} 
+		  
+		var intRegex = /^\d+$/
+		
+		var z = document.forms["inputForm"]["name"].value;
+		if (z == null || z == "")
+		 {
+			alert("Please supply a name");
+			return false;
+		 } 
+		 		
+		var w = document.forms["inputForm"]["description"].value;
+		if (w == null || w == "")
+		 {
+			alert("Description must be written");
+			return false;
+		 } 
+	}
+	
+	
+	
+	</script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<!-- Sets up the form to be used for typing in the information -->
+		<form name="inputForm" action="boothSide.php" method="post" onsubmit = "return validateSubmit();"
+      		  enctype = "multipart/form-data">
+
+			<table border ="0">
+			<tr>
+				<td>Category:</td>
+				<td><input style="width:100%" type="text" name="categoryid"><br></td>
+				</tr>
+
+				<td>Company:</td>
+				<td><input style="width:100%" type="text" name="companyid"><br></td>
+				</tr>
+
+				<td>Name:</td>
+				<td><input style="width:100%" type="text" name="name"><br></td>
+				</tr>
+
+				<td>Description:</td>
+				<td><input style="width:100%" type="text" name="description"><br></td>
+				</tr>
+				
+				<td><button type="submit" class="btn">Submit</td>
+				</tr>
+		</form>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

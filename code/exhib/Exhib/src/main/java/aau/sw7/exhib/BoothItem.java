@@ -7,7 +7,12 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
+
+import map.Node;
+import map.Square;
 
 /**
  * Created by jerian on 23-10-13.
@@ -19,21 +24,29 @@ public class BoothItem implements Parcelable {
     private String description;
     private String companyLogo;
     private boolean subscribed;
-    private Coordinate boothCoordinate;
-    private ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
+    private Square square;
+    private ArrayList<Node> boothWaypoints;
 
     private Category parentCategory; // is set in makeView()
 
     private CheckBox checkBox;
 
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Coordinate boothCoordinate, ArrayList<Coordinate> coordinates) {
+    /***
+     * boothCoordinate should be: BottomRight, TopLeft
+     * @param boothId
+     * @param boothName
+     * @param description
+     * @param companyLogo
+     * @param subscribed
+     * @param square
+     */
+    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
         this.companyLogo = companyLogo;
         this.subscribed = subscribed;
-        this.boothCoordinate = boothCoordinate;
-        this.coordinates = coordinates;
+        this.square = square;
     }
 
     public Category getParentCategory() {
@@ -53,27 +66,31 @@ public class BoothItem implements Parcelable {
     }
 
     public String getBoothName() {
-        return boothName;
+        return this.boothName;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public int getBoothId() {
-        return boothId;
+        return this.boothId;
     }
 
     public String getCompanyLogo() {
-        return companyLogo;
+        return this.companyLogo;
     }
 
-    public Coordinate getBoothCoordinate() {
-        return boothCoordinate;
+    public LatLng getSquareCenter() {
+        return this.square.getCenter();
     }
 
-    public ArrayList<Coordinate> getCoordinates() {
-        return coordinates;
+    public ArrayList<LatLng> getSquareBounds(){
+        return this.square.getSqaureBounds();
+    }
+
+    public Square getSquare() {
+        return this.square;
     }
 
     public View makeView(Context context, Category category) {
@@ -100,8 +117,7 @@ public class BoothItem implements Parcelable {
         out.writeInt(this.boothId);
         out.writeString(this.boothName);
         out.writeString(this.description);
-        out.writeParcelable(this.boothCoordinate, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
-        out.writeList(this.coordinates);
+        out.writeList(this.square.toList());
         // don't save category, results in stackOverflow
     }
 
@@ -121,7 +137,6 @@ public class BoothItem implements Parcelable {
         this.boothId = in.readInt();
         this.boothName = in.readString();
         this.description = in.readString();
-        this.boothCoordinate = in.readParcelable(Coordinate.class.getClassLoader());
-        in.readList(this.coordinates, Coordinate.class.getClassLoader());
+        in.readList(this.square.toList(), LatLng.class.getClassLoader());
     }
 }

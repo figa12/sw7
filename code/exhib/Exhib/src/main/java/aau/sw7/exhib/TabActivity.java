@@ -11,30 +11,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.TileOverlay;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-
+import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
 
 import java.util.ArrayList;
-
 import NfcForeground.NfcForegroundFragment;
+import map.MapController;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, ICategoriesReceiver, FloorFragment.OnFloorFragmentListener {
-    private GoogleMap mMap;
-
+    private MapController mapController;
     @Override
     public void onMapReady(GoogleMap map) {
-        //set options?
-        mMap = map;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-        TileOverlayOptions tileOverlayOptions = new TileOverlayOptions();
-        tileOverlayOptions.tileProvider(new FloorTileProvider("FloorPlan"));
-        //tileOverlayOptions.zIndex(3);
-        TileOverlay overlay = map.addTileOverlay(tileOverlayOptions);
+        this.mapController = new MapController(map);
+        this.mapController.initialize();
     }
 
     public static final String BOOTH_ITEMS = "boothItems";
