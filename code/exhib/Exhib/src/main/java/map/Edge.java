@@ -12,6 +12,9 @@ public class Edge {
         this.weight = weight;
         this.from = from;
         this.to = to;
+
+        this.from.addEdge(this);
+        this.to.addEdge(this);
     }
 
     public Node getFrom() {

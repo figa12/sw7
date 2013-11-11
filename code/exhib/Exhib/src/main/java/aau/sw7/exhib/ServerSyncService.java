@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -27,6 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import map.Edge;
+import map.Graph;
+import map.Node;
+import map.Square;
+
 /**
  * Created by figa on 9/16/13.
  */
@@ -42,6 +49,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final int GET_CATEGORIES = 7;
     public static final int CREATE_USER = 8;
     public static final int SET_CATEGORIES = 9;
+    public static final int GET_FLOORPLAN = 10;
 
     public static final String ITEMS_LIMIT = "6";
 
@@ -215,6 +223,8 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     // Notify activity
                     categoriesActivity.onServerBoothResponse();
                     break;
+                case ServerSyncService.GET_FLOORPLAN:
+                    break;
             }
         } finally {
             reader.close();
@@ -275,6 +285,134 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         reader.endObject();
 
         mainActivity.onUserCreated(exhibId, userId);
+    }
+
+    private void readFloorPlan(JsonReader reader, TabActivity tabActivity) throws IOException {
+        ArrayList<Node> nodes = null;
+        ArrayList<Edge> edges = null;
+        ArrayList<BoothItem> booths = null;
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("nodes")) {
+                nodes = this.readNodes(reader);
+            } else if (name.equals("edges")) {
+                edges = this.readEdges(reader, nodes);
+            } else if (name.equals("booths")) {
+                booths = this.readBoothItems(reader);
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        Graph graph = new Graph(nodes, edges);
+        tabActivity.setFloorPlan(graph,booths);
+    }
+
+    private ArrayList<Node> readNodes(JsonReader reader)throws IOException{
+        ArrayList<Node> nodes = new ArrayList<Node>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            nodes.add(this.readNode(reader));
+        }
+        reader.endArray();
+
+        return nodes;
+    }
+
+    private Node readNode(JsonReader reader) throws IOException{
+        long nodeID = 0;
+        double positionX = 0.0;
+        double positionY = 0.0;
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("id")) {
+                nodeID = reader.nextLong();
+            } else if (name.equals("positionX")){
+                positionX = reader.nextDouble();
+            } else if(name.equals("positionY")){
+                positionY = reader.nextDouble();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new Node(new LatLng(positionY, positionX), nodeID);
+    }
+
+    private ArrayList<Edge> readEdges(JsonReader reader, ArrayList<Node> nodes) throws IOException{
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            edges.add(this.readEdge(reader, nodes));
+        }
+        reader.endArray();
+
+        return edges;
+    }
+
+    private Edge readEdge(JsonReader reader, ArrayList<Node> nodes) throws IOException{
+        double weight = 0.0;
+        long nodeFromID = 0L;
+        long nodeToID = 0L;
+
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("weight")) {
+                weight = reader.nextDouble();
+            } else if (name.equals("vertexA")){
+                nodeFromID = reader.nextLong();
+            } else if(name.equals("vertexB")){
+                nodeToID = reader.nextLong();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        Node from = this.findNode(nodes, nodeFromID);
+        Node to = this.findNode(nodes, nodeToID);
+
+        return new Edge(weight, from, to);
+    }
+
+    private Node findNode(ArrayList<Node> nodes, long id){
+        for(Node n : nodes){
+            if(n.getID() == id){
+                return n;
+            }
+        }
+        return null;
+    }
+
+    private ArrayList<BoothItem> readBoothItems(JsonReader reader)throws IOException{
+        ArrayList<BoothItem> boothItems = new ArrayList<BoothItem>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            boothItems.add(this.readBoothItem(reader));
+        }
+        reader.endArray();
+
+        return null;
     }
 
     private void readExhibitionInformation(JsonReader reader, TabActivity tabActivity) throws IOException {
@@ -398,7 +536,61 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         }
         reader.endObject();
 
-        return new BoothItem(id, boothName, description, companyLogo, sub, null); //TODO read/set coordinate values
+        return new BoothItem(id, boothName, description, companyLogo, sub);
+    }
+
+    private BoothItem readBoothItem(JsonReader reader, ArrayList<Node> nodes) throws IOException {
+        int id = 0;
+        String boothName = "";
+        String description = "";
+        String companyLogo = "";
+        ArrayList<Node> boothsEntryNodes = new ArrayList<Node>();
+        double top = 0.0;
+        double right = 0.0;
+        double left = 0.0;
+        double bottom = 0.0;
+
+        boolean sub = true;
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("id")) {
+                id = reader.nextInt();
+            } else if (name.equals("name")) {
+                boothName = reader.nextString();
+            } else if (name.equals("description")) {
+                description = reader.nextString();
+            } else if(name.equals("logo")) {
+                companyLogo = reader.nextString();
+            } else if(name.equals("sub")) {
+                sub = reader.nextBoolean();
+            } else if(name.equals("nodeIds")) {
+                reader.beginArray();
+                while (reader.hasNext()) {
+                    boothsEntryNodes.add(this.findNode(nodes, reader.nextLong()));
+                }
+                reader.endArray();
+            } else if(name.equals("top")) {
+                top = reader.nextDouble();
+            } else if(name.equals("right")) {
+                right = reader.nextDouble();
+            } else if(name.equals("left")) {
+                left = reader.nextDouble();
+            } else if(name.equals("bottom")) {
+                bottom = reader.nextDouble();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new BoothItem(id, boothName, description, companyLogo, sub,
+                new Square(top, left, bottom, right),
+                boothsEntryNodes);
     }
 
     private ArrayList<FeedItem> readFeedItemsArray(JsonReader reader) throws IOException {

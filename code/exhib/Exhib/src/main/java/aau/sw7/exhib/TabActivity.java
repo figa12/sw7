@@ -14,11 +14,13 @@ import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
 
 import java.util.ArrayList;
 
 import NfcForeground.NfcForegroundFragment;
+import map.Graph;
 import map.MapController;
 
 
@@ -187,6 +189,13 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                             .setText(appSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        new ServerSyncService(this).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FLOORPLAN)),
+                new BasicNameValuePair("Type", "GetFloorPlan"),
+                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));
+
+
     }
 
     public boolean getLock() {
@@ -211,6 +220,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     public ExhibitionInfoFragment getExhibitionInfoFragment() {
         return this.appSectionsPagerAdapter.exhibitionInfoFragment;
+    }
+
+    public void setFloorPlan(Graph graph, ArrayList<BoothItem> boothItems){
+        //TODO implement!!
     }
 
     @Override

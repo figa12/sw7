@@ -8,24 +8,25 @@ import java.util.ArrayList;
  * Created by Jacob on 08-11-13.
  */
 public class Node {
-    private String name;
+    private long id;
     private LatLng position;
     private ArrayList<Edge> edges;
+    private long boothID; //TODO implement
     private boolean visited = false; //only used for djiktras
 
     /***
      * Contructor
      * @param position
-     * @param name
+     * @param id
      */
-    public Node(LatLng position, String name) {
+    public Node(LatLng position, long id) {
         this.position = position;
-        this.name = name;
+        this.id = id;
         this.edges = new ArrayList<Edge>();
     }
 
-    public String getName() {
-        return this.name;
+    public long getID() {
+        return this.id;
     }
 
     public LatLng getPosition() {

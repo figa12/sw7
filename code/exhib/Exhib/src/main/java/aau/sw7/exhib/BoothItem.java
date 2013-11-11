@@ -25,7 +25,7 @@ public class BoothItem implements Parcelable {
     private String companyLogo;
     private boolean subscribed;
     private Square square;
-    private ArrayList<Node> boothWaypoints;
+    private ArrayList<Node> boothEntryNodes;
 
     private Category parentCategory; // is set in makeView()
 
@@ -38,15 +38,19 @@ public class BoothItem implements Parcelable {
      * @param description
      * @param companyLogo
      * @param subscribed
-     * @param square
      */
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square) {
+    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
         this.companyLogo = companyLogo;
         this.subscribed = subscribed;
+    }
+
+    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square, ArrayList<Node> boothEntryNodes) {
+        this(boothId, boothName, description, companyLogo, subscribed);
         this.square = square;
+        this.boothEntryNodes = boothEntryNodes;
     }
 
     public Category getParentCategory() {
@@ -86,7 +90,7 @@ public class BoothItem implements Parcelable {
     }
 
     public ArrayList<LatLng> getSquareBounds(){
-        return this.square.getSqaureBounds();
+        return this.square.getSquareBounds();
     }
 
     public Square getSquare() {

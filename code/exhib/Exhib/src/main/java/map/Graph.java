@@ -36,36 +36,34 @@ public class Graph {
     }
 
     public ArrayList<Edge> getEdges() {
-        return edges;
+        return this.edges;
     }
 
     public ArrayList<Node> getNodes() {
-        return nodes;
+        return this.nodes;
     }
 
     private ArrayList<Edge> addEdges(ArrayList<Node> allPolyNodes){
-        ArrayList<Edge> newArray = new ArrayList<Edge>();
+        ArrayList<Edge> edges = new ArrayList<Edge>();
         for(int i = 0; i < allPolyNodes.size() - 1; i++){
-            Edge edge = new Edge(calcWeight(allPolyNodes.get(i).getPosition(), allPolyNodes.get(i+1).getPosition()), nodes.get(nodes.indexOf(allPolyNodes.get(i))), nodes.get(nodes.indexOf(allPolyNodes.get(i+1))));
-            if (!existEdge(newArray, edge)){
-                newArray.add(edge);
-                this.nodes.get(nodes.indexOf(allPolyNodes.get(i))).addEdge(newArray.get(newArray.indexOf(edge)));
-                this.nodes.get(nodes.indexOf(allPolyNodes.get(i+1))).addEdge(newArray.get(newArray.indexOf(edge)));
+            Edge edge = new Edge(calcWeight(allPolyNodes.get(i).getPosition(), allPolyNodes.get(i+1).getPosition()), this.nodes.get(this.nodes.indexOf(allPolyNodes.get(i))), nodes.get(nodes.indexOf(allPolyNodes.get(i+1))));
+            if (!existEdge(edges, edge)){
+                edges.add(edge);
             }
         }
-        return newArray;
+        return edges;
     }
 
     public Node getNodeByIndex(int index){
-        if(index >= 0 && index < nodes.size()){
-            return nodes.get(index);
+        if(index >= 0 && index < this.nodes.size()){
+            return this.nodes.get(index);
         }
         return null;
     }
 
-    public Node getNodeByName(String name){
+    public Node getNodeByName(long id){
         for(Node node : this.nodes){
-            if(node.getName().equals(name)){
+            if(node.getID() == id){
                 return node;
             }
         }
@@ -100,7 +98,7 @@ public class Graph {
 
     public boolean existsNode (Node node){ //TODO: do we need this, maybe contains will work?
         for(Node n : this.nodes){
-            if (n.getName().equals(node.getName())){
+            if (n.getID() == node.getID()){
                 return true;
             }
         }
