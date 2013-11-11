@@ -189,13 +189,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                             .setText(appSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
-
-        new ServerSyncService(this).execute(
+        //TODO uncomment when Figa has implemented this on the sever.
+        /*new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FLOORPLAN)),
                 new BasicNameValuePair("Type", "GetFloorPlan"),
-                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));
-
-
+                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));*/
     }
 
     public boolean getLock() {
