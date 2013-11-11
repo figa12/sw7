@@ -117,7 +117,8 @@ public class BoothItem implements Parcelable {
         out.writeInt(this.boothId);
         out.writeString(this.boothName);
         out.writeString(this.description);
-        out.writeList(this.square.toList());
+        //out.writeList(this.square.toList()); // toList() gives exception, maybe list can't contain null
+
         // don't save category, results in stackOverflow
     }
 
@@ -137,6 +138,6 @@ public class BoothItem implements Parcelable {
         this.boothId = in.readInt();
         this.boothName = in.readString();
         this.description = in.readString();
-        in.readList(this.square.toList(), LatLng.class.getClassLoader());
+        //in.readList(this.square.toList(), LatLng.class.getClassLoader()); // not written to parcel, yet
     }
 }

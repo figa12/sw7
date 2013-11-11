@@ -11,11 +11,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 import com.google.android.gms.maps.GoogleMap;
-import org.apache.http.message.BasicNameValuePair;
+
 import org.ndeftools.Record;
 
 import java.util.ArrayList;
+
 import NfcForeground.NfcForegroundFragment;
 import map.MapController;
 
@@ -122,7 +124,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     protected void onDestroy()
     {
         super.onDestroy();
-        this.mMap = null;
         this.appSectionsPagerAdapter.onDestroy();
         this.appSectionsPagerAdapter = null;
         this.viewPager = null;
