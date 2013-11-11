@@ -1,0 +1,25 @@
+Comments for the report:
+	TOC
+		chapter 3 should be called something like "server side design"
+	Chapter 1 - introduction:
+		Some of the parts could be put into a chapter called "Excisting technologies"
+			-Why are they relevant?
+		Make it a "big picture" instead, like problem statement
+		Make a big picture of the overall design - System architecture
+	Chapter 2 - Application design
+		Flow chart of the application.
+			-As the first thing in the chapter
+		Client part
+			-Make it clear what is communication between server and client
+
+Comments on the app:
+	Good
+
+General comments:
+	Tell the story clearly, not just the in-depth stuff, please make it understandable for everyone. Tell the whole story.
+	Benefits for users, and managers.
+	Section for development method, and agile. Breef, but can be put in.
+	Testing, breef. It's not the theme, but it's a good way to show that the end user understands the application.
+
+	Deadline 20th December.
+	
