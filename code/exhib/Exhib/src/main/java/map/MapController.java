@@ -164,7 +164,7 @@ public class MapController {
         //this.drawPolyline(new ArrayList<LatLng>(Arrays.asList(new LatLng(0, 0), new LatLng(0, 10), new LatLng(10, 10), new LatLng(10, 0))), 5, Color.RED, 2);
         this.moveCamera(new LatLng(0,0), 3);
         //this.drawPolygon(new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(20,25), new LatLng(25,25),new LatLng(25,20)) ), 5, Color.BLACK, Color.GREEN, 2);
-        BoothItem booth = new BoothItem(12, "Tha Awesome Booth", "We got it all, just name it, we got it", "don't know yet", false, new Square(new LatLng(20,25), new LatLng(25,20)));
+        BoothItem booth = new BoothItem(12, "Tha Awesome Booth", "We got it all, just name it, we got it", "don't know yet", false, new Square(new LatLng(20,25), new LatLng(25,20)), null);
         this.drawBooth(booth);
     }
 

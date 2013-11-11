@@ -19,7 +19,7 @@ import map.Square;
  */
 public class BoothItem implements Parcelable {
 
-    private int boothId;
+    private long boothId;
     private String boothName;
     private String description;
     private String companyLogo;
@@ -39,7 +39,7 @@ public class BoothItem implements Parcelable {
      * @param companyLogo
      * @param subscribed
      */
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed) {
+    public BoothItem(long boothId, String boothName, String description, String companyLogo, boolean subscribed) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
@@ -47,7 +47,7 @@ public class BoothItem implements Parcelable {
         this.subscribed = subscribed;
     }
 
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square, ArrayList<Node> boothEntryNodes) {
+    public BoothItem(long boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square, ArrayList<Node> boothEntryNodes) {
         this(boothId, boothName, description, companyLogo, subscribed);
         this.square = square;
         this.boothEntryNodes = boothEntryNodes;
@@ -77,7 +77,7 @@ public class BoothItem implements Parcelable {
         return this.description;
     }
 
-    public int getBoothId() {
+    public long getBoothId() {
         return this.boothId;
     }
 
@@ -118,7 +118,7 @@ public class BoothItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(this.boothId);
+        out.writeLong(this.boothId);
         out.writeString(this.boothName);
         out.writeString(this.description);
         //out.writeList(this.square.toList()); // toList() gives exception, maybe list can't contain null
@@ -139,7 +139,7 @@ public class BoothItem implements Parcelable {
     };
 
     private BoothItem(Parcel in) {
-        this.boothId = in.readInt();
+        this.boothId = in.readLong();
         this.boothName = in.readString();
         this.description = in.readString();
         //in.readList(this.square.toList(), LatLng.class.getClassLoader()); // not written to parcel, yet

@@ -4,6 +4,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import aau.sw7.exhib.BoothItem;
+
 /**
  * Created by Jacob on 08-11-13.
  */
@@ -11,7 +13,7 @@ public class Node {
     private long id;
     private LatLng position;
     private ArrayList<Edge> edges;
-    private long boothID; //TODO implement
+    private BoothItem booth; //TODO implement Booth relation, if needed.
     private boolean visited = false; //only used for djiktras
 
     /***
