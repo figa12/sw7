@@ -34,8 +34,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     public void onMapReady(GoogleMap map) {
         this.mapController = new MapController(map);
         this.mapController.initialize();
-        this.mapController.drawBooths(this.boothItems);
-        this.mapController.drawGraph(this.graph);
+
+        if(this.boothItems != null && this.graph != null) {
+            this.mapController.drawBooths(this.boothItems);
+            this.mapController.drawGraph(this.graph);
+        }
     }
 
     public static final String BOOTH_ITEMS = "boothItems";
@@ -185,12 +188,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.userId = 1L;
         }
 
-        if (boothId != 0L) {
-            // Then the initial NFC tag contained a boothId
-            // Open the map and show the booth on the map and open a booth acitivty on top of it
-            this.showBoothOnMap(boothId);
-        }
-
         this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
 
         final ActionBar actionBar = getActionBar();
@@ -225,6 +222,12 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FLOORPLAN)),
                 new BasicNameValuePair("Type", "GetFloorPlan"),
                 new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));
+
+        if (boothId != 0L) {
+            // Then the initial NFC tag contained a boothId
+            // Open the map and show the booth on the map and open a booth acitivty on top of it
+            this.showBoothOnMap(boothId);
+        }
     }
 
     public boolean getLock() {
@@ -283,6 +286,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.feedFragment = null;
             this.floorFragment = null;
             this.scheduleFragment = null;
+
+            for (int i = 0; i < this.getCount(); i++) {
+                this.destroyItem(TabActivity.this.viewPager, i, this.getItem(i));
+            }
         }
 
         @Override
