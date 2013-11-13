@@ -136,7 +136,6 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         TabActivity tabActivity = null;
         FeedLinearLayout feedLinearLayout = null;
         CategoriesActivity categoriesActivity = null;
-        ICategoriesReceiver categoriesReceiver = null;
 
         // determine the origin of the context and cast it appropriately
         if (this.context instanceof TabActivity) {
@@ -150,15 +149,11 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             return; // abort
         }
 
-        if(this.context instanceof ICategoriesReceiver) {
-            categoriesReceiver = (ICategoriesReceiver) this.context;
-        }
-
         try {
             switch (requestCode) {
                 // Initial call to populate feed list, is only called in the start of the program
                 case ServerSyncService.GET_FEEDS_REQUEST:
-                    if (feedLinearLayout == null) {
+                    if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
                         break;
                     }
 
@@ -167,7 +162,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
 
                 case ServerSyncService.GET_NEW_FEEDS_REQUEST:
-                    if (feedLinearLayout == null) {
+                    if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
                         break;
                     }
 
@@ -178,6 +173,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
                     int result = this.readNumberOfNewFeeds(reader);
 
+                    if(tabActivity.getFeedFragment() == null) {
+                        break;
+                    }
                     if (result != 0) {
                         tabActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
 
@@ -188,9 +186,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
 
                 case ServerSyncService.GET_MORE_FEEDS_REQUEST:
-                    if (feedLinearLayout == null) {
+                    if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
                         break;
                     }
+
                     ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
 
                     if (feedItems.size() > 0) {
@@ -204,15 +203,22 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     break;
 
                 case ServerSyncService.GET_SCHEDULE:
+                    if (tabActivity.getScheduleFragment() == null) {
+                        break;
+                    }
+
                     tabActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
                     break;
 
                 case ServerSyncService.GET_EXHIBITION_INFO:
+                    if (tabActivity.getExhibitionInfoFragment() == null) {
+                        break;
+                    }
                     this.readExhibitionInformation(reader, tabActivity);
                     break;
 
                 case ServerSyncService.GET_CATEGORIES:
-                    categoriesReceiver.setCategories(this.readCategories(reader));
+                    categoriesActivity.setCategories(this.readCategories(reader));
                     break;
 
                 case ServerSyncService.CREATE_USER:
@@ -224,6 +230,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     categoriesActivity.onServerBoothResponse();
                     break;
                 case ServerSyncService.GET_FLOORPLAN:
+                    if (tabActivity.getFloorFragment() == null) {
+                        break;
+                    }
                     this.readFloorPlan(reader, tabActivity);
                     break;
             }

@@ -287,9 +287,9 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.floorFragment = null;
             this.scheduleFragment = null;
 
-            for (int i = 0; i < this.getCount(); i++) {
-                this.destroyItem(TabActivity.this.viewPager, i, this.getItem(i));
-            }
+            /*for (int i = 0; i < this.getCount(); i++) {
+                this.destroyItem(TabActivity.this.viewPager, i, this.getItem(i)); // attempt to delete memory leakers
+            }*/
         }
 
         @Override

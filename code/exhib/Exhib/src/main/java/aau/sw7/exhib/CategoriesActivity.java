@@ -22,7 +22,7 @@ import NfcForeground.NfcForegroundActivity;
 /**
  * Created by jerian on 23-10-13.
  */
-public class CategoriesActivity extends NfcForegroundActivity implements ICategoriesReceiver {
+public class CategoriesActivity extends NfcForegroundActivity {
 
     private AlertDialog backAlertDialog;
 
