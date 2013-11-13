@@ -24,12 +24,16 @@ import map.Graph;
 import map.MapController;
 
 
-public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, ICategoriesReceiver, FloorFragment.OnFloorFragmentListener {
+public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
     private MapController mapController;
+    private Graph graph;
+
     @Override
     public void onMapReady(GoogleMap map) {
         this.mapController = new MapController(map);
         this.mapController.initialize();
+        this.mapController.drawBooths(this.boothItems);
+        this.mapController.drawGraph(this.graph);
     }
 
     public static final String BOOTH_ITEMS = "boothItems";
@@ -144,7 +148,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             // getInt returns 0 if there isn't any mapping to them
             this.exhibId = extras.getLong(MainActivity.EXHIB_ID);
             this.userId = extras.getLong(MainActivity.USER_ID);
-            this.boothItems = (ArrayList<BoothItem>) extras.getSerializable(TabActivity.BOOTH_ITEMS);
             boothId = extras.getLong(MainActivity.BOOTH_ID);
         } else {
             this.exhibId = 1L;
@@ -189,11 +192,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                             .setText(appSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
-        //TODO uncomment when Figa has implemented this on the sever.
-        /*new ServerSyncService(this).execute(
+
+        new ServerSyncService(this).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FLOORPLAN)),
                 new BasicNameValuePair("Type", "GetFloorPlan"),
-                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));*/
+                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));
     }
 
     public boolean getLock() {
@@ -221,17 +224,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     }
 
     public void setFloorPlan(Graph graph, ArrayList<BoothItem> boothItems){
-        //TODO implement!!
+        this.graph = graph;
+        this.boothItems = boothItems;
     }
 
-    @Override
-    public void setCategories(ArrayList<Category> categories) {
-        this.boothItems = new ArrayList<BoothItem>();
 
-        for (Category category : categories) {
-            this.boothItems.addAll(category.getBoothItems());
-        }
-    }
 
 
     /**

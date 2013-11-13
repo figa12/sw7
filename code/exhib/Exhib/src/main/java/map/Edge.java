@@ -13,6 +13,7 @@ public class Edge {
         this.from = from;
         this.to = to;
 
+        //Add the reference to each node.
         this.from.addEdge(this);
         this.to.addEdge(this);
     }
