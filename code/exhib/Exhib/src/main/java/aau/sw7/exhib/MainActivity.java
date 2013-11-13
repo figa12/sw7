@@ -37,7 +37,7 @@ public class MainActivity extends NfcForegroundActivity {
     public static final String USER_ID = "userId";
 
     private boolean waitingServerResponse = false;
-    private long currentBoothId = 0L;
+    private long currentBoothId = 0L; // Called current because it consists of the last scanned booth id
 
     @SuppressWarnings("ConstantConditions")
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,11 +155,9 @@ public class MainActivity extends NfcForegroundActivity {
         Bundle bundle = new Bundle();
         bundle.putLong(MainActivity.EXHIB_ID, exhibId);
         bundle.putLong(MainActivity.USER_ID, userId);
-        bundle.putLong(MainActivity.BOOTH_ID, this.currentBoothId);
+        bundle.putLong(MainActivity.BOOTH_ID, this.currentBoothId); // save the booth id in bundle
 
-        this.currentBoothId = 0L;
-
-        bundle.putSerializable(TabActivity.BOOTH_ITEMS, extras.getSerializable(TabActivity.BOOTH_ITEMS));//this is not silly, this saves server load
+        this.currentBoothId = 0L; // then overwrite the value
 
         Intent intent = new Intent(this, TabActivity.class);
         intent.putExtras(bundle);

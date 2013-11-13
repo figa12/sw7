@@ -22,7 +22,7 @@ import NfcForeground.NfcForegroundActivity;
 /**
  * Created by jerian on 23-10-13.
  */
-public class CategoriesActivity extends NfcForegroundActivity implements ICategoriesReceiver {
+public class CategoriesActivity extends NfcForegroundActivity {
 
     private AlertDialog backAlertDialog;
 
@@ -157,7 +157,6 @@ public class CategoriesActivity extends NfcForegroundActivity implements ICatego
         Intent result = new Intent();
         result.putExtra(MainActivity.USER_ID, this.userId);
         result.putExtra(MainActivity.EXHIB_ID, this.exhibId);
-        result.putExtra(TabActivity.BOOTH_ITEMS, this.getAllBoothItems());
 
         super.setResult(Activity.RESULT_OK, result);
         super.finish();
