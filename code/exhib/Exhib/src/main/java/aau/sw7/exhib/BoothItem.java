@@ -19,13 +19,13 @@ import map.Square;
  */
 public class BoothItem implements Parcelable {
 
-    private int boothId;
+    private long boothId;
     private String boothName;
     private String description;
     private String companyLogo;
     private boolean subscribed;
     private Square square;
-    private ArrayList<Node> boothWaypoints;
+    private ArrayList<Node> boothEntryNodes;
 
     private Category parentCategory; // is set in makeView()
 
@@ -38,15 +38,19 @@ public class BoothItem implements Parcelable {
      * @param description
      * @param companyLogo
      * @param subscribed
-     * @param square
      */
-    public BoothItem(int boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square) {
+    public BoothItem(long boothId, String boothName, String description, String companyLogo, boolean subscribed) {
         this.boothId = boothId;
         this.boothName = boothName;
         this.description = description;
         this.companyLogo = companyLogo;
         this.subscribed = subscribed;
+    }
+
+    public BoothItem(long boothId, String boothName, String description, String companyLogo, boolean subscribed, Square square, ArrayList<Node> boothEntryNodes) {
+        this(boothId, boothName, description, companyLogo, subscribed);
         this.square = square;
+        this.boothEntryNodes = boothEntryNodes;
     }
 
     public Category getParentCategory() {
@@ -73,7 +77,7 @@ public class BoothItem implements Parcelable {
         return this.description;
     }
 
-    public int getBoothId() {
+    public long getBoothId() {
         return this.boothId;
     }
 
@@ -86,7 +90,7 @@ public class BoothItem implements Parcelable {
     }
 
     public ArrayList<LatLng> getSquareBounds(){
-        return this.square.getSqaureBounds();
+        return this.square.getSquareBounds();
     }
 
     public Square getSquare() {
@@ -114,7 +118,7 @@ public class BoothItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(this.boothId);
+        out.writeLong(this.boothId);
         out.writeString(this.boothName);
         out.writeString(this.description);
         //out.writeList(this.square.toList()); // toList() gives exception, maybe list can't contain null
@@ -135,7 +139,7 @@ public class BoothItem implements Parcelable {
     };
 
     private BoothItem(Parcel in) {
-        this.boothId = in.readInt();
+        this.boothId = in.readLong();
         this.boothName = in.readString();
         this.description = in.readString();
         //in.readList(this.square.toList(), LatLng.class.getClassLoader()); // not written to parcel, yet

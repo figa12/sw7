@@ -29,7 +29,7 @@ public class MapController {
     private List<Polygon> polygonList;
     private List<Polyline> polylineList;
 
-    public MapController(GoogleMap map ) {
+    public MapController(GoogleMap map) {
         this.googleMap = map;
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
         TileOverlayOptions tileOverlayOptions = new TileOverlayOptions();
@@ -112,7 +112,7 @@ public class MapController {
                 poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
                 poly.add(poly.indexOf(edge.getTo())+1,edge.getFrom());
             }
-            else if(poly.indexOf(edge.getTo()) != -1){
+            else if(poly.indexOf(edge.getTo()) != -1){ //TODO is this needed?
                 poly.add(poly.indexOf(edge.getTo())+1,edge.getFrom());
                 poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
             }
@@ -128,6 +128,9 @@ public class MapController {
         }
 
         drawPolyline(polyLine,5, Color.BLUE,2);
+        for(Node n : graph.getNodes()){
+            drawMarker(n.getPosition(), "" + n.getID());
+        }
 
     }
 
@@ -144,21 +147,24 @@ public class MapController {
      * initialize the map...
      */
     public void initialize(){
-        Node hest1 = new Node(new LatLng(15,15), "hest1");
-        Node hest2 = new Node(new LatLng(25,15), "hest2");
-        Node hest3 = new Node(new LatLng(45,20), "hest3");
-        Node hest4 = new Node(new LatLng(-10,5), "hest4");
-        Node hest5 = new Node(new LatLng(-20,-5), "hest5");
-        ArrayList<Node> PolyNodes = new ArrayList<Node>(Arrays.asList(hest1, hest2, hest1, hest5, hest4, hest2, hest3));
+
+        Node hest1 = new Node(new LatLng(15,15), 1L);
+        Node hest2 = new Node(new LatLng(25,15), 2L);
+        Node hest3 = new Node(new LatLng(45,20), 3L);
+        Node hest4 = new Node(new LatLng(-10,5), 4L);
+        Node hest5 = new Node(new LatLng(-20,-5), 5L);
+        Node hest6 = new Node(new LatLng(40, -10), 6L);
+        Node hest7 = new Node(new LatLng(0, -10), 7L);
+        ArrayList<Node> PolyNodes = new ArrayList<Node>(Arrays.asList(hest1, hest2, hest1, hest7, hest1, hest5, hest6, hest3, hest7, hest6));
 
         Graph graph = new Graph(PolyNodes);
 
         drawGraph(graph);
-        this.drawMarker(new LatLng(0, 0), "0,0", "snippet");
-        this.drawPolyline(new ArrayList<LatLng>(Arrays.asList(new LatLng(0, 0), new LatLng(0, 10), new LatLng(10, 10), new LatLng(10, 0))), 5, Color.RED, 2);
+        //this.drawMarker(new LatLng(0, 0), "0,0", "snippet");
+        //this.drawPolyline(new ArrayList<LatLng>(Arrays.asList(new LatLng(0, 0), new LatLng(0, 10), new LatLng(10, 10), new LatLng(10, 0))), 5, Color.RED, 2);
         this.moveCamera(new LatLng(0,0), 3);
         //this.drawPolygon(new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(20,25), new LatLng(25,25),new LatLng(25,20)) ), 5, Color.BLACK, Color.GREEN, 2);
-        BoothItem booth = new BoothItem(12, "Tha Shit Booth", "We got it all you name it", "don't know yet", false, new Square(new LatLng(20,25), new LatLng(25,20)));
+        BoothItem booth = new BoothItem(12, "Tha Awesome Booth", "We got it all, just name it, we got it", "don't know yet", false, new Square(new LatLng(20,25), new LatLng(25,20)), null);
         this.drawBooth(booth);
     }
 
