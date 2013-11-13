@@ -1,26 +1,41 @@
 \chapter{Design}
 This chapter describes the design of our application, ... \todo{Other things than the application?}
 
-\section{Application Design}\label{sec:appdesign}
-In \chapref{chap:intro} we explained the idea of our application and what the application should be able to do. Based on this we need the following Android activities\todo{activities/fragments /windows? Har vi et afsnit der forklarer Android komponenter? Nødvendigt?}:
-
+The reader is expected to be familiar with standard Android components. Some components are briefly explained here:
 \begin{description}
-\item[Exhibitions list] Is the start-up activity which shows a list of exhibitions. Here you can see information about exhibitions and choose to open the exhibitions location in a map.\todo{Skal vi lige have fundet ud af om den faktisk skal gøre det}
-\item[Exhibition information] Shows information about an exhibition such as name, description, and logo.
-\item[Exhibition map] Shows the map of the exhibition. The map contains markers for each booth which the user can click to access information about the booth.
-\item[Booth information] Shows information about a booth, such as name, description, and subscribe button.
-\item[Exhibition schedule] Is a schedule for the exhibition which shows major events happening at the exhibition.
-\item[Exhibition feeds] Is a list of news feeds based on the users subscriptions.
-\item[Feed item] Shows the feed item when it is clicked from the feed list.
-\item[Category list] Is a list of categories, e.g. hardware, software.
-\end{description}\todo{Change to actual activity names when all are created.}
+\item[Activity] An activity is a single focused thing that the user can do. You can also say that it is a window which is either full-screen or floating. \citep{activity}
+\item[Fragment] A fragment inherits from activity and thus has its own lifecycle. Fragments are nested in activities, and can be used to build a multi-pane user interface. \citep{fragment}
+\end{description}
+\todo{Maybe add LinearLayout to the the list}
+
+\section{Application Design}\label{sec:appdesign}
+
+Before designing a prototype of our application we looked at a few other applications to get inspiration for our design.
+
+\begin{figure}[H]
+\begin{minipage}[b]{0.5\columnwidth}
+\centering
+\includegraphics[width=0.7\columnwidth]{img/screenshots/twitter.png}
+\caption{Skype\label{fig:skype}}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.5\columnwidth}
+\centering
+\includegraphics[width=0.7\columnwidth]{img/screenshots/skype.png}
+\caption{Twitter\label{fig:twitter}}
+\end{minipage}
+\end{figure}
+
+We decided that using tabs, like Skype in  \autoref{fig:skype}, was a good way for the user to easily see multiple pages of information by just swiping to the side.
+
+We recognised that we were going to create a few different lists for the application e.g. a list of feeds and a schedule, for this we looked at Twitter \autoref{fig:twitter} and tried to capture their simplicity of tweets in our list items.
 
 \subsection*{Story}
-Julie opens our application \todo{insert actual app name}. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the map button which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, map of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the map she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
+Julie opens our application Exhib. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the map button which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, map of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the map she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
 
 \section{Prototype Design}
 
-Here we show our first revision of a prototype for our application. We created this together to reflect, visualise, and agree on the design. The prototype varies a little from the design discussion in \secref{sec:appdesign} but it is still the general idea.
+Here we show our first revision of a prototype for our application. We created this together to reflect, visualise, and agree on the design.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -92,28 +107,29 @@ When you are successfully registered at the exhibition, then you get to the core
 \end{minipage}
 \end{figure}
 
-\autoref{fig:map} shows the tab displaying the map of the exhibition. Below the map there is a lock button, which locks the user to navigating the map e.g. swiping left and right on the map. If it is not locked then swiping right will change to the schedule tab. Inside the map there should be pinned booths which can be clicked on. When clicking the booths the activity shown in \autoref{fig:booth} is opened. The booth activity shows its attached icon, a name, and information concerning the booth.\todo{Booth prototype lacks subscribe button}
+\autoref{fig:map} shows the tab displaying the map of the exhibition. Below the map there is a lock button, which locks the user to navigating the map e.g. swiping left and right on the map. If it is not locked then swiping right will change to the schedule tab. Inside the map there should be pinned booths which can be clicked on. When clicking the booths the activity shown in \autoref{fig:booth} is opened. The booth activity shows its attached icon, a name, and information concerning the booth.
 
-\pagebreak
 \section{Final Application Design}
 \todo{Pictures and description of the finished application}
 
+The final application consists of the following activities and fragments.
+
+\begin{description}
+\item[MainActivity] This is the startup activity. This activity waits for the user to scan an \ac{nfc} tag and redirect the user appropriately.
+\item[TabActivity] The core of the application, contains all the tabs i.e. fragments.
+\item[ExhibitionInformationFragment] Shows information about an exhibition such as name, description, and logo.
+\item[FloorplanFragment] Shows the map of the exhibition. The map contains markers for each booth which the user can click to access information about the booth.
+\item[ScheduleFragment] Is a schedule for the exhibition which shows major events happening at the exhibition.
+\item[FeedFragment] Is a list of news feeds based on the users subscriptions.
+\item[FeedActivity] Shows the feed item when it is clicked from the feed list.
+\item[CategoriesActivity] Is a list of categories, e.g. hardware, software.
+\end{description}
+
+\autoref{fig:flowchart} show the application flow between these different activities. Note that the \textit{TabActivity} consists only of tabs, each tab is defined in a fragment.
+
 \begin{figure}[H]
-\begin{minipage}[b]{0.5\columnwidth}
 \centering
-\includegraphics[width=0.7\columnwidth]{img/screenshots/twitter.png}
-\caption{Skype\label{fig:skype}}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.5\columnwidth}
-\centering
-\includegraphics[width=0.7\columnwidth]{img/screenshots/skype.png}
-\caption{Twitter\label{fig:twitter}}
-\end{minipage}
+\includegraphics[width=\columnwidth]{img/appFlowchart.pdf}
+\caption{Application actvity flow\label{fig:flowchart}}
 \end{figure}
-
-Before designing our our application we looked at a few other applications to get inspiration for our design.
-
-We decided that using tabs, like Skype in  \autoref{fig:skype}, was a good way for the user to easily see multiple activities by just swiping to the side.
-
-We recognised that we were going to create a few different lists for the application, for this we looked at Twitter \autoref{fig:twitter} and tried to capture their simplicity of tweets in our list items.\todo{Måske nævne at vi tog udgangspunkt i Twitter for feeds.}
+\todo{Figa crop img/appFlowchart.pdf tak}
