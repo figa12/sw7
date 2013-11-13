@@ -101,7 +101,9 @@ public class MapController {
         //add shape
         drawPolygon(boothItem.getSquareBounds(), 5, Color.DKGRAY, Color.GREEN, 2);
         //add add marker with
+        if(!boothItem.getSquareCenter().equals(new LatLng(0.0,0.0))){
         drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
+        }
     }
 
     public void drawGraph(Graph graph){
@@ -126,12 +128,13 @@ public class MapController {
         for(Node n : poly){
             polyLine.add(n.getPosition());
         }
-
         drawPolyline(polyLine,5, Color.BLUE,2);
-        for(Node n : graph.getNodes()){
-            drawMarker(n.getPosition(), "" + n.getID());
-        }
 
+        for(Node n : graph.getNodes()){
+            if(!n.getPosition().equals(new LatLng(0.0,0.0))){
+                drawMarker(n.getPosition(), "" + n.getID());
+            }
+        }
     }
 
     /***
@@ -147,25 +150,7 @@ public class MapController {
      * initialize the map...
      */
     public void initialize(){
-
-        Node hest1 = new Node(new LatLng(15,15), 1L);
-        Node hest2 = new Node(new LatLng(25,15), 2L);
-        Node hest3 = new Node(new LatLng(45,20), 3L);
-        Node hest4 = new Node(new LatLng(-10,5), 4L);
-        Node hest5 = new Node(new LatLng(-20,-5), 5L);
-        Node hest6 = new Node(new LatLng(40, -10), 6L);
-        Node hest7 = new Node(new LatLng(0, -10), 7L);
-        ArrayList<Node> PolyNodes = new ArrayList<Node>(Arrays.asList(hest1, hest2, hest1, hest7, hest1, hest5, hest6, hest3, hest7, hest6));
-
-        Graph graph = new Graph(PolyNodes);
-
-        drawGraph(graph);
-        //this.drawMarker(new LatLng(0, 0), "0,0", "snippet");
-        //this.drawPolyline(new ArrayList<LatLng>(Arrays.asList(new LatLng(0, 0), new LatLng(0, 10), new LatLng(10, 10), new LatLng(10, 0))), 5, Color.RED, 2);
         this.moveCamera(new LatLng(0,0), 3);
-        //this.drawPolygon(new ArrayList<LatLng>(Arrays.asList(new LatLng(20,20), new LatLng(20,25), new LatLng(25,25),new LatLng(25,20)) ), 5, Color.BLACK, Color.GREEN, 2);
-        BoothItem booth = new BoothItem(12, "Tha Awesome Booth", "We got it all, just name it, we got it", "don't know yet", false, new Square(new LatLng(20,25), new LatLng(25,20)), null);
-        this.drawBooth(booth);
     }
 
 }

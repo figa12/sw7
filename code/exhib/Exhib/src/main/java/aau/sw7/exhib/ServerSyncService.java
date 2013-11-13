@@ -224,6 +224,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     categoriesActivity.onServerBoothResponse();
                     break;
                 case ServerSyncService.GET_FLOORPLAN:
+                    this.readFloorPlan(reader, tabActivity);
                     break;
             }
         } finally {
@@ -303,7 +304,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             } else if (name.equals("edges")) {
                 edges = this.readEdges(reader, nodes);
             } else if (name.equals("booths")) {
-                booths = this.readBoothItems(reader);
+                booths = this.readBoothItems(reader, nodes);
             } else {
                 reader.skipValue();
             }
@@ -339,9 +340,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 reader.skipValue();
             } else if (name.equals("id")) {
                 nodeID = reader.nextLong();
-            } else if (name.equals("positionX")){
+            } else if (name.equals("x")){
                 positionX = reader.nextDouble();
-            } else if(name.equals("positionY")){
+            } else if(name.equals("y")){
                 positionY = reader.nextDouble();
             } else {
                 reader.skipValue();
@@ -403,16 +404,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return null;
     }
 
-    private ArrayList<BoothItem> readBoothItems(JsonReader reader)throws IOException{
+    private ArrayList<BoothItem> readBoothItems(JsonReader reader, ArrayList<Node> nodes )throws IOException{
         ArrayList<BoothItem> boothItems = new ArrayList<BoothItem>();
 
         reader.beginArray();
         while (reader.hasNext()) {
-            boothItems.add(this.readBoothItem(reader));
+            boothItems.add(this.readBoothItem(reader, nodes));
         }
         reader.endArray();
 
-        return null;
+        return boothItems;
     }
 
     private void readExhibitionInformation(JsonReader reader, TabActivity tabActivity) throws IOException {
