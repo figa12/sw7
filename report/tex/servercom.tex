@@ -1,4 +1,4 @@
-\chapter{Server communication}
+\chapter{Back-end design}
 This chapter describes the communication between server and client, aswell as the design choices and
 implementation of database. \todo{Bør database være et kapitel for sig selv?}
 
@@ -48,7 +48,7 @@ switch ($_POST['Type']) {
 
 \todo{Nævn de andre cases, måske her?}
 
-\begin{lstlisting}[language=php, caption=getFeeds function]
+\begin{lstlisting}[language=php, label=lst:getFeeds, caption=getFeeds function]
 function getFeeds($con, $userId, $limit) {
 
     global $requestCode;
@@ -79,19 +79,48 @@ function getFeeds($con, $userId, $limit) {
     echo $requestCode;
     echo json_encode($json);$
 }
-\end{lstlisting}
+\end{lstlisting} \todo{SLET DOLLAR TEGN FRA SIDSTE LINJE}
 
 \begin{description}
-\item \textbf{Line 1: }The function takes three parameters, the mysqli object which has a connection
+\item[Line 1] The function takes three parameters, the mysqli object which has a connection
   established to the database, the user id from the client, and the limit which is also given by the client.
-\item \textbf{Line 3: }Since the \textit{RequestCode} is always a required parameter the variable is global.
-\item \textbf{Lines 6-7: }Escape special characters to avoid malicious SQL injections.
-\item \textbf{Lines 9-20: }Create the SQL query with the user id and the limit paramter.
-\item \textbf{Line 22: }Execute the query.
-\item \textbf{Lines 24-29: }Get the results from the database and push them to the json array. When
+\item[Line 3] Since the \textit{RequestCode} is always a required parameter the variable is global.
+\item[Lines 6-7] Escape special characters to avoid malicious SQL injections.
+\item[Lines 9-20] Create the SQL query with the user id and the limit paramter.
+\item[Line 22] Execute the query.
+\item[Lines 24-29] Get the results from the database and push them to the json array. When
   all of the results have been pushed to the array, the \textit{RequestCode} will be echoed and then
   a json encoded version of the json array.
 \end{description}
+
+As seen on line 29 in \autoref{lst:getFeeds} the result is JSON encoded and then echoed. An example of a result from the \textit{GetFeeds} type request could look like the following:
+
+\begin{lstlisting}[language=json, label=lst:jsonResult, caption=Example result from a request with type: \textit{GetFeeds}]
+1[
+    {
+        "id": "18",
+        "boothid": "2",
+        "header": "asdf",
+        "description": "Super.",
+        "feedtime": "2013-10-02 12:41:02",
+        "userid": "1",
+        "logo": "microsoftlogo.png",
+        "name": "Microsoft XBOX"
+    },
+    {
+        "id": "17",
+        "boothid": "2",
+        "header": "short header",
+        "description": "short description.",
+        "feedtime": "2013-10-02 11:43:28",
+        "userid": "1",
+        "logo": "microsoftlogo.png",
+        "name": "Microsoft XBOX"
+    }
+]
+\end{lstlisting}
+
+Note the number before the array in \autoref{lst:jsonResult}, this is the request code.
 
 All of the requests to the server follows this principle. A request is made, the query is run and data is gathered, and lastly the result is returned as a JSON object that the client reads.\\\\
 Our types of requests are as follows:

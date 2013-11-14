@@ -17,6 +17,8 @@ import com.google.android.gms.maps.GoogleMap;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
+import org.ndeftools.externaltype.AndroidApplicationRecord;
+import org.ndeftools.wellknown.TextRecord;
 
 import java.util.ArrayList;
 
@@ -34,10 +36,13 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     public void onMapReady(GoogleMap map) {
         this.mapController = new MapController(map);
         this.mapController.initialize();
-        this.mapController.drawBooths(this.boothItems);
-        this.mapController.drawGraph(this.graph);
-        ArrayList<Node> path = this.graph.shortestRoute(5,6);
-        this.mapController.drawPolyline(path, 5, Color.RED, 3);
+
+        if(this.boothItems != null && this.graph != null) {
+            this.mapController.drawBooths(this.boothItems);
+            this.mapController.drawGraph(this.graph);
+            ArrayList<Node> path = this.graph.shortestRoute(5,6);
+            this.mapController.drawPolyline(path, 5, Color.RED, 3);
+        }       
     }
 
     public static final String BOOTH_ITEMS = "boothItems";
@@ -53,7 +58,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        this.viewPager.setCurrentItem(tab.getPosition());
+        this.viewPager.setCurrentItem(tab.getPosition(), true);
     }
 
     @Override
@@ -68,7 +73,36 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     @Override
     protected void onNfcScanned(ArrayList<Record> records) {
-        //TODO if a new exhibition id is scanned, then open the app again with the package
+        //TODO if a new exhibition id is scanned, then open the app again with the package?
+
+        long exhibId = 0L;
+        long boothId = 0L;
+
+        for (int i = 0; i < records.size(); i++) {
+
+            if (records.get(i) instanceof AndroidApplicationRecord) {
+                AndroidApplicationRecord appRecord = (AndroidApplicationRecord) records.get(i);
+            } else if (records.get(i) instanceof TextRecord) {
+                TextRecord textRecord = (TextRecord) records.get(i);
+
+                if (i == 0) {
+                    exhibId = Long.valueOf(textRecord.getText());
+                } else if (i == 1 && records.size() > 2) {
+                    boothId = Long.valueOf(textRecord.getText());
+                }
+            }
+        }
+
+        this.showBoothOnMap(boothId);
+    }
+
+    private void showBoothOnMap(long boothId) {
+        // index 3 should be the map, check if index 3 exists
+        if(boothId != 0L && this.appSectionsPagerAdapter.getCount() > 3) {
+            this.viewPager.setCurrentItem(3, true);
+
+            //TODO show booth on map
+        }
     }
 
     public long getExhibId() {
@@ -158,15 +192,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.userId = 1L;
         }
 
-        if (boothId != 0L) {
-            // Then the initial NFC tag contained a boothId
-            // Open the map and show the booth on the map and open a booth acitivty on top of it
-            // consider not showing map, and only opening booth acivity
-
-            // send booth items to the FloorFragment
-            // if not present, getBoothItems in the FloorFragment
-        }
-
         this.appSectionsPagerAdapter = new AppSectionsPagerAdapter(super.getSupportFragmentManager());
 
         final ActionBar actionBar = getActionBar();
@@ -201,6 +226,12 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_FLOORPLAN)),
                 new BasicNameValuePair("Type", "GetFloorPlan"),
                 new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));
+
+        if (boothId != 0L) {
+            // Then the initial NFC tag contained a boothId
+            // Open the map and show the booth on the map and open a booth acitivty on top of it
+            this.showBoothOnMap(boothId);
+        }
     }
 
     public boolean getLock() {
@@ -221,6 +252,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     public ScheduleFragment getScheduleFragment() {
         return this.appSectionsPagerAdapter.scheduleFragment;
+    }
+
+    public FloorFragment getFloorFragment() {
+        return this.appSectionsPagerAdapter.floorFragment;
     }
 
     public ExhibitionInfoFragment getExhibitionInfoFragment() {
@@ -255,6 +290,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             this.feedFragment = null;
             this.floorFragment = null;
             this.scheduleFragment = null;
+
+            /*for (int i = 0; i < this.getCount(); i++) {
+                this.destroyItem(TabActivity.this.viewPager, i, this.getItem(i)); // attempt to delete memory leakers
+            }*/
         }
 
         @Override
