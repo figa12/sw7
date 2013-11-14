@@ -3,6 +3,8 @@ package map;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Jacob on 08-11-13.
@@ -61,7 +63,7 @@ public class Graph {
         return null;
     }
 
-    public Node getNodeByName(long id){
+    public Node getNodeById(long id){
         for(Node node : this.nodes){
             if(node.getID() == id){
                 return node;
@@ -105,9 +107,85 @@ public class Graph {
         return false;
     }
 
-    public ArrayList<Node> shortestRoute(Node source, Node target){
+    public ArrayList<Node> shortestRoute(int sourceID, int targetID){
+        Node source = this.getNodeById(sourceID);
+        Node target = this.getNodeById(targetID);
+        ArrayList<Node> previous = new ArrayList<Node>();
+        ArrayList<Double> dist = new ArrayList<Double>();
 
+        for (int i = 0; i< this.nodes.size() ;i++){
+            dist.add(Double.MAX_VALUE);
+            previous.add(null);
+            this.nodes.get(i).setVisited(false);
+        }
 
-        return null;
+        dist.set(this.nodes.indexOf(source), 0.0);
+
+        while (areAllNodesVisited(this.nodes) == false){
+            Node u = smallestDistanceNotVisited(this.nodes, dist);
+            int uIndex = this.nodes.indexOf(u);
+            this.nodes.get(uIndex).setVisited(true);
+
+            if(dist.get(uIndex) == Double.MAX_VALUE){
+                break;
+            }
+
+            for (int i = 0; i< u.getAllNeighboursNodes().size(); i++){
+                Node v = u.getAllNeighboursNodes().get(i);
+                int vIndex = this.nodes.indexOf(v);
+                double alt = dist.get(uIndex) + distBetween(u,v);
+                if(alt < dist.get(vIndex)){
+                    dist.set(vIndex, alt);
+                    previous.set(vIndex, u);
+                }
+            }
+        }
+
+        ArrayList<Node> path = makePath(target, previous, this.nodes);
+
+        return path;
+    }
+
+    private ArrayList<Node> makePath(Node target, ArrayList<Node> previous, ArrayList<Node> Q){
+        ArrayList<Node> path = new ArrayList<Node>();
+        Node u = target;
+        while (previous.get(Q.indexOf(u)) != null){
+            path.add(u);
+            u = previous.get(Q.indexOf(u));
+        }
+
+        u = Q.get(Q.indexOf(u));
+        path.add(u);
+        return path;
+    }
+
+    private boolean areAllNodesVisited(ArrayList<Node> Q){
+        boolean visited = true;
+        for(int i = 0; i < Q.size(); i++){
+            if(Q.get(i).isVisited() == false){
+                visited = false;
+                return visited;
+            }
+        }
+        return visited;
+    }
+
+    private Node smallestDistanceNotVisited(ArrayList<Node> Q, ArrayList<Double> dist){
+        double min = Double.MAX_VALUE;
+        for(int i = 0; i < Q.size(); i++){
+            if (Q.get(i).isVisited() == false && min >= dist.get(i)){
+                min = dist.get(i);
+            }
+        }
+        return Q.get(dist.indexOf(min));
+    }
+
+    private double distBetween(Node u, Node v){
+        for (Edge e : u.getEdges()){
+            if (e.getAdjacentNode(u) == v){
+                return e.getWeight();
+            }
+        }
+        return 0.0;
     }
 }

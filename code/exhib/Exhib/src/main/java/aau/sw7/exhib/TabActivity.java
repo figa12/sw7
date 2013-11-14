@@ -3,6 +3,7 @@ package aau.sw7.exhib;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import NfcForeground.NfcForegroundFragment;
 import map.Graph;
 import map.MapController;
+import map.Node;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
@@ -34,6 +36,8 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.mapController.initialize();
         this.mapController.drawBooths(this.boothItems);
         this.mapController.drawGraph(this.graph);
+        ArrayList<Node> path = this.graph.shortestRoute(5,6);
+        this.mapController.drawPolyline(path, 5, Color.RED, 3);
     }
 
     public static final String BOOTH_ITEMS = "boothItems";

@@ -79,6 +79,19 @@ public class MapController {
         //this.polylineList.add(polyline);
     }
 
+    public void drawPolyline(ArrayList<Node> nodes, float strokeWidth, int color, int zIndex){
+        ArrayList<LatLng> polyPoints = new ArrayList<LatLng>();
+        for(Node n : nodes){
+            polyPoints.add(n.getPosition());
+        }
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .addAll(polyPoints)
+                .width(strokeWidth)
+                .color(color)
+                .zIndex(zIndex);
+        Polyline polyline = this.googleMap.addPolyline(polylineOptions);
+    }
+
 
     public void drawPolygon(List<LatLng> latLngs, float strokeWidth, int strokeColor, int fillColor, int zIndex){
         PolygonOptions polygonOptions = new PolygonOptions()
@@ -102,7 +115,7 @@ public class MapController {
         drawPolygon(boothItem.getSquareBounds(), 5, Color.DKGRAY, Color.GREEN, 2);
         //add add marker with
         if(!boothItem.getSquareCenter().equals(new LatLng(0.0,0.0))){
-        drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
+            drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
         }
     }
 
@@ -119,8 +132,8 @@ public class MapController {
                 poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
             }
             else{
-                poly.add(edge.getFrom());
                 poly.add(edge.getTo());
+                poly.add(edge.getFrom());
             }
         }
 

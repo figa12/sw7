@@ -39,6 +39,9 @@ public class Node {
         return this.visited;
     }
 
+    public void setVisited(boolean bool){
+        this.visited = bool;
+    }
     public void addEdge(Edge edge){
         this.edges.add(edge);
     }
