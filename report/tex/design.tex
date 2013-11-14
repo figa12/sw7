@@ -71,7 +71,7 @@ From the start screen you can also open a small menu in the bottom left corner w
 \end{minipage}
 \end{figure}
 
-When you are successfully registered at the exhibition, then you get to the core of the application. Here you can swipe between the different tabs, and also access a specific tab by clicking on it in the top menu. \autoref{fig:exhibition} shows the first tab. This is a simple welcome screen showing the exhibition icon, exhibition name, and an exhibition description.
+When you are successfully registered at the exhibition, then you get to the core of the application. Here you can swipe between the different tabs, and also access a specific tab by clicking on it in the top menu. \autoref{fig:exhibition} shows the first tab, notice the tab bar in the top of the application showing which tab you are viewing. This is a simple welcome screen showing the exhibition icon, exhibition name, and an exhibition description.
 
 \autoref{fig:feedlist} shows the feed list associated with the exhibition. The user receives feeds based on the chosen subscriptions that was submitted with the activity in \autoref{fig:categories}.
 
@@ -110,9 +110,8 @@ When you are successfully registered at the exhibition, then you get to the core
 \autoref{fig:map} shows the tab displaying the map of the exhibition. Below the map there is a lock button, which locks the user to navigating the map e.g. swiping left and right on the map. If it is not locked then swiping right will change to the schedule tab. Inside the map there should be pinned booths which can be clicked on. When clicking the booths the activity shown in \autoref{fig:booth} is opened. The booth activity shows its attached icon, a name, and information concerning the booth.
 
 \section{Final Application Design}
-\todo{Pictures and description of the finished application}
 
-The final application consists of the following activities and fragments.
+The final application consists of the following activities and fragments:
 
 \begin{description}
 \item[MainActivity] This is the startup activity. This activity waits for the user to scan an \ac{nfc} tag and redirect the user appropriately.
@@ -124,6 +123,7 @@ The final application consists of the following activities and fragments.
 \item[FeedActivity] Shows the feed item when it is clicked from the feed list.
 \item[CategoriesActivity] Is a list of categories, e.g. hardware, software.
 \end{description}
+We did not create the \textit{BoothActivity} which is showed in \autoref{fig:booth}, because we realised that we might as well show all the booth information in the marker information window on the map. This is shown later in this section.
 
 \autoref{fig:flowchart} show the application flow between these different activities. Note that the \textit{TabActivity} consists only of tabs, each tab is defined in a fragment.
 
@@ -132,4 +132,4 @@ The final application consists of the following activities and fragments.
 \includegraphics[width=\columnwidth]{img/appFlowchart.pdf}
 \caption{Application actvity flow\label{fig:flowchart}}
 \end{figure}
-\todo{Figa crop img/appFlowchart.pdf tak}
+\todo{Pictures and description of the finished application}
