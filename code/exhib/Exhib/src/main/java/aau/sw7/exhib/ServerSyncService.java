@@ -122,9 +122,6 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         int requestCode = Integer.valueOf(result.substring(0, objectIndex));
         result = result.substring(objectIndex);
 
-        if(requestCode == ServerSyncService.GET_EXHIBITION_INFO)
-            Log.w(TabActivity.class.getSimpleName(), result);
-
         try {
             this.readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")), requestCode);
         } catch (IOException e) {
