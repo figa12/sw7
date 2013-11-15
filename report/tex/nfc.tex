@@ -1,11 +1,11 @@
-\chapter*{Static data storage}
-When a visitor first visits the exhibition hey most likely do not have the application installed on their phones, so it has to be possible for them to easily get the application without having to find it themselves. This can be done using static data storage like \ac{nfc} or QR codes. This also allows us to store additional information, such as an identifier to identify which exhibition the user is at and other information that might be needed. The following section briefly explains \ac{nfc} and QR codes and their use. 
+\chapter{Static data storage}\todo{Better name small/cheap data storage?}
+When a visitor first visits the exhibition he most likely do not have the application installed on their phones, so it has to be possible for them to easily get the application without having to find it themselves. This can be done using static data storage like \ac{nfc} or QR codes. This also allows us to store additional information, such as an identifier to identify which exhibition the user is at and other information that might be needed. The following section briefly explains \ac{nfc} and QR codes and their use. 
 
 \section*{NFC}
 \ac{nfc} is a way to transfer data wirelessly \todo{Er det overhovedet et ord?} between two \ac{nfc} enabled devices. 
 An \ac{nfc} tag is a small data storage unit, which allows you to store small amount of information that can then be transferred to an \ac{nfc} device. 
 
-A standard \ac{nfc} tag can around 41 characters, whereas the NTAG203 tags can store around 132 characters\citep{nfccap}. Most of the tags store data in a format called \ac{ndef}, this defines a message format used when transfering information between a device and a tag, or two devices. An \ac{ndef} message consists of one or more of so-called \ac{ndef} records. Figure \autoref{fig:ndef} shows general view of an \ac{ndef} message.
+A standard \ac{nfc} tag can contain around 41 characters, whereas the NTAG203 tags can store around 132 characters\citep{nfccap}. Most of the tags store data in a format called \ac{ndef}, this defines a message format used when transfering information between a device and a tag, or two devices. An \ac{ndef} message consists of one or more of so-called \ac{ndef} records. \autoref{fig:ndef} shows general view of an \ac{ndef} message.
 
 \begin{figure}[H]
 \centering
@@ -39,11 +39,11 @@ In this example d1 is the binary code \textit{11010001}, each of the numbers rep
 
 \begin{itemize}
 \item MB means "message begin". The flag is set to 1, which means that this is the first record in the \ac{ndef} message.
-\item ME means "message end". The flag is set to 1, which means means that this is the last record in the \ac{ndef} message. If this is false, then the application knows there are more records coming.
+\item ME means "message end". The flag is set to 1, which means that this is the last record in the \ac{ndef} message. If this is false, then the application knows there are more records coming.
 \item CF means "chunked message", An application can be split into multiple chunks and carried in different \ac{ndef} records. If this is the case, each record has the CF flag set to 1 except for the last one which is set to 0.
 \item SR means "short record", if the flag is set to 1 it means that the payload length is a single octet. 
-\item IL means "identification length", if the flag is set then the $ID\_LENGTH$ field is present in the header as a single octet. 
-\item The TNF value indicates the structure of the TYPE field. The format follows the RTD type name which has been defined in the NFC Forum RTD specification\citep{ndef}
+\item IL means "identification length", if the flag is set then the $ID\_LENGTH$ field is present in the header as a single octet.\todo{Hmm?} 
+\item The TNF value indicates the structure of the TYPE field. The format follows the RTD type name which has been defined in the NFC Forum RTD specification\citep{ndef}\todo{Hmm?}
 \end{itemize}
 
 When a record like in the example is scanned, the website is launched inside the mobile browser. 
@@ -54,9 +54,7 @@ A textrecord can contain letters, symbols and numbers. If a record contains a pa
 
 \section*{QR code}
 
-A QR code is sort of like a barcode that is seen on groceries at the supermarket, except a normal barcode is only capable of storing 20 digits, where as a QR code can store up to 7,089 characters\citep{qrcode}.
-
-Even if a QR code is dirty or damaged, the data is possible to restore due to its error correction capability. However there are limits to how damaged, up to 30\% of the information can be restored. It is also possible to scan a QR code from any direction  because of the patterns located at the three corners of the code, as seen on \autoref{fig:symbolImage} 
+A QR code is sort of like a barcode that is seen on groceries at the supermarket, except a normal barcode is only capable of storing 20 digits, where as a QR code can store up to 7,089 characters. Even if a QR code is dirty or damaged, the data is possible to restore due to its error correction capability. However there are limits to how damaged, up to 30\% of the information can be restored. It is also possible to scan a QR code from any direction  because of the patterns located at the three corners of the code, as seen on \autoref{fig:symbolImage}. \citep{qrcode}
 
 \begin{figure}[H]
 \centering
@@ -74,14 +72,12 @@ The message data on the code is placed in a zigzag pattern as seen on \autoref{f
 \label{fig:qrplacement}
 \end{figure}
 
-The encoding mode consists of four bits, indicating what encoding mode is used and to convey other information. 
-
-Some of the indicators are:
+The encoding mode consists of four bits, indicating what encoding mode is used and to convey other information. Some of the indicators are:
 
 \begin{description}
 \item 0001 - Numeric encoding (10 bits per 3 digits)
-\item 0010 - Alphanumeic encoding (11 bits per 2) charaters)
-\item 0100 - Byte encoding (8 bits per character
+\item 0010 - Alphanumeic encoding (11 bits per 2 charaters)
+\item 0100 - Byte encoding (8 bits per character)
 \item 0000 - End of message
 \end{description}
 
