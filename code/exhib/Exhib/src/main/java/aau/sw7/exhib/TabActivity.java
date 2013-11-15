@@ -40,8 +40,8 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         if(this.boothItems != null && this.graph != null) {
             this.mapController.drawBooths(this.boothItems);
             this.mapController.drawGraph(this.graph);
-            ArrayList<Node> path = this.graph.shortestRoute(5,6);
-            this.mapController.drawPolyline(path, 5, Color.RED, 3);
+            //ArrayList<Node> path = this.graph.shortestRoute(5,6);
+            //this.mapController.drawPolyline(path, 5, Color.RED, 3);
         }       
     }
 
@@ -96,13 +96,27 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.showBoothOnMap(boothId);
     }
 
+    private long pendingBoothId = 0;
     private void showBoothOnMap(long boothId) {
         // index 3 should be the map, check if index 3 exists
         if(boothId != 0L && this.appSectionsPagerAdapter.getCount() > 3) {
             this.viewPager.setCurrentItem(3, true);
-
-            //TODO show booth on map
+            if(boothItems == null && graph == null){
+                pendingBoothId = boothId;
+            }
+            else{
+                this.mapController.animateCameraToBooth(findBoothById(this.boothItems, boothId));
+            }
         }
+    }
+
+    private BoothItem findBoothById(ArrayList<BoothItem> boothItems, long boothId){
+        for(BoothItem b : boothItems){
+            if(b.getBoothId() == boothId){
+                return b;
+            }
+        }
+        return null;
     }
 
     public long getExhibId() {
@@ -265,6 +279,15 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     public void setFloorPlan(Graph graph, ArrayList<BoothItem> boothItems){
         this.graph = graph;
         this.boothItems = boothItems;
+        if(this.getFloorFragment() != null){
+            this.mapController.drawBooths(this.boothItems);
+            this.mapController.drawGraph(this.graph);
+        }
+        if(pendingBoothId != 0L){
+            this.mapController.animateCameraToBooth(this.findBoothById(boothItems, pendingBoothId));
+            pendingBoothId = 0;
+        }
+
     }
 
 

@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import aau.sw7.exhib.BoothItem;
@@ -155,15 +154,29 @@ public class MapController {
      * @param latLng
      * @param zoom
      */
-    public void moveCamera(LatLng latLng, int zoom){
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    public void animateCamera(LatLng latLng, int zoom){
+        this.googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 2000, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                googleMap.getUiSettings().setScrollGesturesEnabled(true);
+            }
+
+            @Override
+            public void onCancel() {
+                googleMap.getUiSettings().setAllGesturesEnabled(true);
+            }
+        });
+    }
+
+    public void animateCameraToBooth(BoothItem boothItem){
+        animateCamera(boothItem.getSquareCenter(),5);
     }
 
     /***
      * initialize the map...
      */
     public void initialize(){
-        this.moveCamera(new LatLng(0,0), 3);
+        this.animateCamera(new LatLng(0, 0), 2);
     }
 
 }
