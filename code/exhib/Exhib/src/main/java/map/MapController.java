@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import aau.sw7.exhib.BoothItem;
@@ -79,6 +78,19 @@ public class MapController {
         //this.polylineList.add(polyline);
     }
 
+    public void drawPolyline(ArrayList<Node> nodes, float strokeWidth, int color, int zIndex){
+        ArrayList<LatLng> polyPoints = new ArrayList<LatLng>();
+        for(Node n : nodes){
+            polyPoints.add(n.getPosition());
+        }
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .addAll(polyPoints)
+                .width(strokeWidth)
+                .color(color)
+                .zIndex(zIndex);
+        Polyline polyline = this.googleMap.addPolyline(polylineOptions);
+    }
+
 
     public void drawPolygon(List<LatLng> latLngs, float strokeWidth, int strokeColor, int fillColor, int zIndex){
         PolygonOptions polygonOptions = new PolygonOptions()
@@ -102,7 +114,7 @@ public class MapController {
         drawPolygon(boothItem.getSquareBounds(), 5, Color.DKGRAY, Color.GREEN, 2);
         //add add marker with
         if(!boothItem.getSquareCenter().equals(new LatLng(0.0,0.0))){
-        drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
+            drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
         }
     }
 
@@ -119,8 +131,8 @@ public class MapController {
                 poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
             }
             else{
-                poly.add(edge.getFrom());
                 poly.add(edge.getTo());
+                poly.add(edge.getFrom());
             }
         }
 
@@ -142,15 +154,29 @@ public class MapController {
      * @param latLng
      * @param zoom
      */
-    public void moveCamera(LatLng latLng, int zoom){
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    public void animateCamera(LatLng latLng, int zoom){
+        this.googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 2000, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                googleMap.getUiSettings().setScrollGesturesEnabled(true);
+            }
+
+            @Override
+            public void onCancel() {
+                googleMap.getUiSettings().setAllGesturesEnabled(true);
+            }
+        });
+    }
+
+    public void animateCameraToBooth(BoothItem boothItem){
+        animateCamera(boothItem.getSquareCenter(),5);
     }
 
     /***
      * initialize the map...
      */
     public void initialize(){
-        this.moveCamera(new LatLng(0,0), 3);
+        this.animateCamera(new LatLng(0, 0), 2);
     }
 
 }

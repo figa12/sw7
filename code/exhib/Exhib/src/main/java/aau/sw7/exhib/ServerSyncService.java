@@ -231,9 +231,6 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                     categoriesActivity.onServerBoothResponse();
                     break;
                 case ServerSyncService.GET_FLOORPLAN:
-                    if (tabActivity.getFloorFragment() == null) {
-                        break;
-                    }
                     this.readFloorPlan(reader, tabActivity);
                     break;
             }
