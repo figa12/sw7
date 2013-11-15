@@ -1,0 +1,56 @@
+\section{ServerSyncService}
+text\todo{}
+
+\begin{lstlisting}[language=java, label=lst:serverrequest, caption={Get exhibition information request}]
+new ServerSyncService(super.getContext()).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_EXHIBITION_INFO)),
+                new BasicNameValuePair("Type", "GetExhibitionInfo"),
+                new BasicNameValuePair("ExhibId", String.valueOf(this.tabActivity.getExhibId());
+\end{lstlisting}
+
+\textit{ServerSyncService} implements the abstract class \textit{AsyncTask}.\todo{}
+
+\begin{lstlisting}[language=java, label=lst:doinbackground, caption={The async abstract method \textit{doInBackground}}]
+@Override
+protected String doInBackground(NameValuePair... pairs) {
+    //Create the HTTP request
+    HttpParams httpParameters = new BasicHttpParams();
+
+    //Setup timeouts
+    HttpConnectionParams.setConnectionTimeout(httpParameters, 15000);
+    HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+
+    HttpClient httpclient = new DefaultHttpClient(httpParameters);
+    HttpPost httppost = new HttpPost(serverUrl);
+
+    httppost.setEntity(new UrlEncodedFormEntity(Arrays.asList(pairs)));
+
+    HttpResponse response = httpclient.execute(httppost);
+    HttpEntity entity = response.getEntity();
+    
+    return EntityUtils.toString(entity);
+}
+\end{lstlisting}\todo{Find ud af hvad de forskellige klasser de gør}
+
+\begin{lstlisting}[language=java, label=lst:onpostexecute, caption={The async method \textit{onPostExecute}}]
+@Override
+protected void onPostExecute(String result) {
+    if (result == null || result.equals("")) {
+        Log.e(ServerSyncService.class.getName(), "No connection found");
+        return;
+    } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
+        Log.e(ServerSyncService.class.getName(), result);
+        return;
+    } else if(result.equals("Timeout")) {
+        Log.e(ServerSyncService.class.getName(), result);
+        return;
+    }
+
+    int objectIndex = result.indexOf('['); // always contains Json object
+
+    int requestCode = Integer.valueOf(result.substring(0, objectIndex));
+    result = result.substring(objectIndex); // cut away requestCode
+
+    this.readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")), requestCode);
+}
+\end{lstlisting}\todo{Der skal stå et sted at requestCode burde være det første Json object i stedet}
