@@ -202,6 +202,7 @@
     basicstyle=\footnotesize,
     numbers=left,
     numberstyle=\tiny\color{black},
+    identifierstyle=\color{dkgreen},
     stepnumber=1,
     numbersep=5pt,
     showspaces=false,
@@ -234,17 +235,12 @@
       {]}{{{\color{delim}{]}}}}{1},
 }
 
-\lstset{
+\lstdefinelanguage{phpstyle}{
   language        = php,
-  basicstyle      = \small\ttfamily,
   keywordstyle    = \color{dkblue},
-  stringstyle     = \color{red},
-  identifierstyle = \color{dkgreen},
-  commentstyle    = \color{gray},
-  emph            =[1]{php},
-  emphstyle       =[1]\color{black},
-  emph            =[2]{if,and,or,else},
-  emphstyle       =[2]\color{dkyellow}}
+  keywords        = {function, while, array, echo, case, switch, break},
+  stringstyle     = \color{red}
+  }
 
 \lstdefinelanguage{KAPAOOW}{
  sensitive=false,
