@@ -31,7 +31,7 @@ database. The server will then return a JSON object containing all the relevant 
 requested. This JSON object can easily be parsed on the client side. The reason why we chose JSON as
 a format is because it is well supported and easy to generate in both android and PHP.
 
-\begin{lstlisting}[language=php, caption=getFeeds function call]
+\begin{lstlisting}[language=phpstyle, caption=getFeeds function call]
 $requestCode = $_POST["RequestCode"];
 
 switch ($_POST['Type']) {
@@ -48,7 +48,7 @@ switch ($_POST['Type']) {
 
 \todo{Nævn de andre cases, måske her?}
 
-\begin{lstlisting}[language=php, label=lst:getFeeds, caption=getFeeds function]
+\begin{lstlisting}[language=phpstyle, label=lst:getFeeds, caption=getFeeds function]
 function getFeeds($con, $userId, $limit) {
 
     global $requestCode;

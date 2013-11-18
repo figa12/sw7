@@ -74,7 +74,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         HttpClient httpclient = new DefaultHttpClient(httpParameters);
         HttpPost httppost = new HttpPost(serverUrl);
 
-        String result = null;
+        String result = "Timeout"; // will be changed by
 
         try {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -100,6 +100,9 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
             Log.e(ServerSyncService.class.getName(), result);
             return;
+        } else if(result.equals("Timeout")) {
+            Log.e(ServerSyncService.class.getName(), result);
+            return;
         }
 
         int objectIndex;
@@ -112,14 +115,12 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         if (result.contains("{")) {
             curlyBracketIndex = result.indexOf('{');
         }
+
         objectIndex = squareBracketIndex < curlyBracketIndex ? squareBracketIndex : curlyBracketIndex;
         objectIndex = squareBracketIndex == curlyBracketIndex ? result.length() : objectIndex; // if the return value only consists of a request code
 
         int requestCode = Integer.valueOf(result.substring(0, objectIndex));
         result = result.substring(objectIndex);
-
-        if(requestCode == ServerSyncService.GET_EXHIBITION_INFO)
-            Log.w(TabActivity.class.getSimpleName(), result);
 
         try {
             this.readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")), requestCode);
