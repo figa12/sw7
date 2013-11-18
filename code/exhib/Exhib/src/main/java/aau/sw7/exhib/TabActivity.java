@@ -1,6 +1,7 @@
 package aau.sw7.exhib;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
@@ -26,6 +28,7 @@ import NfcForeground.NfcForegroundFragment;
 import map.Graph;
 import map.MapController;
 import map.Node;
+import map.PopupAdapter;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
@@ -34,10 +37,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     @Override
     public void onMapReady(GoogleMap map) {
-        this.mapController = new MapController(map);
+        this.mapController = new MapController(map, this);
         this.mapController.initialize();
 
         if(this.boothItems != null && this.graph != null) {
+            this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
             this.mapController.drawBooths(this.boothItems);
             this.mapController.drawGraph(this.graph);
             //ArrayList<Node> path = this.graph.shortestRoute(5,6);
