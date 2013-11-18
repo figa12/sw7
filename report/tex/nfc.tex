@@ -20,12 +20,12 @@ An example of a record could be the URL \textit{http://nokia.com}. When reading 
 03 0e d1 01 0a 55 03 6e 6f 6b 69 61 2e 63 6f 6d fe
 \end{quote}
 
-Each byte contains some information about what has been scanned.
+Each byte contains some information about what has been scanned \citep{ndef}.
 
 \begin{itemize}
 \item 03 - the first byte defines the type of the record. An NDEF record is presented by a 03.
 \item 0e - the second byte tells the reader how many bytes the payload consists off.
-\item d1 - Each NDEF record is of variable length, but they all have a common format which can be seen on\autoref{fig:binformat}. d1 is binary code representing different information about the record. \citep{ndef}
+\item d1 - Each NDEF record is of variable length, but they all have a common format which can be seen on\autoref{fig:binformat}. d1 is binary code representing different information about the record.
 \end{itemize}
 
 \begin{figure}[H]
@@ -35,15 +35,15 @@ Each byte contains some information about what has been scanned.
 \label{fig:binformat}
 \end{figure}
 
-In this example d1 is the binary code \textit{11010001}, each of the numbers represent a flag for true and false, indicating different things about this specific record. 
+In this example d1 is the binary code \textit{11010001}, each of the numbers represent a flag for true and false, indicating different things about this specific record\citep{ndef}. 
 
 \begin{itemize}
 \item MB means "message begin". The flag is set to 1, which means that this is the first record in the \ac{ndef} message.
 \item ME means "message end". The flag is set to 1, which means that this is the last record in the \ac{ndef} message. If this is false, then the application knows there are more records coming.
 \item CF means "chunked message", An application can be split into multiple chunks and carried in different \ac{ndef} records. If this is the case, each record has the CF flag set to 1 except for the last one which is set to 0.
 \item SR means "short record", if the flag is set to 1 it means that the payload length is a single octet. 
-\item IL means "identification length", if the flag is set then the $ID\_LENGTH$ field is present in the header as a single octet.\todo{Hmm?} 
-\item The TNF value indicates the structure of the TYPE field. The format follows the RTD type name which has been defined in the NFC Forum RTD specification\citep{ndef}\todo{Hmm?}
+\item IL means "identification length", if the flag is 0 then the $ID\_LENGTH$ field is ommited in the record. The $ID\_LENGTH$ indicates the length of the ID field in bytes\citep{ndefformat}.
+\item The Type Name Format (TNF) value indicates the structure of the TYPE field. It is a 3-bit value that describes the record type\citep{ndefformat}.
 \end{itemize}
 
 When a record like in the example is scanned, the website is launched inside the mobile browser. 
@@ -72,15 +72,18 @@ The message data on the code is placed in a zigzag pattern as seen on \autoref{f
 \label{fig:qrplacement}
 \end{figure}
 
-The encoding mode consists of four bits, indicating what encoding mode is used and to convey other information. Some of the indicators are:
+The encoding mode consists of four bits, indicating what encoding mode is used and to convey other information. There are a number of indicators, but some of the more common indicators are:
 
 \begin{description}
 \item 0001 - Numeric encoding (10 bits per 3 digits)
 \item 0010 - Alphanumeic encoding (11 bits per 2 charaters)
 \item 0100 - Byte encoding (8 bits per character)
-\item 0000 - End of message
 \end{description}
 
+For example, if you were to encode the word "QR Code" in numeric mode, the mode indicator is 0001.
+
+\begin{table}[H]
+\centering
 \begin{tabular}{|l|l|l|l|}
 \hline
 \textbf{Encoding} & \textbf{Ver. 1-9} & \textbf{10-26} & \textbf{27-40} \\
@@ -91,9 +94,12 @@ The encoding mode consists of four bits, indicating what encoding mode is used a
 \hline
 \textbf{Byte} & 8 & 16 & 16 \\
 \hline
-\end{tabular}\\\\
+\end{tabular}
+\caption{Encoding versions}
+\label{tab:qrversion}
+\end{table}
 
-After the encoding mode, there is a length field that tells how many characters is encoded in the mode specified. The number of bits in the field depends on the encoding and symbol version\citep{qrcode1}.
+After the encoding mode, there is a length field that tells how many characters is encoded in the mode specified. The number of bits in the field depends on the encoding and symbol version\citep{qrcode1}. The symbol version, as seen in \autoref{tab:qrversion} can range between 1 an 40. Each version has a different number of modules, modules being the small black and white dots that make up a QR code\citep{qrversion}. 
 
 
 
