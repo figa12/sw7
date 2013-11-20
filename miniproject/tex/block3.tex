@@ -1,0 +1,85 @@
+\section{Block 3: Data II: Semantic Web}
+
+We created the query shown in Listing \ref{lst:prebensparql} which queries DBpedia's Aalborg resource to find Preben Kaas and return his name, date of birth, and date of death. We could also remove the name filter which would return everyone from Aalborg which are born after the year 1900. We keep the name filter to make the example a little shorter.
+
+Listing \ref{lst:prebenxml} shows the result from the SPARQL query in XML format, and Listing \ref{lst:prebenrdf} shows the result in RDF format.\\
+
+\begin{lstlisting}[language=sparql, caption={SPARQL query}, label=lst:prebensparql] 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dbpedia2: <http://dbpedia.org/property/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+SELECT ?name ?birth ?death ?person WHERE {
+     ?person dbpedia2:birthPlace <http://dbpedia.org/resource/Aalborg> .
+     ?person dbo:birthDate ?birth .
+     ?person foaf:name ?name .
+     ?person dbo:deathDate ?death
+     FILTER (?birth > "1900-01-01"^^xsd:date AND ?name = "Preben Kaas"@en) .
+}
+\end{lstlisting}\todo{måske ændre farven}
+
+\begin{lstlisting}[language=xml,label=lst:prebenxml, caption={XML from SPARQL query}] 
+<sparql
+    xmlns="http://www.w3.org/2005/sparql-results#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd">
+    
+    <head>
+        <variable name="name"/>
+        <variable name="birth"/>
+        <variable name="death"/>
+        <variable name="person"/>
+    </head>
+    <results distinct="false" ordered="true">
+        <result>
+            <binding name="name"><literal xml:lang="en">Preben Kaas</literal></binding>
+            <binding name="birth"><literal datatype="http://www.w3.org/2001/XMLSchema#date">1930-03-30</literal></binding>
+            <binding name="death"><literal datatype="http://www.w3.org/2001/XMLSchema#date">1981-03-27</literal></binding>
+            <binding name="person"><uri>http://dbpedia.org/resource/Preben_Kaas</uri></binding>
+        </result>
+    </results>
+</sparql>
+\end{lstlisting}
+
+\begin{lstlisting}[language=xml, caption={RDF from SPARQL query}, label=lst:prebenrdf]
+<rdf:RDF
+    xmlns:res="http://www.w3.org/2005/sparql-results#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+    <rdf:Description rdf:nodeID="rset">
+        <rdf:type rdf:resource="http://www.w3.org/2005/sparql-results#ResultSet" />
+        <res:resultVariable>name</res:resultVariable>
+        <res:resultVariable>birth</res:resultVariable>
+        <res:resultVariable>death</res:resultVariable>
+        <res:resultVariable>person</res:resultVariable>
+        
+        <res:solution rdf:nodeID="r0">
+            <res:binding rdf:nodeID="r0c0">
+                <res:variable>name</res:variable>
+                <res:value xml:lang="en">Preben Kaas</res:value>
+            </res:binding>
+            
+            <res:binding rdf:nodeID="r0c1">
+                <res:variable>birth</res:variable>
+                <res:value datatype="http://www.w3.org/2001/XMLSchema#date">1930-03-30</res:value>
+            </res:binding>
+            
+            <res:binding rdf:nodeID="r0c2">
+                <res:variable>death</res:variable>
+                <res:value datatype="http://www.w3.org/2001/XMLSchema#date">1981-03-27</res:value>
+            </res:binding>
+            
+            <res:binding rdf:nodeID="r0c3">
+                <res:variable>person</res:variable>
+                <res:value rdf:resource="http://dbpedia.org/resource/Preben_Kaas"/>
+            </res:binding>
+        </res:solution>
+    </rdf:Description>
+</rdf:RDF>
+\end{lstlisting}
+
+%\subsubsection*{Differences between XML and RDF}
+%The immediate differences are that XML takes up less space than RDF does.
+%XML is more concerned with being serializable to easily deserialize it to other data. RDF is not data format but more a model.
+\todo{Udkommenteret få linjer om forskelle}
