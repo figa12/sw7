@@ -1,9 +1,14 @@
 package map;
 
+import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -17,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aau.sw7.exhib.BoothItem;
+import aau.sw7.exhib.R;
 
 /**
  * Created by Jacob on 07-11-13.
@@ -27,9 +33,11 @@ public class MapController {
     private List<Marker> markerList;
     private List<Polygon> polygonList;
     private List<Polyline> polylineList;
+    private Activity parentActivity;
 
-    public MapController(GoogleMap map) {
+    public MapController(GoogleMap map, Activity parent) {
         this.googleMap = map;
+        this.parentActivity = parent;
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
         TileOverlayOptions tileOverlayOptions = new TileOverlayOptions();
         tileOverlayOptions.tileProvider(new FloorTileProvider("FloorPlan"));
@@ -42,11 +50,12 @@ public class MapController {
      * @param title
      * @param snippet
      */
-    public void drawMarker(LatLng latLng, String title, String snippet){ //TODO implement picture
+    public void drawMarker(LatLng latLng, String title, String snippet, int picture){ //TODO implement picture
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(title)
-                .snippet(snippet);
+                .snippet(snippet)
+                .icon(BitmapDescriptorFactory.fromResource(picture));
         Marker marker = this.googleMap.addMarker(markerOptions);
         //this.markerList.add(marker);
     }
@@ -114,8 +123,9 @@ public class MapController {
         drawPolygon(boothItem.getSquareBounds(), 5, Color.DKGRAY, Color.GREEN, 2);
         //add add marker with
         if(!boothItem.getSquareCenter().equals(new LatLng(0.0,0.0))){
-            drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription());
+            drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription(), R.drawable.icon);
         }
+
     }
 
     public void drawGraph(Graph graph){
@@ -171,6 +181,13 @@ public class MapController {
     public void animateCameraToBooth(BoothItem boothItem){
         animateCamera(boothItem.getSquareCenter(),5);
     }
+
+    public void setCustomInfoWindow(LayoutInflater layoutInflater, ArrayList<BoothItem> booths){
+        PopupAdapter customInfoWindow = new PopupAdapter(layoutInflater, booths);
+        this.googleMap.setInfoWindowAdapter(customInfoWindow);
+
+    }
+
 
     /***
      * initialize the map...
