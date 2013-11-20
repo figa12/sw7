@@ -59,7 +59,7 @@ public class PopupAdapter implements GoogleMap.InfoWindowAdapter {
         if(boothItem != null){
             this.imageLoader.displayImage(boothItem.getCompanyLogo(), imgv, this.imageLoaderOptions);
         }else{
-            //imgview none
+            //imgview none, is standard ic_launcher.png
         }
 
         TextView tv = (TextView)popup.findViewById(R.id.title);
