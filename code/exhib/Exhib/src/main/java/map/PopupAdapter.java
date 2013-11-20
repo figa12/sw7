@@ -9,11 +9,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 
 import aau.sw7.exhib.BoothItem;
@@ -25,6 +22,12 @@ import aau.sw7.exhib.R;
 public class PopupAdapter implements GoogleMap.InfoWindowAdapter {
     LayoutInflater inflater = null;
     ArrayList<BoothItem> boothItems;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    DisplayImageOptions imageLoaderOptions = new DisplayImageOptions.Builder()
+            .cacheInMemory(true)
+            .cacheOnDisc(true)
+            .build();
 
 
     public PopupAdapter(LayoutInflater layoutInflater, ArrayList<BoothItem> boothItems){
@@ -37,19 +40,6 @@ public class PopupAdapter implements GoogleMap.InfoWindowAdapter {
         return null;
     }
 
-    public Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     private BoothItem findBoothByName(String name){
         for(BoothItem b : boothItems){
@@ -66,12 +56,10 @@ public class PopupAdapter implements GoogleMap.InfoWindowAdapter {
         BoothItem boothItem = findBoothByName(marker.getTitle());
 
         ImageView imgv = (ImageView)popup.findViewById(R.id.icon);
-        Bitmap bit = getBitmapFromURL(boothItem.getCompanyLogo());
-        if(bit != null){
-            imgv.setImageBitmap(bit);
-        }
-        else{
-            imgv.setImageResource(R.drawable.ic_launcher);
+        if(boothItem != null){
+            this.imageLoader.displayImage(boothItem.getCompanyLogo(), imgv, this.imageLoaderOptions);
+        }else{
+            //imgview none
         }
 
         TextView tv = (TextView)popup.findViewById(R.id.title);

@@ -539,7 +539,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             } else if (name.equals("description")) {
                 description = reader.nextString();
             } else if(name.equals("logo")) {
-                companyLogo = reader.nextString();
+                companyLogo = "http://figz.dk/images/" + reader.nextString();
             } else if(name.equals("sub")) {
                 sub = reader.nextBoolean();
             } else {
@@ -577,7 +577,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             } else if (name.equals("description")) {
                 description = reader.nextString();
             } else if(name.equals("logo")) {
-                companyLogo = reader.nextString();
+                companyLogo = "http://figz.dk/images/" + reader.nextString();
             } else if(name.equals("sub")) {
                 sub = reader.nextBoolean();
             } else if(name.equals("nodeIds")) {
