@@ -1,6 +1,8 @@
 package aau.sw7.exhib;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
@@ -92,16 +94,36 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return result;
     }
 
+    private AlertDialog createAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.context);
+        //myAlertDialog.setTitle("Title");
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setMessage("Server connection failed.");
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                //TODO
+            }
+        });
+        return alertDialogBuilder.create();
+    }
+
+    private void displayAlert(String logMessage) {
+        Log.e(ServerSyncService.class.getName(), logMessage);
+
+        AlertDialog alertDialog = this.createAlertDialog();
+        alertDialog.show();
+    }
+
     @Override
     protected void onPostExecute(String result) {
         if (result == null || result.equals("")) {
-            Log.e(ServerSyncService.class.getName(), "No connection found-ish.");
+            this.displayAlert("No connection found-ish.");
             return;
         } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
-            Log.e(ServerSyncService.class.getName(), result);
+            this.displayAlert(result);
             return;
         } else if(result.equals("Timeout")) {
-            Log.e(ServerSyncService.class.getName(), result);
+            this.displayAlert(result);
             return;
         }
 
@@ -139,8 +161,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         int requestCode = 0;
 
         reader.beginObject();
-        while(reader.hasNext())
-        {
+        while(reader.hasNext()) {
             String name = reader.nextName();
 
             if (name == null) {
