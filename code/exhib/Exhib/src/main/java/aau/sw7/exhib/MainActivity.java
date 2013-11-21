@@ -56,10 +56,6 @@ public class MainActivity extends NfcForegroundActivity {
         actionBar.setDisplayUseLogoEnabled(false);
     }
 
-    //temp button click to open the tab acitivity
-    public void onClickTemp(View v) {
-        super.startActivity(new Intent(this, TabActivity.class));
-    }
 
     @Override
     protected void onNfcScanned(ArrayList<Record> records) {
