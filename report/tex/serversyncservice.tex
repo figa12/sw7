@@ -1,8 +1,8 @@
 \section{ServerSyncService}
 
-To communicate with the server from the application we have created a class called \lstinline|ServerSyncServices| that manages all server communication. The class inherits from the abstract class \lstinline|AsyncTask| which makes it easy to run a task on a new thread and send the results back to the UI thread. We must override the abstract method \lstinline|doInBackground()| which is what is run on a new thread, and the result of the computation is send to \lstinline|onPostExecute(result)|.
+To communicate with the server from the application we have created a class called \lstinline|ServerSyncServices| that manages all server communication. The class inherits from the abstract class \lstinline|AsyncTask| which makes it easy to run a task on a new thread and send the results back to the UI thread. We must override the abstract method \lstinline|doInBackground()| which is what is run on a new thread, and the result of the computation is send to \lstinline|onPostExecute(result)| which is run on the \ac{ui} thread.
 
-\lstinline|ServerSyncService| sends a request to the server, parses the response, and sends the result to the correct receiver. Every request consists of a \lstinline|"RequestCode"| and a \lstinline|"Type"|. The value of \lstinline|"RequestCode"| is a unique static final integer which the server sends back as part of the result, we use it in the \lstinline|ServerSyncService| to know how to process the response and where to send the result. The value of \lstinline|"Type"| is the actual request we make to the server. Each type may also have some parameters. \todo{Det står måske også i afsnittet før}
+\lstinline|ServerSyncService| sends a request to the server, parses the response, and sends the result to the correct receiver. Every request consists of a \lstinline|"RequestCode"| and a \lstinline|"Type"|. The value of \lstinline|"RequestCode"| is a unique static final integer which the server sends back as part of the result, we use it in the \lstinline|ServerSyncService| to know how to process the response and where to send the result. The value of \lstinline|"Type"| is the actual request we make to the server. Each type may also have some parameters.
 
 \autoref{lst:serverrequest} shows how to make a request to the server. This example is a request made from the \lstinline|ExhibitionInfoFragment|.
 
@@ -57,13 +57,13 @@ After \lstinline|doInBackground()| returns the result, the \lstinline|AsyncTask|
 @Override
 protected void onPostExecute(String result) {
     if (result == null || result.equals("")) {
-        Log.e(ServerSyncService.class.getName(), "No connection found-ish.");
+        this.displayAlert("No connection found-ish.");
         return;
     } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
-        Log.e(ServerSyncService.class.getName(), result);
+        this.displayAlert(result);
         return;
     } else if(result.equals("Timeout")) {
-        Log.e(ServerSyncService.class.getName(), result);
+        this.displayAlert(result);
         return;
     }
 
@@ -71,11 +71,53 @@ protected void onPostExecute(String result) {
     this.readJsonStream(stream);
     stream.close();
 }
-\end{lstlisting}\todo{Der skal stå et sted at requestCode burde være det første Json object i stedet}
+\end{lstlisting}
 
 \begin{description}
-\item[Lines 3-5] If the result is empty, then we did not find the server.
-\item[Lines 6-8] If the server were missing the type parameter or the request code, then it could not process the request.
-\item[Lines 9-11] If the timeout limit was reached. We print the error in the log. \todo{It would be a good idea to handle these kinds of errors in a better way, like letting the user know that a connection was not established and maybe allowing him to try again.}
-\item[Lines ] ... \todo{do}
+\item[Lines 3-5] If the result is empty, then we did not find the server. Display alert to user.
+\item[Lines 6-8] If the server were missing the type parameter or the request code, then it could not process the request. Display alert to user.
+\item[Lines 9-11] If the timeout limit was reached, then display alert to user. \todo{It would be a good idea to handle these kinds of errors in a better way, like letting the user know that a connection was not established and maybe allowing him to try again.}
+\item[Lines 14-16] Create a stream reader, read the stream, and close it.
 \end{description}
+\autoref{lst:readjsonstream} shows \lstinline|readJsonStream()| which is where we read the \ac{json} response from the server. The listing has been simplified; we only show one case in the switch. The full implementation has a case for each request that we can make to the server. See \secref{sec:com} for a full list of requests that we can make on the server.
+
+\begin{lstlisting}[language=java, label=lst:readjsonstream, caption={The method \lstinline|readJsonStream()|}]
+private void readJsonStream(InputStream stream) throws IOException {
+    JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
+    int requestCode = 0;
+
+    reader.beginObject();
+    while(reader.hasNext()) {
+        String name = reader.nextName();
+
+        if (name == null) {
+            reader.skipValue();
+        } else if (name.equals("RequestCode")) {
+            requestCode = reader.nextInt();
+        } else if (name.equals("Data") && requestCode != 0) {
+            switch (requestCode) {
+                case ServerSyncService.GET_EXHIBITION_INFO:
+                    this.readExhibitionInformation(reader);
+                    break;
+            }
+        } else {
+            reader.skipValue();
+        }
+    }
+    reader.endObject();
+}
+\end{lstlisting}
+
+\begin{description}
+\item[Line 2] Here we create a new \ac{json} reader from our byte array stream.
+\item[Line 5] Let the reader know that the stream should now contain the beginning of a \ac{json} object.
+\item[Lines 6-22] \lstinline|hasNext()| looks ahead in the \ac{json} stream to check if there are more values and as long as there are more in the \ac{json} stream we loop our code that reads the stream.
+\item[Line 7] \lstinline|nextName()| returns the name of the next property in the \ac{json} stream.
+\item[Lines 9-10] Ensures that we do not get null exceptions.
+\item[Lines 11-12] Check if the name equals the property \lstinline|"RequestCode"| and parse the property to our integer \lstinline|requestCode|.
+\item[Lines 13-18] Check if the name equals the property \lstinline|"Data"|. Note that the \lstinline|"RequestCode"| must always appear before the \lstinline|"Data"| in the \ac{json} object.
+\item[Lines 15-17] This is the case for \lstinline|GET_EXHIBITION_INFO| which calls the appropriate method for reading exhibition information.
+\item[Lines 19-21] If we do not recognise the name from the \ac{json} stream, then skip the value. This should not happen but it can make debugging easier.
+\item[Line 23] Let the \ac{json} stream know that the object should end.
+\end{description}
+We will not show the implementation of \lstinline|readExhibitionInformation()| since it simply reads from the \ac{json} stream and then send the result to the correct location.
