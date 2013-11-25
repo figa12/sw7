@@ -56,7 +56,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final String ITEMS_LIMIT = "6";
 
     private Context context;
-    private String serverUrl = "http://figz.dk/api.php";
+    private String serverUrl = "http://blaaaaaaaaa.dk/api.php";
 
     public ServerSyncService(Context context) {
         this.context = context;
@@ -107,11 +107,16 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return alertDialogBuilder.create();
     }
 
+    private static AlertDialog alertDialog = null;
+
     private void displayAlert(String logMessage) {
         Log.e(ServerSyncService.class.getName(), logMessage);
 
-        AlertDialog alertDialog = this.createAlertDialog();
-        alertDialog.show();
+        if(alertDialog == null)
+            this.alertDialog = this.createAlertDialog();
+
+        if(!this.alertDialog.isShowing())
+            this.alertDialog.show();
     }
 
     @Override
@@ -245,7 +250,8 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                         break;
 
                     case ServerSyncService.SET_CATEGORIES:
-                        // Notify activity
+                        // The Data property is empty, so begin/end it
+                        // We just need to notify the activity that a user was created
                         reader.beginObject();
                         reader.endObject();
                         categoriesActivity.onServerBoothResponse();
