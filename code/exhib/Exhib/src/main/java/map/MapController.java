@@ -1,10 +1,8 @@
 package map;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -100,7 +98,6 @@ public class MapController {
         Polyline polyline = this.googleMap.addPolyline(polylineOptions);
     }
 
-
     public void drawPolygon(List<LatLng> latLngs, float strokeWidth, int strokeColor, int fillColor, int zIndex){
         PolygonOptions polygonOptions = new PolygonOptions()
                 .addAll(latLngs)
@@ -123,34 +120,14 @@ public class MapController {
         drawPolygon(boothItem.getSquareBounds(), 5, Color.DKGRAY, Color.GREEN, 2);
         //add add marker with
         if(!boothItem.getSquareCenter().equals(new LatLng(0.0,0.0))){
-            drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription(), R.drawable.icon);
+            drawMarker(boothItem.getSquareCenter(), boothItem.getBoothName(), boothItem.getDescription(), R.drawable.info);
         }
 
     }
 
     public void drawGraph(Graph graph){
-        ArrayList<Node> poly = new ArrayList<Node>();
-
-        for(Edge edge : graph.getEdges()){
-            if(poly.indexOf(edge.getFrom()) != -1 ){
-                poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
-                poly.add(poly.indexOf(edge.getTo())+1,edge.getFrom());
-            }
-            else if(poly.indexOf(edge.getTo()) != -1){ //TODO is this needed?
-                poly.add(poly.indexOf(edge.getTo())+1,edge.getFrom());
-                poly.add(poly.indexOf(edge.getFrom())+1,edge.getTo());
-            }
-            else{
-                poly.add(edge.getTo());
-                poly.add(edge.getFrom());
-            }
-        }
-
-        ArrayList<LatLng> polyLine = new ArrayList<LatLng>();
-        for(Node n : poly){
-            polyLine.add(n.getPosition());
-        }
-        drawPolyline(polyLine,5, Color.BLUE,2);
+        ArrayList<Node> poly = new ArrayList<Node>(graph.getPolylinePath());
+        drawPolyline(poly, 5, Color.BLUE, 2);
 
         for(Node n : graph.getNodes()){
             if(!n.getPosition().equals(new LatLng(0.0,0.0))){
@@ -187,7 +164,6 @@ public class MapController {
         this.googleMap.setInfoWindowAdapter(customInfoWindow);
 
     }
-
 
     /***
      * initialize the map...
