@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        
+        <script type="text/javascript">
+            function dostuf()
+            {
+                var testtext = document.test.testtextbox.value;
+                var navne = document.test.navnebox.value;
+
+                $.ajax(
+                {
+                    url: 'mvc.php',
+                    data: {text: testtext, navn: navne},
+                    type: 'post',
+                    success: function(data)
+                    {
+                        $('#output').html(data);
+                    }
+                });
+            }
+        </script>
+    </head>
+    
+    <body>
+        <form name="test">
+            <table border="0" style="width:100%">
+                <tr>
+                    <td>Input: </td>
+                    <td><input type="textbox" name="testtextbox" style="width:100%" ><br></td>
+                </tr>
+                <tr>
+                    <td>Output: </td>
+                    <td><input type="textbox" name="navnebox" style="width:100%" ></td>
+                </tr>
+            </table>
+            
+            <input type="button" onclick="dostuf();" value="Submit" />
+        </form>
+        
+        <div id="output" style="width:800px; height:800px"/>
+    </body>
+</html>

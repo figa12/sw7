@@ -1,6 +1,8 @@
 package aau.sw7.exhib;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
@@ -54,7 +56,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final String ITEMS_LIMIT = "6";
 
     private Context context;
-    private String serverUrl = "http://figz.dk/api.php";
+    private String serverUrl = "http://blaaaaaaaaa.dk/api.php";
 
     public ServerSyncService(Context context) {
         this.context = context;
@@ -92,21 +94,49 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return result;
     }
 
+    private AlertDialog createAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.context);
+        //myAlertDialog.setTitle("Title");
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setMessage("Server connection failed.");
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                //TODO
+            }
+        });
+        return alertDialogBuilder.create();
+    }
+
+    private static AlertDialog alertDialog = null;
+
+    private void displayAlert(String logMessage) {
+        Log.e(ServerSyncService.class.getName(), logMessage);
+
+        if(alertDialog == null)
+            this.alertDialog = this.createAlertDialog();
+
+        if(!this.alertDialog.isShowing())
+            this.alertDialog.show();
+    }
+
     @Override
     protected void onPostExecute(String result) {
         if (result == null || result.equals("")) {
-            Log.e(ServerSyncService.class.getName(), "No connection found-ish.");
+            this.displayAlert("No connection found-ish.");
             return;
         } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
-            Log.e(ServerSyncService.class.getName(), result);
+            this.displayAlert(result);
             return;
         } else if(result.equals("Timeout")) {
-            Log.e(ServerSyncService.class.getName(), result);
+            this.displayAlert(result);
             return;
         }
 
+        InputStream stream = null;
         try {
-            this.readJsonStream(new ByteArrayInputStream(result.getBytes("UTF-8")));
+            stream = new ByteArrayInputStream(result.getBytes("UTF-8"));
+            this.readJsonStream(stream);
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,110 +165,106 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
         int requestCode = 0;
 
-        try {
-            reader.beginObject();
-            while(reader.hasNext())
-            {
-                String name = reader.nextName();
+        reader.beginObject();
+        while(reader.hasNext()) {
+            String name = reader.nextName();
 
-                if (name == null) {
-                    reader.skipValue();
-                } else if (name.equals("RequestCode")) {
-                    requestCode = reader.nextInt();
-                } else if(name.equals("Data") && requestCode != 0) {
-                    switch (requestCode) {
-                        // Initial call to populate feed list, is only called in the start of the program
-                        case ServerSyncService.GET_FEEDS_REQUEST:
-                            if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
-                                break;
+            if (name == null) {
+                reader.skipValue();
+            } else if (name.equals("RequestCode")) {
+                requestCode = reader.nextInt();
+            } else if(name.equals("Data") && requestCode != 0) {
+                switch (requestCode) {
+                    // Initial call to populate feed list, is only called in the start of the program
+                    case ServerSyncService.GET_FEEDS_REQUEST:
+                        if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
+                            break;
+                        }
+
+                        tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
+                        this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
+                        break;
+
+                    case ServerSyncService.GET_NEW_FEEDS_REQUEST:
+                        if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
+                            break;
+                        }
+
+                        this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
+                        tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
+                        break;
+
+                    case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
+                        int result = this.readNumberOfNewFeeds(reader);
+
+                        if(tabActivity.getFeedFragment() == null) {
+                            break;
+                        }
+                        if (result != 0) {
+                            tabActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
+
+                            if (tabActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
+                                tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
                             }
+                        }
+                        break;
 
+                    case ServerSyncService.GET_MORE_FEEDS_REQUEST:
+                        if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
+                            break;
+                        }
+
+                        ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
+
+                        if (feedItems.size() > 0) {
+                            // As long we get feeds from the server, we assume there are more
+                            feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
                             tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
-                            this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Bottom);
+                        } else {
+                            // If it returned 0, then there are no more feeds available from the server
+                            tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
+                        }
+                        break;
+
+                    case ServerSyncService.GET_SCHEDULE:
+                        if (tabActivity.getScheduleFragment() == null) {
                             break;
+                        }
 
-                        case ServerSyncService.GET_NEW_FEEDS_REQUEST:
-                            if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
-                                break;
-                            }
+                        tabActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
+                        break;
 
-                            this.addFeedItems(readFeedItemsArray(reader), feedLinearLayout, FeedLinearLayout.AddAt.Top);
-                            tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.Neutral);
+                    case ServerSyncService.GET_EXHIBITION_INFO:
+                        if (tabActivity.getExhibitionInfoFragment() == null) {
                             break;
+                        }
+                        this.readExhibitionInformation(reader, tabActivity);
+                        break;
 
-                        case ServerSyncService.CHECK_NEW_FEEDS_REQUEST:
-                            int result = this.readNumberOfNewFeeds(reader);
+                    case ServerSyncService.GET_CATEGORIES:
+                        categoriesActivity.setCategories(this.readCategories(reader));
+                        break;
 
-                            if(tabActivity.getFeedFragment() == null) {
-                                break;
-                            }
-                            if (result != 0) {
-                                tabActivity.getFeedFragment().setUpdateButtonText("Click to load " + String.valueOf(result) + " new items");
+                    case ServerSyncService.CREATE_USER:
+                        this.readUserCreated(reader, mainActivity);
+                        break;
 
-                                if (tabActivity.getFeedFragment().getTopItemsState() != FeedFragment.TopMessageState.NewItemsAvailable) {
-                                    tabActivity.getFeedFragment().setTopMessageState(FeedFragment.TopMessageState.NewItemsAvailable);
-                                }
-                            }
-                            break;
-
-                        case ServerSyncService.GET_MORE_FEEDS_REQUEST:
-                            if (feedLinearLayout == null || tabActivity.getFeedFragment() == null) {
-                                break;
-                            }
-
-                            ArrayList<FeedItem> feedItems = readFeedItemsArray(reader);
-
-                            if (feedItems.size() > 0) {
-                                // As long we get feeds from the server, we assume there are more
-                                feedLinearLayout.addFeedItems(feedItems, FeedLinearLayout.AddAt.Bottom);
-                                tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.MoreItemsAvailable);
-                            } else {
-                                // If it returned 0, then there are no more feeds available from the server
-                                tabActivity.getFeedFragment().setBottomMessageState(FeedFragment.BottomMessageState.NoItemsAvailable);
-                            }
-                            break;
-
-                        case ServerSyncService.GET_SCHEDULE:
-                            if (tabActivity.getScheduleFragment() == null) {
-                                break;
-                            }
-
-                            tabActivity.getScheduleFragment().setSchedule(this.readScheduleItemsArray(reader));
-                            break;
-
-                        case ServerSyncService.GET_EXHIBITION_INFO:
-                            if (tabActivity.getExhibitionInfoFragment() == null) {
-                                break;
-                            }
-                            this.readExhibitionInformation(reader, tabActivity);
-                            break;
-
-                        case ServerSyncService.GET_CATEGORIES:
-                            categoriesActivity.setCategories(this.readCategories(reader));
-                            break;
-
-                        case ServerSyncService.CREATE_USER:
-                            this.readUserCreated(reader, mainActivity);
-                            break;
-
-                        case ServerSyncService.SET_CATEGORIES:
-                            // Notify activity
-                            reader.beginObject();
-                            reader.endObject();
-                            categoriesActivity.onServerBoothResponse();
-                            break;
-                        case ServerSyncService.GET_FLOORPLAN:
-                            this.readFloorPlan(reader, tabActivity);
-                            break;
-                    }
-                } else {
-                    reader.skipValue();
+                    case ServerSyncService.SET_CATEGORIES:
+                        // The Data property is empty, so begin/end it
+                        // We just need to notify the activity that a user was created
+                        reader.beginObject();
+                        reader.endObject();
+                        categoriesActivity.onServerBoothResponse();
+                        break;
+                    case ServerSyncService.GET_FLOORPLAN:
+                        this.readFloorPlan(reader, tabActivity);
+                        break;
                 }
+            } else {
+                reader.skipValue();
             }
-            reader.endObject();
-        } finally {
-            reader.close();
         }
+        reader.endObject();
         this.context = null;
     }
 
