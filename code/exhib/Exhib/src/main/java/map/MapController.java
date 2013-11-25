@@ -156,7 +156,9 @@ public class MapController {
     }
 
     public void animateCameraToBooth(BoothItem boothItem){
-        animateCamera(boothItem.getSquareCenter(),5);
+        if(boothItem != null){
+            animateCamera(boothItem.getSquareCenter(),5);
+        }
     }
 
     public void setCustomInfoWindow(LayoutInflater layoutInflater, ArrayList<BoothItem> booths){
