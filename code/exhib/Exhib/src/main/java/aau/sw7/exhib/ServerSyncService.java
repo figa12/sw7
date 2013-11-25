@@ -56,7 +56,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     public static final String ITEMS_LIMIT = "6";
 
     private Context context;
-    private String serverUrl = "http://blaaaaaaaaa.dk/api.php";
+    private String serverUrl = "http://figz.dk/api.php";
 
     public ServerSyncService(Context context) {
         this.context = context;
