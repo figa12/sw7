@@ -12,10 +12,14 @@ import java.util.Collections;
 public class Graph {
     private ArrayList<Edge> edges;
     private ArrayList<Node> nodes;
+    private ArrayList<Node> polylinePath;
+    private boolean updatePolyline;
 
     public Graph() {
         this.edges = new ArrayList<Edge>();
         this.nodes = new ArrayList<Node>();
+        this.polylinePath = new ArrayList<Node>();
+        this.updatePolyline = true;
     }
 
     /***
@@ -25,6 +29,8 @@ public class Graph {
     public Graph(ArrayList<Node> allPolyNodes) {
         this.nodes = this.distinct(allPolyNodes);
         this.edges = this.addEdges(allPolyNodes);
+        this.polylinePath = new ArrayList<Node>();
+        this.updatePolyline = true;
     }
 
     /***
@@ -35,6 +41,49 @@ public class Graph {
     public Graph(ArrayList<Node> nodes, ArrayList<Edge> edges){
         this.edges = edges;
         this.nodes = nodes;
+        this.polylinePath = new ArrayList<Node>();
+        this.updatePolyline = true;
+    }
+
+    public ArrayList<Node> getPolylinePath() {
+        if(this.updatePolyline){
+            makePolyLine();
+            this.updatePolyline = false;
+        }
+        return polylinePath;
+    }
+
+    public boolean isUpdatePolyline() {
+        return updatePolyline;
+    }
+
+    public void setUpdatePolyline(boolean updatePolyline) {
+        this.updatePolyline = updatePolyline;
+    }
+
+    public void makePolyLine(){
+        this.polylinePath = new ArrayList<Node>();
+        for(Edge edge : this.getEdges()){
+            int indexFrom = this.polylinePath.indexOf(edge.getFrom());
+            int indexTo = this.polylinePath.indexOf(edge.getTo());
+            if(indexTo != -1){
+                this.polylinePath.add(indexTo + 1, edge.getFrom());
+                this.polylinePath.add(this.polylinePath.indexOf(edge.getFrom())+1, edge.getTo());
+            }
+            else if(indexFrom != -1 ){
+                this.polylinePath.add(indexFrom + 1, edge.getTo());
+                this.polylinePath.add(this.polylinePath.indexOf(edge.getTo())+1, edge.getFrom());
+            }
+            else{
+                this.polylinePath.add(edge.getFrom());
+                this.polylinePath.add(edge.getTo());
+            }
+        }
+
+        ArrayList<LatLng> polyLine = new ArrayList<LatLng>();
+        for(Node n : this.polylinePath){
+            polyLine.add(n.getPosition());
+        }
     }
 
     public ArrayList<Edge> getEdges() {

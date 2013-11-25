@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import org.apache.http.message.BasicNameValuePair;
@@ -23,8 +24,10 @@ import org.ndeftools.externaltype.AndroidApplicationRecord;
 import org.ndeftools.wellknown.TextRecord;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import NfcForeground.NfcForegroundFragment;
+import map.Edge;
 import map.Graph;
 import map.MapController;
 import map.Node;
@@ -38,6 +41,22 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     @Override
     public void onMapReady(GoogleMap map) {
         this.mapController = new MapController(map, this);
+        /*Node one = new Node(new LatLng(1,1),1L);
+        Node two = new Node(new LatLng(2,2),2L);
+        Node three = new Node(new LatLng(3,3),3L);
+        Node four = new Node(new LatLng(4,4),4L);
+        Node five = new Node(new LatLng(5,5),5L);
+        Edge onetwo = new Edge(0, one, two);
+        Edge twothree = new Edge(0, two, three);
+        Edge fourtwo = new Edge(0, four, two);
+        Edge onefour = new Edge(0, one, four);
+        Edge fivetwo = new Edge(0, five, two);
+        Edge fiveone = new Edge(0, five, one);
+
+        ArrayList<Node> poly = new ArrayList<Node>();
+        Graph graphTest = new Graph(new ArrayList<Node>(Arrays.asList(one, two, three, four, five)), new ArrayList<Edge>(Arrays.asList(onetwo,twothree,fourtwo,onefour,fivetwo,fiveone)));
+        graphTest.makePolyLine();*/
+
         this.mapController.initialize();
 
         if(this.boothItems != null && this.graph != null) {
