@@ -273,11 +273,11 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             feedLinearLayout.addFeedItems(feedItems, addAt);
 
             // We need to save the timestamp of the newest feed
-            long timestamp = (feedItems.get(0).getFeedDateTime().getTime() / 1000) + 7200; //TODO fix server/client time difference
+            long timestamp = (feedItems.get(0).getFeedDateTime().getTime() / 1000) + 3600; //TODO fix server/client time difference
             feedLinearLayout.setTimestampForFeedRequest(timestamp);
         } else {
             // If the initial call didn't give any feeds we need to save the current time as the timestamp
-            long timestamp = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
+            long timestamp = (new Date().getTime() / 1000) + 3600; //TODO fix server/client time difference
             feedLinearLayout.setTimestampForFeedRequest(timestamp);
         }
     }

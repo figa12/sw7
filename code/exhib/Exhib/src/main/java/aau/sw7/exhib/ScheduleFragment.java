@@ -51,7 +51,7 @@ public class ScheduleFragment extends Fragment {
         this.progressCircle = (ProgressBar) rootView.findViewById(R.id.progressCircle);
         this.viewDestroyed = false;
 
-        long ts = (new Date().getTime() / 1000) + 7200; //TODO fix server/client time difference
+        long ts = (new Date().getTime() / 1000) + 3600; //TODO fix server/client time difference
         new ServerSyncService(super.getActivity()).execute(
                 new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.GET_SCHEDULE)),
                 new BasicNameValuePair("Type", "GetSchedule"),
@@ -83,11 +83,11 @@ public class ScheduleFragment extends Fragment {
             return;
         }
 
+        this.progressCircle.setVisibility(View.GONE);
+
         if (scheduleItems.size() == 0) {
             return;
         }
-
-        this.progressCircle.setVisibility(View.GONE);
 
         this.scheduleLinearLayouts.clear();
         this.scheduleContainer.removeAllViews();
