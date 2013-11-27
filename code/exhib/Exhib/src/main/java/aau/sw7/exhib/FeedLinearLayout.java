@@ -37,7 +37,7 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
     public static final String FEED_ITEM = "FeedItem";
 
     private Intent feedIntent;
-    private long timestampForFeedRequest = (new Date().getTime() / 1000) + 7200;
+    private long timestampForFeedRequest = (new Date().getTime() / 1000) + 3600;
 
     public FeedLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);

@@ -72,7 +72,7 @@ public class ScheduleItem {
     }
 
     public String getTimeInterval() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         return simpleDateFormat.format(this.startDateTime) + "-" + simpleDateFormat.format(this.endDateTime);
     }
 }
