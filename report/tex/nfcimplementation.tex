@@ -1,3 +1,19 @@
 \section{Implementation of NFC}
-We have created a class called \lstinline|NfcForegroundActivity|
+We have created a class called \lstinline|NfcForegroundActivity| which every activity that we want to enable \ac{nfc} on can extend. \lstinline|NfcForegroundActivity| contains some useful methods to aid in the use of the \ac{nfc} tags.
+
+\subsection{Foreground Mode}
+\label{sec:foeground}
+
+It is possible to force priority over other activities when handling \ac{nfc} intents using the Foregroud Dispatch System \citep{foregroundDispatch}.
+
+\begin{lstlisting}[language=java, caption=Foreground mode enabling]
+protected void onResume() {
+  // foreground mode gives the current active application priority for reading scanned tags
+  IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED); // filter for tags
+  IntentFilter[] writeTagFilters = new IntentFilter[] { tagDetected };
+  this.nfcAdapter.enableForegroundDispatch((Activity) this.context, this.nfcPendingIntent, writeTagFilters, null);
+}
+\end{lstlisting}
+
+
 NDEF Tools for Android \citep{ndeftools}
