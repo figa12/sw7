@@ -433,13 +433,12 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     }
 
     private Node findNode(ArrayList<Node> nodes, long id){
-        Node result = null;
-        for (int i = 0; i < nodes.size(); i++){
-            if(nodes.get(i).getID() == id){
-                result = nodes.get(i);
+        for (Node n : nodes){
+            if(n.getID() == id){
+                return n;
             }
         }
-        return result;
+        return null;
     }
 
     private ArrayList<BoothItem> readBoothItems(JsonReader reader, ArrayList<Node> nodes )throws IOException{
