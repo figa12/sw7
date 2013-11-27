@@ -65,9 +65,9 @@ public class CustomScrollView extends ScrollView {
         long timestamp;
 
         if(feedLinearLayout.getSize() > 0) {
-            timestamp = feedLinearLayout.get(feedLinearLayout.getSize() - 1).getFeedDateTime().getTime() / 1000; // get the timestamp of the last element in the list
+            timestamp = (feedLinearLayout.get(feedLinearLayout.getSize() - 1).getFeedDateTime().getTime() / 1000) + 3600; // get the timestamp of the last element in the list
         } else {
-            timestamp = (new Date().getTime() / 1000) + 7200;
+            timestamp = (new Date().getTime() / 1000) + 3600;
         }
 
         new ServerSyncService(this.tabActivity).execute(
