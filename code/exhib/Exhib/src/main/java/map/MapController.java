@@ -28,10 +28,11 @@ import aau.sw7.exhib.R;
 public class MapController {
     private GoogleMap googleMap;
     private TileOverlay floorPlanOverlay;
-    private List<Marker> markerList;
-    private List<Polygon> polygonList;
-    private List<Polyline> polylineList;
+    public List<Marker> markerList = new ArrayList<Marker>();;
+    public List<Polygon> polygonList = new ArrayList<Polygon>();
+    public List<Polyline> polylineList = new ArrayList<Polyline>();
     private Activity parentActivity;
+    private Marker userLocation;
 
     public MapController(GoogleMap map, Activity parent) {
         this.googleMap = map;
@@ -48,14 +49,20 @@ public class MapController {
      * @param title
      * @param snippet
      */
-    public void drawMarker(LatLng latLng, String title, String snippet, int picture){ //TODO implement picture
+    public Marker drawMarker(LatLng latLng, String title, String snippet, int picture){
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(title)
                 .snippet(snippet)
                 .icon(BitmapDescriptorFactory.fromResource(picture));
         Marker marker = this.googleMap.addMarker(markerOptions);
-        //this.markerList.add(marker);
+        if(picture == R.drawable.iamhere){
+            userLocation = marker;
+        }
+        this.markerList.add(marker);
+
+        return marker;
+
     }
 
     /***
@@ -68,7 +75,7 @@ public class MapController {
                 .position(latLng)
                 .title(title);
         Marker marker = this.googleMap.addMarker(markerOptions);
-        //this.markerList.add(marker);
+        this.markerList.add(marker);
     }
 
     /***
@@ -82,7 +89,7 @@ public class MapController {
                 .color(color)
                 .zIndex(zIndex);
         Polyline polyline = this.googleMap.addPolyline(polylineOptions);
-        //this.polylineList.add(polyline);
+        this.polylineList.add(polyline);
     }
 
     public void drawPolyline(ArrayList<Node> nodes, float strokeWidth, int color, int zIndex){
@@ -96,6 +103,22 @@ public class MapController {
                 .color(color)
                 .zIndex(zIndex);
         Polyline polyline = this.googleMap.addPolyline(polylineOptions);
+        this.polylineList.add(polyline);
+    }
+
+    public void removePreviousRoutePath(){
+        for(Polyline p: polylineList){
+            if(p.getColor() == Color.RED){
+                p.remove();
+                polylineList.remove(polylineList.indexOf(p));
+            }
+        }
+    }
+
+    public void removePreviousUserLocationerMarker(){
+        if(userLocation != null){
+            userLocation.remove();
+        }
     }
 
     public void drawPolygon(List<LatLng> latLngs, float strokeWidth, int strokeColor, int fillColor, int zIndex){
@@ -106,7 +129,7 @@ public class MapController {
                 .fillColor(fillColor)
                 .zIndex(zIndex);
         Polygon polygon =  this.googleMap.addPolygon(polygonOptions);
-        //polygonList.add(polygon);
+        polygonList.add(polygon);
     }
 
     public void drawBooths(List<BoothItem> boothItems) {
@@ -137,7 +160,7 @@ public class MapController {
     }
 
     /***
-     * Moves the camera on the map, no animation
+     * Moves the camera on the map, animation
      * @param latLng
      * @param zoom
      */

@@ -433,12 +433,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     }
 
     private Node findNode(ArrayList<Node> nodes, long id){
-        for(Node n : nodes){
-            if(n.getID() == id){
-                return n;
+        Node result = null;
+        for (int i = 0; i < nodes.size(); i++){
+            if(nodes.get(i).getID() == id){
+                result = nodes.get(i);
             }
         }
-        return null;
+        return result;
     }
 
     private ArrayList<BoothItem> readBoothItems(JsonReader reader, ArrayList<Node> nodes )throws IOException{
@@ -514,7 +515,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     }
 
     private Category readCategory(JsonReader reader) throws IOException {
-        int id = 0;
+        long id = 0;
         String categoryName = "";
         ArrayList<BoothItem> boothItems = new ArrayList<BoothItem>();
 
@@ -525,7 +526,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             if (name == null) {
                 reader.skipValue();
             } else if (name.equals("id")) {
-                id = reader.nextInt();
+                id = reader.nextLong();
             } else if (name.equals("name")) {
                 categoryName = reader.nextString();
             } else if (name.equals("booths")) {
@@ -546,7 +547,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     }
 
     private BoothItem readBoothItem(JsonReader reader) throws IOException {
-        int id = 0;
+        long id = 0;
         String boothName = "";
         String description = "";
         String companyLogo = "";
@@ -559,7 +560,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             if (name == null) {
                 reader.skipValue();
             } else if (name.equals("id")) {
-                id = reader.nextInt();
+                id = reader.nextLong();
             } else if (name.equals("name")) {
                 boothName = reader.nextString();
             } else if (name.equals("description")) {
@@ -578,7 +579,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
     }
 
     private BoothItem readBoothItem(JsonReader reader, ArrayList<Node> nodes) throws IOException {
-        int id = 0;
+        long id = 0;
         String boothName = "";
         String description = "";
         String companyLogo = "";
@@ -597,7 +598,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             if (name == null) {
                 reader.skipValue();
             } else if (name.equals("id")) {
-                id = reader.nextInt();
+                id = reader.nextLong();
             } else if (name.equals("name")) {
                 boothName = reader.nextString();
             } else if (name.equals("description")) {
@@ -609,7 +610,10 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
             } else if(name.equals("nodeIds")) {
                 reader.beginArray();
                 while (reader.hasNext()) {
-                    boothsEntryNodes.add(this.findNode(nodes, reader.nextLong()));
+                    Node waypoint = this.findNode(nodes, reader.nextLong());
+                    if(waypoint != null){
+                        boothsEntryNodes.add(waypoint);
+                    }
                 }
                 reader.endArray();
             } else if(name.equals("top")) {

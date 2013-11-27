@@ -31,6 +31,4 @@
             android:layout_height="wrap_content"
             android:textSize="8sp"/>
     </LinearLayout>
-
-
 </LinearLayout>

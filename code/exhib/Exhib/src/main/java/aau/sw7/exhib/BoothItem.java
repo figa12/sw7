@@ -65,6 +65,10 @@ public class BoothItem implements Parcelable {
         this.checkBox.setChecked(checked);
     }
 
+    public ArrayList<Node> getBoothEntryNodes() {
+        return boothEntryNodes;
+    }
+
     public boolean isSubscribed() {
         return this.subscribed;
     }
@@ -122,7 +126,6 @@ public class BoothItem implements Parcelable {
         out.writeString(this.boothName);
         out.writeString(this.description);
         //out.writeList(this.square.toList()); // toList() gives exception, maybe list can't contain null
-
         // don't save category, results in stackOverflow
     }
 

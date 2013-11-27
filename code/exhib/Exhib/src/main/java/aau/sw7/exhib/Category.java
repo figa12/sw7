@@ -15,13 +15,13 @@ import java.util.ArrayList;
  */
 public class Category implements Parcelable {
 
-    private int categoryId;
+    private long categoryId;
     private String categoryName;
     private ArrayList<BoothItem> boothItems = new ArrayList<BoothItem>();
 
     private CheckBox checkBox;
 
-    public Category(int categoryId, String categoryName) {
+    public Category(long categoryId, String categoryName) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
@@ -80,7 +80,7 @@ public class Category implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(this.categoryId);
+        out.writeLong(this.categoryId);
         out.writeString(this.categoryName);
         out.writeList(this.boothItems);
     }
