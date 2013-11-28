@@ -1,7 +1,6 @@
 package aau.sw7.exhib;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,8 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
@@ -24,19 +23,17 @@ import org.ndeftools.externaltype.AndroidApplicationRecord;
 import org.ndeftools.wellknown.TextRecord;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import NfcForeground.NfcForegroundFragment;
-import map.Edge;
 import map.Graph;
 import map.MapController;
 import map.Node;
-import map.PopupAdapter;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
-    private MapController mapController;
+    public static MapController mapController;
     private Graph graph;
+    private BoothItem targetBooth;
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -128,8 +125,24 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 pendingBoothId = boothId;
             }
             else{
+                targetBooth = findBoothById(this.boothItems, 83L); //TODO Find a way to set a target.
                 this.mapController.animateCameraToBooth(findBoothById(this.boothItems, boothId));
+                this.updateUserLocation(boothId);
             }
+        }
+    }
+
+    private void updateUserLocation(Long boothId){
+        this.mapController.removePreviousUserLocationerMarker();
+        BoothItem sourceBooth = findBoothById(this.boothItems, boothId);
+        this.graph.setUserLocation(sourceBooth.getSquareCenter());
+        this.mapController.drawMarker(this.graph.getUserLocation(),"YOU ARE HERE!","",R.drawable.iamhere);
+
+        if(targetBooth != null){
+            this.mapController.removePreviousRoutePath();
+            ArrayList<Node> bestWaypoints = this.graph.bestWaypoint(sourceBooth, targetBooth);
+            ArrayList<Node> path = this.graph.shortestRoute(bestWaypoints.get(0).getID(), bestWaypoints.get(1).getID());
+            this.mapController.drawPolyline(path, 5, Color.RED, 2); //TODO remove previous route
         }
     }
 
@@ -137,6 +150,15 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         for(BoothItem b : boothItems){
             if(b.getBoothId() == boothId){
                 return b;
+            }
+        }
+        return null;
+    }
+
+    private Node findNodeById(ArrayList<Node> nodes, long nodeId){
+        for (Node n : nodes){
+            if(n.getID() == nodeId){
+                return n;
             }
         }
         return null;
@@ -179,11 +201,9 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.startActivityForResult(categoriesIntent, 0);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         this.appSectionsPagerAdapter.notifyDataSetChanged();
     }
 
@@ -303,18 +323,18 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.graph = graph;
         this.boothItems = boothItems;
         if(this.getFloorFragment() != null){
+            this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
             this.mapController.drawBooths(this.boothItems);
             this.mapController.drawGraph(this.graph);
         }
         if(pendingBoothId != 0L){
+            targetBooth = findBoothById(this.boothItems, 83L);
             this.mapController.animateCameraToBooth(this.findBoothById(boothItems, pendingBoothId));
+            this.updateUserLocation(pendingBoothId);
             pendingBoothId = 0;
         }
 
     }
-
-
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary

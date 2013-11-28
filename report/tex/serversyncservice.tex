@@ -44,11 +44,11 @@ protected String doInBackground(NameValuePair... pairs) {
 \end{lstlisting}
 
 \begin{description}
-\item[Line 3] Get some basic http parameters.
-\item[Lines 5-6] Set timeouts on the http parameters. Allow 15 seconds to create a connection, and allow 15 seconds to to get a response.
-\item[Line 8] Create the http client with our http parameters.
-\item[Lines 10-11]create an \lstinline|HttpPost| object with the server address. Convert our name/value pairs to \lstinline|UrlEncodedFormEntity| and set the entity as the request.
-\item[Line 13] Executes the http request on the http client and saves the response. This pauses the thread until a response is received.
+\item[Line 3] Get some basic \ac {http} parameters.
+\item[Lines 5-6] Set timeouts on the \ac {http} parameters. Allow 15 seconds to create a connection, and allow 15 seconds to to get a response.
+\item[Line 8] Create the \ac {http} client with our \ac {http} parameters.
+\item[Lines 10-11] Create an \lstinline|HttpPost| object with the server address. Convert our name/value pairs to \lstinline|UrlEncodedFormEntity| and set the entity as the request.
+\item[Line 13] Executes the \ac {http} request on the \ac {http} client and saves the response. This pauses the thread until a response is received.
 \item[Lines 15-16] Get the response as an entity, convert the entity to a string, and return it.
 \end{description}
 After \lstinline|doInBackground()| returns the result, the \lstinline|AsyncTask| automatically passes the result to \lstinline|onPostExecute()|. \autoref{lst:onpostexecute} shows our implementation of this method and how we treat the response from the server.

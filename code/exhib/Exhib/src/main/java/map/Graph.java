@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import aau.sw7.exhib.BoothItem;
+import aau.sw7.exhib.TabActivity;
+
 /**
  * Created by Jacob on 08-11-13.
  */
@@ -14,12 +17,16 @@ public class Graph {
     private ArrayList<Node> nodes;
     private ArrayList<Node> polylinePath;
     private boolean updatePolyline;
+    private LatLng userLocation;
+    private BoothItem currentBoothLocation;
+
 
     public Graph() {
         this.edges = new ArrayList<Edge>();
         this.nodes = new ArrayList<Node>();
         this.polylinePath = new ArrayList<Node>();
         this.updatePolyline = true;
+        this.userLocation = null;
     }
 
     /***
@@ -31,6 +38,7 @@ public class Graph {
         this.edges = this.addEdges(allPolyNodes);
         this.polylinePath = new ArrayList<Node>();
         this.updatePolyline = true;
+        this.userLocation = null;
     }
 
     /***
@@ -43,6 +51,7 @@ public class Graph {
         this.nodes = nodes;
         this.polylinePath = new ArrayList<Node>();
         this.updatePolyline = true;
+        this.userLocation = null;
     }
 
     public ArrayList<Node> getPolylinePath() {
@@ -55,6 +64,22 @@ public class Graph {
 
     public boolean isUpdatePolyline() {
         return updatePolyline;
+    }
+
+    public LatLng getUserLocation(){
+        return this.userLocation;
+    }
+
+    public void setUserLocation(LatLng newLocation){
+        this.userLocation = newLocation;
+    }
+
+    public BoothItem getCurrentBoothLocation() {
+        return currentBoothLocation;
+    }
+
+    public void setCurrentBoothLocation(BoothItem currentBoothLocation) {
+        this.currentBoothLocation = currentBoothLocation;
     }
 
     public void setUpdatePolyline(boolean updatePolyline) {
@@ -156,7 +181,7 @@ public class Graph {
         return false;
     }
 
-    public ArrayList<Node> shortestRoute(int sourceID, int targetID){
+    public ArrayList<Node> shortestRoute(long sourceID, long targetID){
         Node source = this.getNodeById(sourceID);
         Node target = this.getNodeById(targetID);
         ArrayList<Node> previous = new ArrayList<Node>();
@@ -193,6 +218,24 @@ public class Graph {
         ArrayList<Node> path = makePath(target, previous, this.nodes);
 
         return path;
+    }
+
+    public ArrayList<Node> bestWaypoint(BoothItem sourceBooth, BoothItem targetBooth){
+        Double smallestWeight = Double.MAX_VALUE;
+        ArrayList<Node> result = new ArrayList<Node>();
+        Node source = null;
+        for(Node sn : sourceBooth.getBoothEntryNodes()){
+            for (Node tn : targetBooth.getBoothEntryNodes()){
+                double weight = distBetween(sn, tn);
+                if(weight < smallestWeight){
+                    smallestWeight = weight;
+                    result.clear();
+                    result.add(0,sn);
+                    result.add(1,tn);
+                }
+            }
+        }
+        return result;
     }
 
     private ArrayList<Node> makePath(Node target, ArrayList<Node> previous, ArrayList<Node> Q){

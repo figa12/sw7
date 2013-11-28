@@ -50,8 +50,6 @@ public class FloorFragment extends SupportMapFragment {
         if (mCallback != null) {
             mCallback.onMapReady(getMap());
         }
-
-
         return view;
     }
 

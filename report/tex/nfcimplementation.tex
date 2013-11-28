@@ -4,7 +4,19 @@ We have created a class called \lstinline|NfcForegroundActivity| which every act
 \subsection{Foreground Mode}
 \label{sec:foeground}
 
-It is possible to force priority over other activities when handling \ac{nfc} intents using the Foregroud Dispatch System \citep{foregroundDispatch}.
+It is possible to force priority over other activities when handling \ac{nfc} intents using the Foregroud Dispatch System \citep{foregroundDispatch}. This enables us to handle the intent when the user has out activity open and scans an \ac{nfc} tag.
+
+\begin{lstlisting}[language=java, label=nfcForegroundOnCreate, caption=OnCreate]
+public NfcForeground(Context context) { 
+  this.nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
+  this.nfcPendingIntent = PendingIntent.getActivity(this.context, 0, new Intent(this.context, ((Activity) this.context).getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+}
+\end{lstlisting}\todo{fix caption}
+\begin{description}
+\item[Line 2] The default \ac{nfc} adapter is get and saved.
+\item[Line 3] A pending intent is created and saved for later use.
+\end{description}\todo{Description skal måske uddybes}
+As seen in \autoref{nfcForegroundOnCreate} a pending intent is set. This is necessary because the system must have an intent to populate when an \ac{nfc} tag is scanned.
 
 \begin{lstlisting}[language=java, caption=Foreground mode enabling]
 protected void onResume() {
@@ -14,6 +26,8 @@ protected void onResume() {
   this.nfcAdapter.enableForegroundDispatch((Activity) this.context, this.nfcPendingIntent, writeTagFilters, null);
 }
 \end{lstlisting}
+
+
 
 
 NDEF Tools for Android \citep{ndeftools}
