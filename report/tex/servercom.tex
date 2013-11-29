@@ -5,7 +5,7 @@ implementation of database. \todo{Bør database være et kapitel for sig selv?}
 \section{Communication}
 \label{sec:com}
 
-The communication betweeen the client application and the server is done by HTTP POST requests.
+The communication between the client application and the server is done by HTTP POST requests.
 The client sends a HTTP POST request to the server containing a certain list of parameters which
 define what the server is supposed to do. All requests must take atleast two required parameters, a \textit{RequestCode} and a
 \textit{Type}.
@@ -152,15 +152,40 @@ Our types of requests are as follows:
 \section{Database}
 We are using a MySQL database with the MyISAM storage engine and which is located at a remote server. \todo{info om hvor osv.?}
 
-The server is to contain all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and some basic information about the users.
+The server contains all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and some basic information about the users.
+
+\autoref{fig:erd} shows the \ac{er} diagram of our database. The diagram does not show the attributes of the entities in order to make the diagram a little smaller. \autoref{tab:relations} shows the mapping of our \ac{er} diagram to relations.
 
 \begin{figure}[H]
 \centering
 \includegraphics[page=1,width=1\linewidth]{img/sw7ERD.pdf}
-\caption{Entity-relation diagram}
+\caption{ER diagram}
 \label{fig:erd}
 \end{figure}
-\todo{ERD skal opdateres!!}
+
+\newcommand{\relation}[1]{[\{ #1 \}]\\}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{1.2cm} p{9.6cm}}
+booth: & \relation{\underline{id: int}, exhibid $\ra$ exhib: int, categoryid $\ra$ category: int, companyid $\ra$ company: int, name: varchar, description: text}
+category: & \relation{\underline{id: int}, name: varchar}
+company: & \relation{\underline{id: int}, name: varchar, logo: varchar}
+coordinate: & \relation{\underline{id: int}, x: double, y: double, isroad: tinyint, boothid $\ra$ booth: int, exhibid $\ra$ exhib: int}
+edge: & \relation{\underline{id: int}, weight: double, vertexA $\ra$ coordinate: int, vertexB $\ra$ coordinate: int}
+exhib: & \relation{\underline{id: int}, name: varchar, address: varchar, zip: int, country: varchar, description: text, logo: varchar}
+feed: & \relation{\underline{id: int}, boothid $\ra$ booth: int, header: varchar, description: text, feedtime: timestamp}
+schedule: & \relation{\underline{id: int}, boothid $\ra$ booth: int, name: text, starttime: timestamp, endtime: timestamp}
+picks: & \relation{\underline{id: int}, userid $\ra$ user: int, boothid $\ra$ booth: int, seen: tinyint, sub: tinyint}
+user: & \relation{\underline{id: int}, exhibid $\ra$ exhib: int}
+\end{tabular}
+\caption{Relations}
+\label{tab:relations}
+\end{table}
+\todo{why zip == int?}
+\todo{skriv at det er picks relationship fra diagrammet (hedder egentlig userbooths i databasen)}
+\todo{Måske skriv at vi ikke kan bruge foreign keys i vores database}
 
 %%% Local Variables: 
 %%% mode: latex
