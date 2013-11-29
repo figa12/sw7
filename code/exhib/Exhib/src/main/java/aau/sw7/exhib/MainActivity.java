@@ -50,10 +50,11 @@ public class MainActivity extends NfcForegroundActivity {
 
         final ActionBar actionBar = getActionBar();
         /* Remove title bar etc. Doesn't work when applied to the style directly via the xml */
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(true);
+
     }
 
 

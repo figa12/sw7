@@ -152,11 +152,11 @@ public class MapController {
         ArrayList<Node> poly = new ArrayList<Node>(graph.getPolylinePath());
         drawPolyline(poly, 5, Color.BLUE, 2);
 
-        for(Node n : graph.getNodes()){
+        /*for(Node n : graph.getNodes()){
             if(!n.getPosition().equals(new LatLng(0.0,0.0))){
                 drawMarker(n.getPosition(), "" + n.getID());
             }
-        }
+        }*/
     }
 
     /***
