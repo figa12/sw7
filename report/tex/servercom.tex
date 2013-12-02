@@ -152,7 +152,7 @@ We are using a MySQL database with the MyISAM storage engine and which is locate
 
 The server contains all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and some basic information about the users.
 
-\autoref{fig:erd} shows the \ac{er} diagram of our database. The diagram does not show the attributes of the entities in order to make the diagram a little smaller. \autoref{tab:relations} shows the mapping of our \ac{er} diagram to relations.
+\autoref{fig:erd} shows the \ac{er} diagram of our database. The diagram does not show the attributes of the entities in order to make the diagram a little smaller.
 
 \begin{figure}[H]
 \centering
@@ -160,6 +160,20 @@ The server contains all data about each exhibition, the companies at the exhibit
 \caption{ER diagram}
 \label{fig:erd}
 \end{figure}
+
+\newcommand{\rel}[2]{$(#1:#2)$}
+
+Some of the relationships in the \ac{er} diagram needs a little detailed description, but most of them are self explanatory.
+
+All functional relationship types are total participations, except for the relationship \textit{has} between \textit{coordinate} and \textit{booth}, which is partial participation.
+
+The \textit{attends} relationship between \textit{exhib} and \textit{user} is a \rel{1}{n} because we decided that one person that attends different exhibitions will get a new user for each exhibition he visits. We could also have made it an \rel{n}{m} relationship, but that would require us to make some kind of way to retrieve an existing user for that person and then also subscribe him to that exhibition. The user is not required to give any information when he is registered to an exhibition i.e. the registration is automatic, then we do not need to save any user data to be used at other exhibitions.
+
+The \textit{contain} relationship between edge and \textit{coordinate} is shown to be a \rel{n}{1}, but the \textit{edge} actually contains exactly two coordinates, which can not be shown with Chen notation.
+
+\textit{Category} only has a relationship with \textit{booth}. This means that one specific category can be used for multiple booths at different exhibitions. This is a design choice.
+
+\autoref{tab:relations} shows the mapping of our \ac{er} diagram to relations.
 
 \newcommand{\relation}[1]{[\{ #1 \}]\\}
 

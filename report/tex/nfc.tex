@@ -100,5 +100,5 @@ For example, if you were to encode the word "QR Code" in numeric mode, the mode 
 
 After the encoding mode, there is a length field that tells how many characters is encoded in the mode specified. The number of bits in the field depends on the encoding and symbol version\citep{qrcode1}. The symbol version, as seen in \autoref{tab:qrversion} can range between 1 an 40. Each version has a different number of modules, modules being the small black and white dots that make up a QR code\citep{qrversion}. 
 
-
-
+\section*{Our choice of data storage}
+We chose to use \ac{nfc} tags as our way of storing the data. Even though you have to buy the \ac{nfc} tags instead of printing them yourself like you can with QR-codes. The tags are easy to use, you can even have the supplier write them and make them read-only for you. We also found it to be an inconvenience for the user to have to use the camera to scan a QR-code, compared to an NFC-reader which just runs in the background. However the main reason we chose to use \ac{nfc} instead of QR-codes is because a QR-code can be scanned from a distance, and we want to know exactly where a user stands when scanning, so with the short range of \ac{nfc}, we can make sure that the user is actually next to the tag and thereby get their location.
