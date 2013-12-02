@@ -7,7 +7,7 @@ implementation of database. \todo{Bør database være et kapitel for sig selv?}
 
 The communication between the client application and the server is done by HTTP POST requests.
 The client sends a HTTP POST request to the server containing a certain list of parameters which
-define what the server is supposed to do. All requests must take atleast two required parameters, a \textit{RequestCode} and a
+define what the server is supposed to do. All requests must take at least two required parameters, a \textit{RequestCode} and a
 \textit{Type}.
 
 \textit{RequestCode} is an integer that is simply passed through the server, it is not handled in any
@@ -15,11 +15,9 @@ way on the server. The purpose of the RequestCode parameter is to distinguish th
 it to execute the appropriate function.
 
 \textit{Type} is used to identify the request. A typical request is to get a list of feeds, and the
-value of the \textit{Type} parameter would be ``GetFeeds'' in this case.\\
+value of the \textit{Type} parameter would be ``GetFeeds'' in this case.
 
-Depending on the \textit{Type} of the request, additional parameters may be required.\\
-
-As an example, \textit{GetFeeds} takes the following parameters:
+Depending on the \textit{Type} of the request, additional parameters may be required. As an example, \textit{GetFeeds} takes the following parameters:
 \begin{itemize}
 \item RequestCode
 \item UserId
@@ -88,7 +86,7 @@ function getFeeds($con, $userId, $limit) {
   established to the database, the user id from the client, and the limit which is also given by the client.
 \item[Line 3] Since the \textit{RequestCode} is always a required parameter the variable is global.
 \item[Lines 6-7] Escape special characters to avoid malicious SQL injections.
-\item[Lines 9-20] Create the SQL query with the user id and the limit paramter.
+\item[Lines 9-20] Create the SQL query with the user id and the limit parameter.
 \item[Line 22] Execute the query.
 \item[Lines 24-31] Get the results from the database and push them to the JSON array. When
   all of the results have been pushed to the array, the \textit{RequestCode} and the JSON array will be JSON encoded and echoed.

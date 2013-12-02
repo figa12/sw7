@@ -28,6 +28,7 @@ public class Square {
         this.bottomRight = bottomRight;
         this.topRight = topRight;
         this.topLeft = topLeft;
+        this.center = this.calculateCenter(bottomLeft, topRight);
     }
 
     public Square(double top, double left, double bottom, double right){
@@ -54,10 +55,10 @@ public class Square {
         return this.topLeft;
     }
 
-    private LatLng calculateCenter(LatLng botttomRight, LatLng topRight){
-        LatLng difference = new LatLng(topRight.latitude - botttomRight.latitude, topRight.longitude - topRight.longitude);
-        LatLng offset = new LatLng(difference.latitude/2, difference.longitude/2);
-        return new LatLng(this.bottomLeft.latitude + offset.latitude, this.bottomLeft.longitude + offset.latitude); //bottomRight.latitude + offset.latitude, bottomright.longitude + offset.longitude
+    private LatLng calculateCenter(LatLng bottomLeft, LatLng topRight) {
+        double lng = bottomLeft.longitude + (Math.abs(topRight.longitude - bottomLeft.longitude) / 2.0);
+        double lat = bottomLeft.latitude  + (Math.abs(topRight.latitude - bottomLeft.latitude) / 2.0);
+        return new LatLng(lat, lng);
     }
 
     public ArrayList<LatLng> getSquareBounds(){
