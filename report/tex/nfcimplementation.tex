@@ -50,7 +50,7 @@ public void onNewIntent(Intent intent) {
 \item[Line 5] The method \lstinline|newIntentEvent| of the class \lstinline|NfcForeground| is run with the intent and a list of records is returned.
 \item[Lines 6-7] If any records were found \lstinline|onNfcScanned| is called with these.
 \end{description}
-As seen in \autoref{lst:onNewIntent} on line 5, the records are gathered trough the use of \lstinline|this.nfcForeground.newIntentEvent(intent);|\autoref{lst:newIntentEvent}.
+As seen in \autoref{lst:onNewIntent} on line 5, the records are gathered trough the use of \lstinline|this.nfcForeground.newIntentEvent(intent);| which can be seen in \autoref{lst:newIntentEvent}.
 
 \begin{lstlisting}[language=java, label=lst:newIntentEvent, caption=newIntentEvent]
 public ArrayList<Record> newIntentEvent(Intent intent) {
@@ -58,28 +58,14 @@ public ArrayList<Record> newIntentEvent(Intent intent) {
   ArrayList<Record> foundRecords = new ArrayList<Record>();
 
   if (messages != null) {
-    Log.d(this.getClass().getSimpleName(), "Found " + messages.length + " NDEF messages");
-
-    this.vibrate(); // signal found messages
-
-    // parse to records
     for (int i = 0; i < messages.length; i++) {
-      try {
-        List<Record> records = new Message((NdefMessage)messages[i]);
 
-        Log.d(this.getClass().getSimpleName(), "Found " + records.size() + " records in message " + i);
+      List<Record> records = new Message((NdefMessage)messages[i]);
 
-        for(int k = 0; k < records.size(); k++) {
-          Log.d(this.getClass().getSimpleName(), " Record #" + k + " is of class " + records.get(k).getClass().getSimpleName());
-
-          Record record = records.get(k);
-          foundRecords.add(record);
-
-        }
-      } catch (Exception e) {
-        Log.e(this.getClass().getSimpleName(), "Problem parsing message", e);
+      for(int k = 0; k < records.size(); k++) {
+        Record record = records.get(k);
+        foundRecords.add(record);
       }
-
     }
   }
   return foundRecords;
@@ -88,7 +74,7 @@ public ArrayList<Record> newIntentEvent(Intent intent) {
 
 
 
-
+\todo{Ting under det her er crap.}
 
 As seen in \autoref{lst:onNewIntent} on line 7, the method \lstinline|onNfcScanned| is called. This method is abstract and hence must be overwritten in the activity that extends \lstinline|NfcForegroundActivity|. This allows for a very easy way to handle the records that lie on the \ac{nfc} tag.
 
