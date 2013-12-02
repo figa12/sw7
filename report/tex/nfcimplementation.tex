@@ -4,7 +4,7 @@ We have created a class called \lstinline|NfcForegroundActivity| which every act
 \subsection{Foreground Mode}
 \label{sec:foeground}
 
-It is possible to force priority over other activities when handling \ac{nfc} intents using the Foregroud Dispatch System \citep{foregroundDispatch}. This enables us to handle the intent when the user has out activity open and scans an \ac{nfc} tag.
+It is possible to force priority over other activities when handling \ac{nfc} intents using the Foregroud Dispatch System \citep{foregroundDispatch}. This enables us to handle the intent when the user has our activity open and scans an \ac{nfc} tag.
 
 \begin{lstlisting}[language=java, label=nfcForegroundOnCreate, caption=OnCreate]
 public NfcForeground(Context context) { 
@@ -26,8 +26,27 @@ protected void onResume() {
   this.nfcAdapter.enableForegroundDispatch((Activity) this.context, this.nfcPendingIntent, writeTagFilters, null);
 }
 \end{lstlisting}
+\begin{description}
+\item[Line 3] An \lstinline|IntentFilter| is created. This particular filter tells the system that we want to override the behaviour when an \ac{nfc} tag is scanned.
+\item[Line 4] The filter is added to an array. This is required because you can have multiple filters.
+\item[Line 5] Foreground mode is enabled with the pending intent from \autoref{nfcForegroundOnCreate} and the intent filter.
+\end{description}
 
+\subsubsection{Handling of NFC Intent}
+When an \ac{nfc} tag is scanned the method shown in \autoref{lst:onNewIntent} is called.
+\begin{lstlisting}[language=java, label=lst:onNewIntent, caption=onNewIntent]
+@Override
+/* This method is called when an NFC tag is scanned */
+public void onNewIntent(Intent intent) { 
+    super.onNewIntent(intent);
+    ArrayList<Record> records = this.nfcForeground.newIntentEvent(intent);
+    if(records.size() > 0) {
+        this.onNfcScanned(records);
+    }
+}  
+\end{lstlisting}
 
+The \lstinline|NfcForegroundActivity| class contains an abstract method \lstinline|protected abstract void onNfcScanned(ArrayList<Record> records)|. 
 
 
 NDEF Tools for Android \citep{ndeftools}
