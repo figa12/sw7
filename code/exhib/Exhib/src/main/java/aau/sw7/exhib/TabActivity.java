@@ -14,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
@@ -121,15 +119,24 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         // index 3 should be the map, check if index 3 exists
         if(boothId != 0L && this.appSectionsPagerAdapter.getCount() > 3) {
             this.viewPager.setCurrentItem(3, true);
-            if(boothItems == null && graph == null){
+            if (boothItems == null && graph == null){
                 pendingBoothId = boothId;
-            }
-            else{
+            } else {
+                this.registerBoothAsVisited(boothId);
+
                 targetBooth = findBoothById(this.boothItems, 83L); //TODO Find a way to set a target.
                 this.mapController.animateCameraToBooth(findBoothById(this.boothItems, boothId));
                 this.updateUserLocation(boothId);
             }
         }
+    }
+
+    private void registerBoothAsVisited(long boothId) {
+        new ServerSyncService(this).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.NO_RESPONSE)),
+                new BasicNameValuePair("Type", "BoothSeen"),
+                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())),
+                new BasicNameValuePair("BoothId", String.valueOf(boothId)));
     }
 
     private void updateUserLocation(Long boothId){
