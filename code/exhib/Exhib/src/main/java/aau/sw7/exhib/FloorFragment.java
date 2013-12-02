@@ -1,27 +1,35 @@
 package aau.sw7.exhib;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
+
+import map.MapWrapperLayout;
 
 /**
  * Created by jacob on 10/3/13.
  */
 public class FloorFragment extends SupportMapFragment {
     private static final String SUPPORT_MAP_BUNDLE_KEY = "MapOptions";
-
+    private MapWrapperLayout mapWrapperLayout;
     public static interface OnFloorFragmentListener {
         void onMapReady(GoogleMap map);
     }
 
     public static FloorFragment newInstance() {
         return new FloorFragment();
+    }
+
+    public MapWrapperLayout getMapWrapperLayout() {
+        return mapWrapperLayout;
     }
 
     public static FloorFragment newInstance(GoogleMapOptions options) {
@@ -47,11 +55,17 @@ public class FloorFragment extends SupportMapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        MapWrapperLayout mapWrapperLayout = new MapWrapperLayout(this.getActivity());
+        mapWrapperLayout.addView(view);
+        this.mapWrapperLayout = mapWrapperLayout;
+
         if (mCallback != null) {
             mCallback.onMapReady(getMap());
         }
-        return view;
+        return mapWrapperLayout;
     }
+
+
 
     private OnFloorFragmentListener mCallback;
 }

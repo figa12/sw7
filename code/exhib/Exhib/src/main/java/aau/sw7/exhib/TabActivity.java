@@ -2,6 +2,7 @@ package aau.sw7.exhib;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,10 +13,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
@@ -27,39 +34,46 @@ import java.util.ArrayList;
 import NfcForeground.NfcForegroundFragment;
 import map.Graph;
 import map.MapController;
+import map.MapWrapperLayout;
 import map.Node;
+import map.OnInfoWindowElemTouchListener;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
     public static MapController mapController;
     private Graph graph;
     private BoothItem targetBooth;
+    private MapWrapperLayout mapWrapperLayout;
+    private ViewGroup infoWindow;
+    private TextView infoTitle;
+    private TextView infoSnippet;
+    private ImageView infoImage;
+    private Button infoButton;
+    private OnInfoWindowElemTouchListener infoButtonListener;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    DisplayImageOptions imageLoaderOptions = new DisplayImageOptions.Builder()
+            .cacheInMemory(true)
+            .cacheOnDisc(true)
+            .build();
 
     @Override
     public void onMapReady(GoogleMap map) {
         this.mapController = new MapController(map, this);
-        /*Node one = new Node(new LatLng(1,1),1L);
-        Node two = new Node(new LatLng(2,2),2L);
-        Node three = new Node(new LatLng(3,3),3L);
-        Node four = new Node(new LatLng(4,4),4L);
-        Node five = new Node(new LatLng(5,5),5L);
-        Edge onetwo = new Edge(0, one, two);
-        Edge twothree = new Edge(0, two, three);
-        Edge fourtwo = new Edge(0, four, two);
-        Edge onefour = new Edge(0, one, four);
-        Edge fivetwo = new Edge(0, five, two);
-        Edge fiveone = new Edge(0, five, one);
+        mapWrapperLayout = this.getFloorFragment().getMapWrapperLayout();
+        mapWrapperLayout.init(map, getPixelsFromDp(this, 39 + 20));
+        // We want to reuse the info window for all the markers,
+        // so let's create only one class member instance
 
-        ArrayList<Node> poly = new ArrayList<Node>();
-        Graph graphTest = new Graph(new ArrayList<Node>(Arrays.asList(one, two, three, four, five)), new ArrayList<Edge>(Arrays.asList(onetwo,twothree,fourtwo,onefour,fivetwo,fiveone)));
-        graphTest.makePolyLine();*/
-
+        this.initializeInfoButton();
+        this.initializeInfoWindow(map);
         this.mapController.initialize();
 
         if(this.boothItems != null && this.graph != null) {
-            this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
+            //this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
             this.mapController.drawBooths(this.boothItems);
             this.mapController.drawGraph(this.graph);
+
             //ArrayList<Node> path = this.graph.shortestRoute(5,6);
             //this.mapController.drawPolyline(path, 5, Color.RED, 3);
         }       
@@ -116,6 +130,51 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.showBoothOnMap(boothId);
     }
 
+    private void initializeInfoButton(){
+        this.infoButtonListener = new OnInfoWindowElemTouchListener(infoButton,
+                getResources().getDrawable(R.drawable.btn_default_normal_holo_light),
+                getResources().getDrawable(R.drawable.btn_default_pressed_holo_light))
+        {
+            @Override
+            protected void onClickConfirmed(View v, Marker marker) {
+                // Here we can perform some action triggered after clicking the button
+                Toast.makeText(TabActivity.this, marker.getTitle() + "'s button clicked!", Toast.LENGTH_SHORT).show();
+            }
+        };
+        this.infoButton.setOnTouchListener(infoButtonListener);
+    }
+
+    private void initializeInfoWindow(GoogleMap map){
+        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Setting up the infoWindow with current's marker info
+                infoTitle.setText(marker.getTitle());
+                infoSnippet.setText(marker.getSnippet());
+
+                BoothItem boothItem = findBoothByName(marker.getTitle());
+
+                if(boothItem != null){
+                    imageLoader.displayImage(boothItem.getCompanyLogo(), infoImage, imageLoaderOptions);
+                }else{
+                    //imgview none, is standard ic_launcher.png
+                }
+
+                infoButtonListener.setMarker(marker);
+
+                // We must call this to set the current marker and infoWindow references
+                // to the MapWrapperLayout
+                mapWrapperLayout.setMarkerWithInfoWindow(marker, infoWindow);
+                return infoWindow;
+            }
+        });
+    }
+
     private long pendingBoothId = 0;
     private void showBoothOnMap(long boothId) {
         // index 3 should be the map, check if index 3 exists
@@ -130,6 +189,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 this.updateUserLocation(boothId);
             }
         }
+    }
+
+    public static int getPixelsFromDp(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale + 0.5f);
     }
 
     private void updateUserLocation(Long boothId){
@@ -155,10 +219,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         return null;
     }
 
-    private Node findNodeById(ArrayList<Node> nodes, long nodeId){
-        for (Node n : nodes){
-            if(n.getID() == nodeId){
-                return n;
+    private BoothItem findBoothByName(String name){
+        for(BoothItem b : boothItems){
+            if(b.getBoothName().equals(name)){
+                return b;
             }
         }
         return null;
@@ -289,6 +353,13 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             // Open the map and show the booth on the map and open a booth acitivty on top of it
             this.showBoothOnMap(boothId);
         }
+
+        this.infoWindow = (ViewGroup)getLayoutInflater().inflate(R.layout.popup, null);
+        this.infoTitle = (TextView)infoWindow.findViewById(R.id.title);
+        this.infoSnippet = (TextView)infoWindow.findViewById(R.id.snippet);
+        this.infoImage = (ImageView) infoWindow.findViewById(R.id.icon);
+        this.infoButton = (Button)infoWindow.findViewById(R.id.button);
+        this.infoImage = (ImageView) infoWindow.findViewById(R.id.icon);
     }
 
     public boolean getLock() {
@@ -323,7 +394,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.graph = graph;
         this.boothItems = boothItems;
         if(this.getFloorFragment() != null){
-            this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
+            //this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
             this.mapController.drawBooths(this.boothItems);
             this.mapController.drawGraph(this.graph);
         }

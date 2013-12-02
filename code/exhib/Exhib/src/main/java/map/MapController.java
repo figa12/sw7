@@ -184,11 +184,6 @@ public class MapController {
         }
     }
 
-    public void setCustomInfoWindow(LayoutInflater layoutInflater, ArrayList<BoothItem> booths){
-        PopupAdapter customInfoWindow = new PopupAdapter(layoutInflater, booths);
-        this.googleMap.setInfoWindowAdapter(customInfoWindow);
-
-    }
 
     /***
      * initialize the map...
