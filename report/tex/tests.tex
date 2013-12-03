@@ -56,6 +56,36 @@ Text
 \end{center}
 
 % SIMON; SKRIV EFTER DENNE LINJE
+\testcase
+{Choose different booths and see if feeds updates accordingly}
+{Make sure the feed list is updated when new booths are chosen}
+{Connected to the Internet, registered to an exhibition}
+{Change booth subscriptions}
+
+
+\testcase
+{Scan an \ac{nfc} tag with and without a registered user}
+{Make sure that when scanning without a registered user, you have to choose categories and scanning with a registered user you do not}
+{Connected to the Internet, \ac{nfc} is on}
+{Register a user, booth subscriptions}
+
+\testcase
+{Scan an \ac{nfc} tag while in the tab activity}
+{The application should change tab to "Map" and snap to the booth that matches the boothID on the tag}
+{Connected to the Internet,  tab activity open, \ac{nfc} is on}
+{Snap to the booth the user is located at}
+
+\testcase
+{Click a booth on the map and navigate to it}
+{The user should get the shortest path from where he last scanned a tag and to the booth he wants to navigate to}
+{Connected to the Internet, be on the "Map" tab}
+{Route planner}
+
+\testcase
+{Have the tab activity open and scan a different exhibID}
+{End current exhibition session and start a new one with the new exhibID and prompt the user to choose categories}
+{Connect to the Internet, tab activity open}
+{Support for multiple exhibitions}
 
 \section{White-box testing}
 
