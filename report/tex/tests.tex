@@ -5,7 +5,7 @@ Text
 {
 \subsubsection*{#1}
 \begin{center}
-\begin{tabular}{l p{7.4cm}}
+\begin{tabular}{p{1.8cm} p{7.5cm}}
 \hline
 \textbf{Case name} & #1\\
 \textbf{Objective} & #2\\
@@ -20,9 +20,26 @@ Text
 \testcase
 {Change subscriptions}
 {Make sure the application only shows feeds that the user has subscribed to}
-{Registered to the exhibition}
+{Connected to the internet, tab activity open}
 {Change booth subscriptions}
 
+\testcase
+{Load old feeds}
+{Make sure the application does not stall when scrolling to the bottom of the feed list}
+{Connected to the internet, tab activity open}
+{Save phone memory}
+
+\testcase
+{Scan tag while reading a feed}
+{The feed window should close and show the booth on the map}
+{Connected to the internet, tab activity open}
+{Foreground mode}
+
+\testcase
+{Load new feeds}
+{While the user is viewing feed list and a booth creates a new feed, the list should show that more feeds are availabe}
+{Connected to the internet, tab activity open}
+{}
 
 \begin{center}
 \begin{tabular}{| c | p{4.5cm} | p{4.5cm} |}
