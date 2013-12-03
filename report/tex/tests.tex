@@ -1,1 +1,44 @@
+\section{Black-box testing}
 Text
+
+\newcommand{\testcase}[4]
+{
+\subsubsection*{#1}
+\begin{center}
+\begin{tabular}{l p{7.4cm}}
+\hline
+\textbf{Case name} & #1\\
+\textbf{Objective} & #2\\
+\textbf{Preconditions} & #3\\
+\textbf{Requirement} & #4\\
+\hline
+\\
+\end{tabular}
+\end{center}
+}
+
+\testcase
+{Change subscriptions}
+{Make sure the application only shows feeds that the user has subscribed to}
+{Registered to the exhibition}
+{Change booth subscriptions}
+
+
+\begin{center}
+\begin{tabular}{| c | p{4.5cm} | p{4.5cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Find the same two airports & \textit{None}\\
+\hline
+2 & Make sure there is selected at least one person & \textit{None}\\
+\hline
+3 & Click search button & No search result\\
+\hline
+\end{tabular}
+\end{center}
+
+% SIMON; SKRIV EFTER DENNE LINJE
+
+\section{White-box testing}
+
