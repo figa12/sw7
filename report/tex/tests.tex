@@ -1,19 +1,28 @@
 \section{Black-box testing}
 Text
 
-\subsubsection*{Airport X to X}
-
+\newcommand{\testcase}[4]
+{
+\subsubsection*{#1}
 \begin{center}
-\begin{tabular}{l p{7cm}}
+\begin{tabular}{l p{7.4cm}}
 \hline
-\textbf{Case name} & \\
-\textbf{Objective} & Make sure you cannot travel from an airport to the same airport, as this would have to be kind of loop in the ticket\\
-\textbf{Preconditions} & Registered to the exhibition\\
-\textbf{Requirement} & Change booth subscriptions\\
+\textbf{Case name} & #1\\
+\textbf{Objective} & #2\\
+\textbf{Preconditions} & #3\\
+\textbf{Requirement} & #4\\
 \hline
 \\
 \end{tabular}
 \end{center}
+}
+
+\testcase
+{Change subscriptions}
+{Make sure the application only shows feeds that the user has subscribed to}
+{Registered to the exhibition}
+{Change booth subscriptions}
+
 
 \begin{center}
 \begin{tabular}{| c | p{4.5cm} | p{4.5cm} |}
