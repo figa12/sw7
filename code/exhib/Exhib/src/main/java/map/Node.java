@@ -13,21 +13,31 @@ public class Node {
     private long id;
     private LatLng position;
     private ArrayList<Edge> edges;
-    private BoothItem booth; //TODO implement Booth relation, if needed.
+    private long boothId; //TODO implement Booth relation, if needed.
     private boolean visited = false; //only used for djiktras
+
+    public long getBoothId() {
+        return boothId;
+    }
+
+    public void setBoothId(long boothId) {
+        this.boothId = boothId;
+    }
 
     /***
      * Contructor
      * @param position
+
      * @param id
      */
     public Node(LatLng position, long id) {
         this.position = position;
         this.id = id;
         this.edges = new ArrayList<Edge>();
+        this.boothId = -1;
     }
 
-    public long getID() {
+    public long getId() {
         return this.id;
     }
 

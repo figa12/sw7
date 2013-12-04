@@ -31,4 +31,9 @@
             android:layout_height="wrap_content"
             android:textSize="8sp"/>
     </LinearLayout>
+    <Button
+        android:id="@+id/button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Navigate to" />
 </LinearLayout>

@@ -2,6 +2,7 @@ package aau.sw7.exhib;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,8 +13,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.ndeftools.Record;
@@ -25,39 +34,47 @@ import java.util.ArrayList;
 import NfcForeground.NfcForegroundFragment;
 import map.Graph;
 import map.MapController;
+import map.MapWrapperLayout;
 import map.Node;
+import map.OnInfoWindowElemTouchListener;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
     public static MapController mapController;
-    private Graph graph;
-    private BoothItem targetBooth;
+    private static Graph graph;
+    private static ArrayList<BoothItem> boothItems;
+    private static BoothItem targetBooth;
+    private static Node sourceNode;
+    private MapWrapperLayout mapWrapperLayout;
+    private ViewGroup infoWindow;
+    private TextView infoTitle;
+    private TextView infoSnippet;
+    private ImageView infoImage;
+    private Button infoButton;
+    private OnInfoWindowElemTouchListener infoButtonListener;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    DisplayImageOptions imageLoaderOptions = new DisplayImageOptions.Builder()
+            .cacheInMemory(true)
+            .cacheOnDisc(true)
+            .build();
 
     @Override
     public void onMapReady(GoogleMap map) {
-        this.mapController = new MapController(map, this);
-        /*Node one = new Node(new LatLng(1,1),1L);
-        Node two = new Node(new LatLng(2,2),2L);
-        Node three = new Node(new LatLng(3,3),3L);
-        Node four = new Node(new LatLng(4,4),4L);
-        Node five = new Node(new LatLng(5,5),5L);
-        Edge onetwo = new Edge(0, one, two);
-        Edge twothree = new Edge(0, two, three);
-        Edge fourtwo = new Edge(0, four, two);
-        Edge onefour = new Edge(0, one, four);
-        Edge fivetwo = new Edge(0, five, two);
-        Edge fiveone = new Edge(0, five, one);
+        mapController = new MapController(map, this);
+        mapWrapperLayout = this.getFloorFragment().getMapWrapperLayout();
+        mapWrapperLayout.init(map, getPixelsFromDp(this, 39 + 20));
+        // We want to reuse the info window for all the markers,
+        // so let's create only one class member instance
 
-        ArrayList<Node> poly = new ArrayList<Node>();
-        Graph graphTest = new Graph(new ArrayList<Node>(Arrays.asList(one, two, three, four, five)), new ArrayList<Edge>(Arrays.asList(onetwo,twothree,fourtwo,onefour,fivetwo,fiveone)));
-        graphTest.makePolyLine();*/
+        this.initializeInfoButton();
+        this.initializeInfoWindow(map);
+        mapController.initialize();
 
-        this.mapController.initialize();
-
-        if(this.boothItems != null && this.graph != null) {
-            this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
-            this.mapController.drawBooths(this.boothItems);
-            this.mapController.drawGraph(this.graph);
+        if(boothItems != null && graph != null) {
+            //this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
+            mapController.drawBooths(boothItems);
+            mapController.drawGraph(graph);
             //ArrayList<Node> path = this.graph.shortestRoute(5,6);
             //this.mapController.drawPolyline(path, 5, Color.RED, 3);
         }       
@@ -72,7 +89,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     private long exhibId = 0;
     private long userId = 0;
-    private ArrayList<BoothItem> boothItems;
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -94,7 +110,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         //TODO if a new exhibition id is scanned, then open the app again with the package?
 
         long exhibId = 0L;
-        long boothId = 0L;
+        long nodeId = 0L;
 
         for (int i = 0; i < records.size(); i++) {
 
@@ -106,27 +122,82 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 if (i == 0) {
                     exhibId = Long.valueOf(textRecord.getText());
                 } else if (i == 1 && records.size() > 2) {
-                    boothId = Long.valueOf(textRecord.getText());
+                    nodeId = Long.valueOf(textRecord.getText()); //this can either be a node ID
                 }
             }
         }
 
-        this.showBoothOnMap(boothId);
+        if(nodeId != 0L){
+            this.showOnMap(nodeId);
+        }
     }
 
-    private long pendingBoothId = 0;
-    private void showBoothOnMap(long boothId) {
-        // index 3 should be the map, check if index 3 exists
-        if(boothId != 0L && this.appSectionsPagerAdapter.getCount() > 3) {
-            this.viewPager.setCurrentItem(3, true);
-            if (boothItems == null && graph == null){
-                pendingBoothId = boothId;
-            } else {
-                this.registerBoothAsVisited(boothId);
+    private void initializeInfoButton(){
+        this.infoButtonListener = new OnInfoWindowElemTouchListener(infoButton,
+                getResources().getDrawable(R.drawable.btn_default_normal_holo_light),
+                getResources().getDrawable(R.drawable.btn_default_pressed_holo_light))
+        {
+            @Override
+            protected void onClickConfirmed(View v, Marker marker) {
+                // Here we can perform some action triggered after clicking the button
+                targetBooth = TabActivity.findBoothByName(marker.getTitle());
+                calculateAndDrawRoute();
+                Toast.makeText(TabActivity.this, "Navigating to " +  marker.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        this.infoButton.setOnTouchListener(infoButtonListener);
+    }
 
-                targetBooth = findBoothById(this.boothItems, 83L); //TODO Find a way to set a target.
-                this.mapController.animateCameraToBooth(findBoothById(this.boothItems, boothId));
-                this.updateUserLocation(boothId);
+    private void initializeInfoWindow(GoogleMap map){
+        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Setting up the infoWindow with current's marker info
+                infoTitle.setText(marker.getTitle());
+                infoSnippet.setText(marker.getSnippet());
+
+                BoothItem boothItem = findBoothByName(marker.getTitle());
+
+                if(boothItem != null){
+                    imageLoader.displayImage(boothItem.getCompanyLogo(), infoImage, imageLoaderOptions);
+                }else{
+                    //imgview none, is standard ic_launcher.png
+                }
+
+                infoButtonListener.setMarker(marker);
+
+                // We must call this to set the current marker and infoWindow references
+                // to the MapWrapperLayout
+                mapWrapperLayout.setMarkerWithInfoWindow(marker, infoWindow);
+                return infoWindow;
+            }
+        });
+    }
+
+    private long pendingId = 0;
+    private void showOnMap(long nodeId) {
+        // index 3 should be the map, check if index 3 exists
+        if(nodeId != 0L && this.appSectionsPagerAdapter.getCount() > 3) {
+            this.viewPager.setCurrentItem(3, true);
+            if(graph == null){
+                pendingId = nodeId;
+            }
+            else{
+                Node scannedNode = graph.findNodeById(nodeId);
+                if(scannedNode.getBoothId() == -1){
+                    mapController.animateCamera(scannedNode.getPosition(), 5);
+                    this.updateUserLocation(nodeId);
+                }
+                else{
+                    this.registerBoothAsVisited(scannedNode.getBoothId());
+                    mapController.animateCameraToBooth(findBoothById(scannedNode.getBoothId()));
+                    this.updateUserLocation(nodeId);
+                }
             }
         }
     }
@@ -139,21 +210,48 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 new BasicNameValuePair("BoothId", String.valueOf(boothId)));
     }
 
-    private void updateUserLocation(Long boothId){
-        this.mapController.removePreviousUserLocationerMarker();
-        BoothItem sourceBooth = findBoothById(this.boothItems, boothId);
-        this.graph.setUserLocation(sourceBooth.getSquareCenter());
-        this.mapController.drawMarker(this.graph.getUserLocation(),"YOU ARE HERE!","",R.drawable.iamhere);
+    public static int getPixelsFromDp(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale + 0.5f);
+    }
 
-        if(targetBooth != null){
-            this.mapController.removePreviousRoutePath();
-            ArrayList<Node> bestWaypoints = this.graph.bestWaypoint(sourceBooth, targetBooth);
-            ArrayList<Node> path = this.graph.shortestRoute(bestWaypoints.get(0).getID(), bestWaypoints.get(1).getID());
-            this.mapController.drawPolyline(path, 5, Color.RED, 2); //TODO remove previous route
+    private void updateUserLocation(Long nodeId){
+
+        sourceNode = graph.findNodeById(nodeId); //Set the new sourceNode
+        mapController.removePreviousUserLocationerMarker(); //Remove the previous red marker
+
+        if(sourceNode.getBoothId() == -1L){
+            graph.setUserLocation(sourceNode.getPosition());
+        }else{
+            graph.setUserLocation(findBoothById(sourceNode.getBoothId()).getSquareCenter());
+        }
+
+        mapController.drawMarker(graph.getUserLocation(),"YOU ARE HERE!","",R.drawable.iamhere);
+
+        //if destination reached
+        if(targetBooth != null && sourceNode.getBoothId() == targetBooth.getBoothId()){
+            targetBooth = null;
+        }
+
+        //draw the route from sourceNode to target
+        calculateAndDrawRoute();
+    }
+
+    private static void calculateAndDrawRoute(){
+        if(targetBooth != null && sourceNode != null){
+            mapController.removePreviousRoutePath(); // Remove the previous path
+            ArrayList<Node> bestWaypoints;
+            if(sourceNode.getBoothId() == -1L){
+                bestWaypoints = graph.bestWaypoint(sourceNode, targetBooth); //TODO should be between the sourceBooth and targetBooth
+            }else{
+                bestWaypoints = graph.bestWaypoint(findBoothById(sourceNode.getBoothId()), targetBooth); //TODO should be between the sourceBooth and targetBooth
+            }
+            ArrayList<Node> path = graph.shortestRoute(bestWaypoints.get(0).getId(), bestWaypoints.get(1).getId());
+            mapController.drawPolyline(path, 5, Color.RED, 5);
         }
     }
 
-    private BoothItem findBoothById(ArrayList<BoothItem> boothItems, long boothId){
+    public static BoothItem findBoothById(long boothId){
         for(BoothItem b : boothItems){
             if(b.getBoothId() == boothId){
                 return b;
@@ -162,10 +260,10 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         return null;
     }
 
-    private Node findNodeById(ArrayList<Node> nodes, long nodeId){
-        for (Node n : nodes){
-            if(n.getID() == nodeId){
-                return n;
+    public static BoothItem findBoothByName(String name){
+        for(BoothItem b : boothItems){
+            if(b.getBoothName().equals(name)){
+                return b;
             }
         }
         return null;
@@ -235,7 +333,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.appSectionsPagerAdapter.onDestroy();
         this.appSectionsPagerAdapter = null;
         this.viewPager = null;
-        this.boothItems = null;
+        boothItems = null;
     }
 
     @Override
@@ -244,13 +342,13 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         setContentView(R.layout.activity_tab);
 
         Bundle extras = getIntent().getExtras();
-        long boothId = 0L;
+        long nodeId = 0L;
 
         if (extras != null) {
             // getInt returns 0 if there isn't any mapping to them
             this.exhibId = extras.getLong(MainActivity.EXHIB_ID);
             this.userId = extras.getLong(MainActivity.USER_ID);
-            boothId = extras.getLong(MainActivity.BOOTH_ID);
+            nodeId = extras.getLong(MainActivity.BOOTH_ID);
         } else {
             this.exhibId = 1L;
             this.userId = 1L;
@@ -291,11 +389,18 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 new BasicNameValuePair("Type", "GetFloorPlan"),
                 new BasicNameValuePair("UserId", String.valueOf(this.getUserId())));
 
-        if (boothId != 0L) {
+        if (nodeId != 0L) {
             // Then the initial NFC tag contained a boothId
             // Open the map and show the booth on the map and open a booth acitivty on top of it
-            this.showBoothOnMap(boothId);
+            this.showOnMap(nodeId);
         }
+
+        this.infoWindow = (ViewGroup)getLayoutInflater().inflate(R.layout.popup, null);
+        this.infoTitle = (TextView)infoWindow.findViewById(R.id.title);
+        this.infoSnippet = (TextView)infoWindow.findViewById(R.id.snippet);
+        this.infoImage = (ImageView) infoWindow.findViewById(R.id.icon);
+        this.infoButton = (Button)infoWindow.findViewById(R.id.button);
+        this.infoImage = (ImageView) infoWindow.findViewById(R.id.icon);
     }
 
     public boolean getLock() {
@@ -326,19 +431,17 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         return this.appSectionsPagerAdapter.exhibitionInfoFragment;
     }
 
-    public void setFloorPlan(Graph graph, ArrayList<BoothItem> boothItems){
-        this.graph = graph;
-        this.boothItems = boothItems;
+    public void setFloorPlan(Graph newGraph, ArrayList<BoothItem> booths){
+        graph = newGraph;
+        boothItems = booths;
         if(this.getFloorFragment() != null){
-            this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
-            this.mapController.drawBooths(this.boothItems);
-            this.mapController.drawGraph(this.graph);
+            //this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
+            mapController.drawBooths(boothItems);
+            mapController.drawGraph(graph);
         }
-        if(pendingBoothId != 0L){
-            targetBooth = findBoothById(this.boothItems, 83L);
-            this.mapController.animateCameraToBooth(this.findBoothById(boothItems, pendingBoothId));
-            this.updateUserLocation(pendingBoothId);
-            pendingBoothId = 0;
+        if(pendingId != 0L){
+            showOnMap(pendingId);
+            pendingId = 0;
         }
 
     }

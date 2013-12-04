@@ -3,11 +3,8 @@ package map;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import aau.sw7.exhib.BoothItem;
-import aau.sw7.exhib.TabActivity;
 
 /**
  * Created by Jacob on 08-11-13.
@@ -137,9 +134,9 @@ public class Graph {
         return null;
     }
 
-    public Node getNodeById(long id){
+    public Node findNodeById(long id){
         for(Node node : this.nodes){
-            if(node.getID() == id){
+            if(node.getId() == id){
                 return node;
             }
         }
@@ -174,7 +171,7 @@ public class Graph {
 
     public boolean existsNode (Node node){ //TODO: do we need this, maybe contains will work?
         for(Node n : this.nodes){
-            if (n.getID() == node.getID()){
+            if (n.getId() == node.getId()){
                 return true;
             }
         }
@@ -182,8 +179,8 @@ public class Graph {
     }
 
     public ArrayList<Node> shortestRoute(long sourceID, long targetID){
-        Node source = this.getNodeById(sourceID);
-        Node target = this.getNodeById(targetID);
+        Node source = this.findNodeById(sourceID);
+        Node target = this.findNodeById(targetID);
         ArrayList<Node> previous = new ArrayList<Node>();
         ArrayList<Double> dist = new ArrayList<Double>();
 
@@ -215,16 +212,36 @@ public class Graph {
             }
         }
 
-        ArrayList<Node> path = makePath(target, previous, this.nodes);
+        this.resetNodesVisited();
 
-        return path;
+        return makePath(target, previous, this.nodes);
+    }
+
+    private void resetNodesVisited(){
+        for(Node n : nodes){
+            n.setVisited(false);
+        }
+    }
+
+    public ArrayList<Node> bestWaypoint(Node source, BoothItem targetBooth){
+        Double smallestWeight = Double.MAX_VALUE;
+        ArrayList<Node> result = new ArrayList<Node>();
+            for (Node tn : targetBooth.getBoothEntryNodes()){
+                double weight = distBetween(source, tn);
+                if(weight < smallestWeight){
+                    smallestWeight = weight;
+                    result.clear();
+                    result.add(0,source);
+                    result.add(1,tn);
+                }
+            }
+        return result;
     }
 
     public ArrayList<Node> bestWaypoint(BoothItem sourceBooth, BoothItem targetBooth){
         Double smallestWeight = Double.MAX_VALUE;
         ArrayList<Node> result = new ArrayList<Node>();
-        Node source = null;
-        for(Node sn : sourceBooth.getBoothEntryNodes()){
+        for (Node sn : sourceBooth.getBoothEntryNodes()){
             for (Node tn : targetBooth.getBoothEntryNodes()){
                 double weight = distBetween(sn, tn);
                 if(weight < smallestWeight){
