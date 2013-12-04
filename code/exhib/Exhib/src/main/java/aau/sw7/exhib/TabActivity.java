@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,10 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -40,12 +41,12 @@ import map.OnInfoWindowElemTouchListener;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
-    public static MapController mapController;
+    private static MapController mapController;
     private static Graph graph;
     private static ArrayList<BoothItem> boothItems;
     private static BoothItem targetBooth;
     private static Node sourceNode;
-    private MapWrapperLayout mapWrapperLayout;
+    private static MapWrapperLayout mapWrapperLayout;
     private ViewGroup infoWindow;
     private TextView infoTitle;
     private TextView infoSnippet;
@@ -69,7 +70,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         this.initializeInfoButton();
         this.initializeInfoWindow(map);
-        mapController.initialize();
 
         if(boothItems != null && graph != null) {
             //this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
@@ -158,22 +158,26 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             @Override
             public View getInfoContents(Marker marker) {
                 // Setting up the infoWindow with current's marker info
-                infoTitle.setText(marker.getTitle());
-                infoSnippet.setText(marker.getSnippet());
-
-                BoothItem boothItem = findBoothByName(marker.getTitle());
-
-                if(boothItem != null){
-                    imageLoader.displayImage(boothItem.getCompanyLogo(), infoImage, imageLoaderOptions);
+                if(!marker.getTitle().equals("You are here")){
+                    infoTitle.setText(marker.getTitle());
+                    infoSnippet.setText(marker.getSnippet());
+                    BoothItem boothItem = findBoothByName(marker.getTitle());
+                    if(boothItem != null){
+                        imageLoader.displayImage(boothItem.getCompanyLogo(), infoImage, imageLoaderOptions);
+                    }else{
+                        //imgview none, is standard ic_launcher.png
+                    }
+                    infoButtonListener.setMarker(marker);
+                    // We must call this to set the current marker and infoWindow references
+                    // to the MapWrapperLayout
+                    mapWrapperLayout.setMarkerWithInfoWindow(marker, infoWindow);
                 }else{
-                    //imgview none, is standard ic_launcher.png
+                    ViewGroup markWindow = new LinearLayout(TabActivity.this);
+                    TextView markTitle = new TextView(TabActivity.this);
+                    markTitle.setText(marker.getTitle());
+                    markWindow.addView(markTitle);
+                    return markWindow;
                 }
-
-                infoButtonListener.setMarker(marker);
-
-                // We must call this to set the current marker and infoWindow references
-                // to the MapWrapperLayout
-                mapWrapperLayout.setMarkerWithInfoWindow(marker, infoWindow);
                 return infoWindow;
             }
         });
@@ -216,21 +220,24 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
     }
 
     private void updateUserLocation(Long nodeId){
-
         sourceNode = graph.findNodeById(nodeId); //Set the new sourceNode
         mapController.removePreviousUserLocationerMarker(); //Remove the previous red marker
 
+        LatLng userLocation;
+
         if(sourceNode.getBoothId() == -1L){
-            graph.setUserLocation(sourceNode.getPosition());
+             userLocation = sourceNode.getPosition();
         }else{
-            graph.setUserLocation(findBoothById(sourceNode.getBoothId()).getSquareCenter());
+             userLocation = findBoothById(sourceNode.getBoothId()).getSquareCenter();
         }
 
-        mapController.drawMarker(graph.getUserLocation(),"YOU ARE HERE!","",R.drawable.iamhere);
+        mapController.drawUserLocationMarker(userLocation);
+
 
         //if destination reached
         if(targetBooth != null && sourceNode.getBoothId() == targetBooth.getBoothId()){
             targetBooth = null;
+            mapController.removePreviousRoute();
         }
 
         //draw the route from sourceNode to target
@@ -239,7 +246,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     private static void calculateAndDrawRoute(){
         if(targetBooth != null && sourceNode != null){
-            mapController.removePreviousRoutePath(); // Remove the previous path
+            mapController.removePreviousRoute(); // Remove the previous path
             ArrayList<Node> bestWaypoints;
             if(sourceNode.getBoothId() == -1L){
                 bestWaypoints = graph.bestWaypoint(sourceNode, targetBooth); //TODO should be between the sourceBooth and targetBooth
@@ -247,7 +254,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 bestWaypoints = graph.bestWaypoint(findBoothById(sourceNode.getBoothId()), targetBooth); //TODO should be between the sourceBooth and targetBooth
             }
             ArrayList<Node> path = graph.shortestRoute(bestWaypoints.get(0).getId(), bestWaypoints.get(1).getId());
-            mapController.drawPolyline(path, 5, Color.RED, 5);
+            mapController.drawRoute(path);
         }
     }
 
