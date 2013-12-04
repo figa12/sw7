@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 import com.google.android.gms.maps.model.Marker;
+
+import aau.sw7.exhib.TabActivity;
+
 /**
  * Created by Jacob on 29-11-13.
  */
@@ -25,6 +28,7 @@ public abstract class OnInfoWindowElemTouchListener implements OnTouchListener {
         this.bgDrawableNormal = bgDrawableNormal;
         this.bgDrawablePressed = bgDrawablePressed;
     }
+
 
     public void setMarker(Marker marker) {
         this.marker = marker;

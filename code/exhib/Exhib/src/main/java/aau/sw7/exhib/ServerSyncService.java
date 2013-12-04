@@ -434,7 +434,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
 
     private Node findNode(ArrayList<Node> nodes, long id){
         for (Node n : nodes){
-            if(n.getID() == id){
+            if(n.getId() == id){
                 return n;
             }
         }
@@ -610,6 +610,7 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
                 reader.beginArray();
                 while (reader.hasNext()) {
                     Node waypoint = this.findNode(nodes, reader.nextLong());
+                    waypoint.setBoothId(id);
                     if(waypoint != null){
                         boothsEntryNodes.add(waypoint);
                     }
