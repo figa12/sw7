@@ -2,7 +2,6 @@ package map;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.view.LayoutInflater;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,9 +29,10 @@ public class MapController {
     private TileOverlay floorPlanOverlay;
     public List<Marker> markerList = new ArrayList<Marker>();;
     public List<Polygon> polygonList = new ArrayList<Polygon>();
-    public List<Polyline> polylineList = new ArrayList<Polyline>();
+    public List<Polyline> polylinesRoutes = new ArrayList<Polyline>();
+    public Polyline floorPath;
     private Activity parentActivity;
-    private Marker userLocation;
+    private Marker userLocationMarker;
 
     public MapController(GoogleMap map, Activity parent) {
         this.googleMap = map;
@@ -56,13 +56,18 @@ public class MapController {
                 .snippet(snippet)
                 .icon(BitmapDescriptorFactory.fromResource(picture));
         Marker marker = this.googleMap.addMarker(markerOptions);
-        if(picture == R.drawable.iamhere){
-            userLocation = marker;
-        }
         this.markerList.add(marker);
-
         return marker;
 
+    }
+
+    public Marker drawRedMarker(LatLng latLng, int picture){
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(latLng)
+                .title("You are here")
+                .icon(BitmapDescriptorFactory.fromResource(picture));
+        Marker marker = this.googleMap.addMarker(markerOptions);
+        return marker;
     }
 
     /***
@@ -82,17 +87,16 @@ public class MapController {
      * adds a polyline to the map given array containing latlngs
      * @param latLngs
      */
-    public void drawPolyline(List<LatLng> latLngs, float strokeWidth, int color, int zIndex){
+    public Polyline drawPolyline(List<LatLng> latLngs, float strokeWidth, int color, int zIndex){
         PolylineOptions polylineOptions = new PolylineOptions()
                 .addAll(latLngs)
                 .width(strokeWidth)
                 .color(color)
                 .zIndex(zIndex);
-        Polyline polyline = this.googleMap.addPolyline(polylineOptions);
-        this.polylineList.add(polyline);
+        return this.googleMap.addPolyline(polylineOptions);
     }
 
-    public void drawPolyline(ArrayList<Node> nodes, float strokeWidth, int color, int zIndex){
+    public Polyline drawPolyline(ArrayList<Node> nodes, float strokeWidth, int color, int zIndex){
         ArrayList<LatLng> polyPoints = new ArrayList<LatLng>();
         for(Node n : nodes){
             polyPoints.add(n.getPosition());
@@ -102,22 +106,18 @@ public class MapController {
                 .width(strokeWidth)
                 .color(color)
                 .zIndex(zIndex);
-        Polyline polyline = this.googleMap.addPolyline(polylineOptions);
-        this.polylineList.add(polyline);
+        return this.googleMap.addPolyline(polylineOptions);
     }
 
-    public void removePreviousRoutePath(){
-        for(Polyline p: polylineList){
-            if(p.getColor() == Color.RED){
-                p.remove();
-                polylineList.remove(polylineList.indexOf(p));
-            }
+    public void removePreviousRoute(){
+        for(Polyline p: polylinesRoutes){
+            p.remove();
         }
     }
 
     public void removePreviousUserLocationerMarker(){
-        if(userLocation != null){
-            userLocation.remove();
+        if(userLocationMarker != null){
+            userLocationMarker.remove();
         }
     }
 
@@ -132,10 +132,24 @@ public class MapController {
         polygonList.add(polygon);
     }
 
+    public void drawUserLocationMarker(LatLng userLocation){
+        this.userLocationMarker = drawRedMarker(userLocation, R.drawable.iamhere);
+    }
+
     public void drawBooths(List<BoothItem> boothItems) {
         for(BoothItem b : boothItems){
             drawBooth(b);
         }
+    }
+
+    public void drawFloorPath(ArrayList<Node> path){
+        Polyline floorPath = drawPolyline(path, 5, Color.BLUE, 2);
+        this.floorPath = floorPath;
+    }
+
+    public void drawRoute(ArrayList<Node> path){
+        Polyline route = drawPolyline(path, 5, Color.RED, 5);
+        polylinesRoutes.add(route);
     }
 
     public void drawBooth(BoothItem boothItem) {
@@ -150,7 +164,7 @@ public class MapController {
 
     public void drawGraph(Graph graph){
         ArrayList<Node> poly = new ArrayList<Node>(graph.getPolylinePath());
-        drawPolyline(poly, 5, Color.BLUE, 2);
+        drawFloorPath(poly);
 
         /*for(Node n : graph.getNodes()){
             if(!n.getPosition().equals(new LatLng(0.0,0.0))){
