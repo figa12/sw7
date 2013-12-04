@@ -5,7 +5,7 @@ Text
 {
 \subsubsection*{#1}
 \begin{center}
-\begin{tabular}{p{1.8cm} p{7.5cm}}
+\begin{tabular}{p{1.8cm} p{8.52cm}}
 \hline
 \textbf{Case name} & #1\\
 \textbf{Objective} & #2\\
@@ -17,43 +17,73 @@ Text
 \end{center}
 }
 
-\testcase
-{Change subscriptions}
-{Make sure the application only shows feeds that the user has subscribed to}
-{Connected to the internet, tab activity open}
-{Change booth subscriptions}
+\newcommand{\casetwo}{Load old feeds}
+\newcommand{\casethree}{Scan while reading a feed}
+\newcommand{\casefour}{Load new feeds}
+
+\begin{center}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Note the booth names from the feed list & \textit{None}\\
+\hline
+2 & Click the menu button & Menu opens\\
+\hline
+3 & Click the menu item \textit{Choose Categories} & Categories activity opens\\
+\hline
+4 & Change booth subscriptions and note the changes & \textit{None}\\
+\hline
+5 & Click the submit button & Categories activity closes\\
+\hline
+6 & Check that the feed list changed accordingly to your new subscriptions & Feeds changed successfully\\
+\hline
+\end{tabular}
+\end{center}
 
 \testcase
-{Load old feeds}
+{\casetwo}
 {Make sure the application does not stall when scrolling to the bottom of the feed list}
 {Connected to the internet, tab activity open}
 {Save phone memory}
 
+\begin{center}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Click the \textit{Feeds} tab & \textit{Feed} tab is displayed\\
+\hline
+2 & Scroll to the bottom of the list & Older feeds are loaded from the server\\
+\hline
+\end{tabular}
+\end{center}
+
 \testcase
-{Scan tag while reading a feed}
+{\casethree}
 {The feed window should close and show the booth on the map}
 {Connected to the internet, tab activity open}
 {Foreground mode}
 
-\testcase
-{Load new feeds}
-{While the user is viewing feed list and a booth creates a new feed, the list should show that more feeds are availabe}
-{Connected to the internet, tab activity open}
-{}
-
 \begin{center}
-\begin{tabular}{| c | p{4.5cm} | p{4.5cm} |}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
 \hline
 \textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
 \hline
-1 & Find the same two airports & \textit{None}\\
+1 & Click the \textit{Feeds} tab & \textit{Feed} tab is displayed\\
 \hline
-2 & Make sure there is selected at least one person & \textit{None}\\
+2 & Click a feed item & A window opens with the full feed descriptions\\
 \hline
-3 & Click search button & No search result\\
+3 & Scan a booth \ac{nfc} tag & The feed window closes and the tab changes to the map and snaps to a booth\\
 \hline
 \end{tabular}
 \end{center}
+
+\testcase
+{\casefour}
+{While the user is viewing feed list and a booth creates a new feed, the list should show that more feeds are availabe}
+{Connected to the internet, tab activity open}
+{}
 
 % SIMON; SKRIV EFTER DENNE LINJE
 \testcase
