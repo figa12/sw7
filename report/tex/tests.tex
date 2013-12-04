@@ -1,1 +1,91 @@
+\section{Black-box testing}
 Text
+
+\newcommand{\testcase}[4]
+{
+\subsubsection*{#1}
+\begin{center}
+\begin{tabular}{p{1.8cm} p{7.5cm}}
+\hline
+\textbf{Case name} & #1\\
+\textbf{Objective} & #2\\
+\textbf{Preconditions} & #3\\
+\textbf{Requirement} & #4\\
+\hline
+\\
+\end{tabular}
+\end{center}
+}
+
+\testcase
+{Change subscriptions}
+{Make sure the application only shows feeds that the user has subscribed to}
+{Connected to the internet, tab activity open}
+{Change booth subscriptions}
+
+\testcase
+{Load old feeds}
+{Make sure the application does not stall when scrolling to the bottom of the feed list}
+{Connected to the internet, tab activity open}
+{Save phone memory}
+
+\testcase
+{Scan tag while reading a feed}
+{The feed window should close and show the booth on the map}
+{Connected to the internet, tab activity open}
+{Foreground mode}
+
+\testcase
+{Load new feeds}
+{While the user is viewing feed list and a booth creates a new feed, the list should show that more feeds are availabe}
+{Connected to the internet, tab activity open}
+{}
+
+\begin{center}
+\begin{tabular}{| c | p{4.5cm} | p{4.5cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Find the same two airports & \textit{None}\\
+\hline
+2 & Make sure there is selected at least one person & \textit{None}\\
+\hline
+3 & Click search button & No search result\\
+\hline
+\end{tabular}
+\end{center}
+
+% SIMON; SKRIV EFTER DENNE LINJE
+\testcase
+{Choose different booths and see if feeds updates accordingly}
+{Make sure the feed list is updated when new booths are chosen}
+{Connected to the Internet, registered to an exhibition}
+{Change booth subscriptions}
+
+
+\testcase
+{Scan an \ac{nfc} tag with and without a registered user}
+{Make sure that when scanning without a registered user, you have to choose categories and scanning with a registered user you do not}
+{Connected to the Internet, \ac{nfc} is on}
+{Register a user, booth subscriptions}
+
+\testcase
+{Scan an \ac{nfc} tag while in the tab activity}
+{The application should change tab to "Map" and snap to the booth that matches the boothID on the tag}
+{Connected to the Internet,  tab activity open, \ac{nfc} is on}
+{Snap to the booth the user is located at}
+
+\testcase
+{Click a booth on the map and navigate to it}
+{The user should get the shortest path from where he last scanned a tag and to the booth he wants to navigate to}
+{Connected to the Internet, be on the "Map" tab}
+{Route planner}
+
+\testcase
+{Have the tab activity open and scan a different exhibID}
+{End current exhibition session and start a new one with the new exhibID and prompt the user to choose categories}
+{Connect to the Internet, tab activity open}
+{Support for multiple exhibitions}
+
+\section{White-box testing}
+

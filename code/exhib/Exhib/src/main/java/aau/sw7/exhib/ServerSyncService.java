@@ -42,6 +42,7 @@ import map.Square;
 public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String> {
 
     // numbers doesn't matter, as long as they are unique
+    public static final int NO_RESPONSE = 0;
     public static final int GET_FEEDS_REQUEST = 1;
     public static final int GET_NEW_FEEDS_REQUEST = 2;
     public static final int CHECK_NEW_FEEDS_REQUEST = 3;

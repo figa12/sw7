@@ -75,7 +75,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             //this.mapController.setCustomInfoWindow(this.getLayoutInflater(), boothItems);
             mapController.drawBooths(boothItems);
             mapController.drawGraph(graph);
-
             //ArrayList<Node> path = this.graph.shortestRoute(5,6);
             //this.mapController.drawPolyline(path, 5, Color.RED, 3);
         }       
@@ -90,6 +89,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
     private long exhibId = 0;
     private long userId = 0;
+
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         this.viewPager.setCurrentItem(tab.getPosition(), true);
@@ -124,7 +124,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 } else if (i == 1 && records.size() > 2) {
                     nodeId = Long.valueOf(textRecord.getText()); //this can either be a node ID
                 }
-
             }
         }
 
@@ -195,11 +194,20 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     this.updateUserLocation(nodeId);
                 }
                 else{
+                    this.registerBoothAsVisited(scannedNode.getBoothId());
                     mapController.animateCameraToBooth(findBoothById(scannedNode.getBoothId()));
                     this.updateUserLocation(nodeId);
                 }
             }
         }
+    }
+
+    private void registerBoothAsVisited(long boothId) {
+        new ServerSyncService(this).execute(
+                new BasicNameValuePair("RequestCode", String.valueOf(ServerSyncService.NO_RESPONSE)),
+                new BasicNameValuePair("Type", "BoothSeen"),
+                new BasicNameValuePair("UserId", String.valueOf(this.getUserId())),
+                new BasicNameValuePair("BoothId", String.valueOf(boothId)));
     }
 
     public static int getPixelsFromDp(Context context, float dp) {
@@ -221,9 +229,9 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         mapController.drawMarker(graph.getUserLocation(),"YOU ARE HERE!","",R.drawable.iamhere);
 
         //if destination reached
-        /*if(nodeId == targetBooth.getBoothId()){
+        if(targetBooth != null && sourceNode.getBoothId() == targetBooth.getBoothId()){
             targetBooth = null;
-        }*/
+        }
 
         //draw the route from sourceNode to target
         calculateAndDrawRoute();

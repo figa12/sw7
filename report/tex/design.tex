@@ -72,7 +72,7 @@ From the start screen you can also open a small menu in the bottom left corner w
 
 When you are successfully registered at the exhibition, then you get to the core of the application. Here you can swipe between the different tabs, and also access a specific tab by clicking on it in the top menu. \autoref{fig:exhibition} shows the first tab, notice the tab bar in the top of the application showing which tab you are viewing. This is a simple welcome screen showing the exhibition icon, exhibition name, and an exhibition description.
 
-\autoref{fig:feedlist} shows the feed list associated with the exhibition. The user receives feeds based on the chosen subscriptions that was submitted with the activity in \autoref{fig:categories}.
+\autoref{fig:feedlist} shows the feed list associated with the exhibition. The user receives feeds based on the chosen subscriptions that was submitted with the activity in \autoref{fig:categories}. An exhibition can have many feeds, and loading hundreds of feeds at the same time might slow down the application. The feed list should only load a few feeds at a time.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -110,7 +110,7 @@ When you are successfully registered at the exhibition, then you get to the core
 
 \section{Final Application Design}
 
-The final application consists of the following activities and fragments:
+We did not create the \textit{BoothActivity} which is showed in \autoref{fig:booth}, because we realised that we might as well show all the booth information in the marker information window on the map. This is shown later in this section. The final application consists of the following activities and fragments:
 
 \begin{description}
 \item[MainActivity] This is the startup activity. This activity waits for the user to scan an \ac{nfc} tag and redirect the user appropriately.
@@ -122,12 +122,6 @@ The final application consists of the following activities and fragments:
 \item[FeedActivity] Shows the feed item when it is clicked from the feed list.
 \item[CategoriesActivity] Is a list of categories, e.g. hardware, software.
 \end{description}
-We did not create the \textit{BoothActivity} which is showed in \autoref{fig:booth}, because we realised that we might as well show all the booth information in the marker information window on the map. This is shown later in this section.
-
-\section*{Final design}
-The following section shows our final design of our application. A run-through of each of the screen that you may encounter throughout the application.
-
-When opening the application the first screen you encouter is one telling the user to scan an \ac{nfc} tag. The screen is shown on \autoref{fig:nfcscreen}. The windows differs from the protoype, as there is no menu in the bottom right to browse exhibitions. When the \ac{nfc} tag is scanned you are signed up to that specific exhibition and a new screen appears asking the user to choose between different categories and booths, this is to identify the users interests which will be used later by the application. This is shown on \autoref{fig:categories1}. After the user has selected their categories, they press submit. Note that after having scanned and chosen categories the first time, the next time the user opens the application and scan an \ac{nfc} tag from the same exhibition, the user does not have to choose categories and booths again.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -145,11 +139,7 @@ When opening the application the first screen you encouter is one telling the us
 \end{minipage}
 \end{figure}
 
-After having submitted the categories the user want to subscribe to, the user will be taken to an "Info" tab, this is a simple tab displaying information about exhibition the user are currently at, such as exhibition logo, name and a description of the exhibition. This can be seen on \autoref{fig:infoscreen}  at the top. Next to "Info" there are three other tabs: "Feeds", "Schedule", and "Map". These four tabs can be navigated to and from, from any of the other tabs either by swiping from side to side or by clicking on the tab itself at the top.
-
-The tab "Feeds", as seen on\autoref{fig:feedsscreen}, shows a list feeds made by booths at the exhibition. The application uses the booths that the user subscribed to before, the user only receives feeds from the booths that they subscribed to after scanning the \ac{nfc} tag. Each feed has a timestamp telling the user when it was made.
-
-It is also possible for the user to change the booths they have subscribed to, if they want to receive different feeds. This is done by pressing the three vertical dots in the top right corner, this takes they user to the categories screen again where they can choose new categories and booths. 
+When opening the application the first screen you encouter is one telling the user to scan an \ac{nfc} tag. The screen is shown on \autoref{fig:nfcscreen}. The windows differs from the protoype, as there is no menu in the bottom right to browse exhibitions. When the \ac{nfc} tag is scanned you are signed up to that specific exhibition and a new screen appears asking the user to choose between different categories and booths, this is to identify the users interests which will be used later by the application. This is shown on \autoref{fig:categories1}. After the user has selected their categories, they press submit. Note that after having scanned and chosen categories the first time, the next time the user opens the application and scan an \ac{nfc} tag from the same exhibition, the user does not have to choose categories and booths again.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -167,7 +157,11 @@ It is also possible for the user to change the booths they have subscribed to, i
 \end{minipage}
 \end{figure}
 
-Some of the feeds are too long to display all the text in the list of feeds, so in order to read the full feed you can press the feed and a pop-up will come up displaying the full feed, as shown on \autoref{fig:popupfeed}. This is different from the prototype, because we thought it would be more convenient for the user to have a pop-up. During the exhibition, the booths might send new feeds, when this happens a button will be displayed, telling the user that more feeds are available, allowing them to choose when they want to load the new feeds so they always can make sure they have read all feeds before loading new ones. This can be seen on \autoref{fig:feedsnewitem}.
+After having submitted the categories the user want to subscribe to, the user will be taken to an "Info" tab, this is a simple tab displaying information about exhibition the user are currently at, such as exhibition logo, name and a description of the exhibition. This can be seen on \autoref{fig:infoscreen}  at the top. Next to "Info" there are three other tabs: "Feeds", "Schedule", and "Map". These four tabs can be navigated to and from, from any of the other tabs either by swiping from side to side or by clicking on the tab itself at the top.
+
+The tab "Feeds", as seen on\autoref{fig:feedsscreen}, shows a list feeds made by booths at the exhibition, note that the feeds do not have a header like shown on the prototypes. We decided against this because we felt it would take up too much space. The application uses the booths that the user subscribed to before, the user only receives feeds from the booths that they subscribed to after scanning the \ac{nfc} tag. Each feed has a timestamp telling the user when it was made.
+
+It is also possible for the user to change the booths they have subscribed to, if they want to receive different feeds. This is done by pressing the three vertical dots in the top right corner, this takes they user to the categories screen again where they can choose new categories and booths. For some phones these dots will be located as a hardware button itself, and then the dots will not be in the application.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -185,9 +179,7 @@ Some of the feeds are too long to display all the text in the list of feeds, so 
 \end{minipage}
 \end{figure}
 
-The "Schedule" tab shows the events that is going on at the exhibition itself, could be a company presenting some new hardware or software at the main stage. This can be seen on \autoref{fig:schedule1}. Each event in the schedule has a countdown to when it will happen. 
-
-The last tab is the map, this is a map over the exhibition, displaying all the booths on the exhibition. If you scan an \ac{nfc} on a booth the map will snap to that booth on the map and display a red circle to show where you are, this can be seen on \autoref{fig:map1}. You can also press the info icon on each booth, to receive information about this booth.
+Some of the feeds are too long to display all the text in the list of feeds, so in order to read the full feed you can press the feed and a pop-up will come up displaying the full feed, as shown on \autoref{fig:popupfeed}. This is different from the prototype, because we thought it would be more convenient for the user to have a pop-up. During the exhibition, the booths might send new feeds, when this happens a button will be displayed, telling the user that more feeds are available, allowing them to choose when they want to load the new feeds so they always can make sure they have read all feeds before loading new ones. This can be seen on \autoref{fig:feedsnewitem}.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -206,6 +198,10 @@ The last tab is the map, this is a map over the exhibition, displaying all the b
 \missingfigure{}
 \end{minipage}
 \end{figure}\todo{Picture of map goes here}
+
+The "Schedule" tab shows the events that is going on at the exhibition itself, if the booths have a larger presentation they can add it to the schedule. This can be seen on \autoref{fig:schedule1}. Each event in the schedule has a countdown to when it will happen. 
+
+The last tab is "Map", this is a map showing the exhibition floor plan with all its booths displayed. If you scan an \ac{nfc} on one of the booths, the map will snap to that booth on the map and display a red circle to show where you are, this can be seen on \autoref{fig:map1}. You can also press the info icon on each booth, to receive information about this booth.\todo{Hvad sker der når man scanner booth tag, ingen låse knap}
 
 \autoref{fig:flowchart} show the application flow between these different activities. Note that the \textit{TabActivity} consists only of tabs, each tab is defined in a fragment.
 

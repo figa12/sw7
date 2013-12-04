@@ -4,7 +4,7 @@ We have created a class called \lstinline|NfcForegroundActivity| which every act
 \subsection{Foreground Mode}
 \label{sec:foeground}
 
-It is possible to force priority over other activities when handling \ac{nfc} intents using the Foregroud Dispatch System \citep{foregroundDispatch}. This enables us to handle the intent when the user has out activity open and scans an \ac{nfc} tag.
+It is possible to force priority over other activities when handling \ac{nfc} intents using the Foreground Dispatch System \citep{foregroundDispatch}. This enables us to handle the intent when the user has our activity open and scans an \ac{nfc} tag.
 
 \begin{lstlisting}[language=java, label=nfcForegroundOnCreate, caption=OnCreate]
 public NfcForeground(Context context) { 
@@ -26,8 +26,109 @@ protected void onResume() {
   this.nfcAdapter.enableForegroundDispatch((Activity) this.context, this.nfcPendingIntent, writeTagFilters, null);
 }
 \end{lstlisting}
+\begin{description}
+\item[Line 3] An \lstinline|IntentFilter| is created. This particular filter tells the system that we want to override the behavior when an \ac{nfc} tag is scanned.
+\item[Line 4] The filter is added to an array. This is required because you can have multiple filters.
+\item[Line 5] Foreground mode is enabled with the pending intent from \autoref{nfcForegroundOnCreate} and the intent filter.
+\end{description}
+
+\subsubsection{Handling of NFC Intent}
+When an \ac{nfc} tag is scanned the method shown in \autoref{lst:onNewIntent} is called. This method is a part of \lstinline|NfcForegroundActivity|.
+\begin{lstlisting}[language=java, label=lst:onNewIntent, caption=onNewIntent]
+@Override
+/* This method is called when an NFC tag is scanned */
+public void onNewIntent(Intent intent) { 
+    super.onNewIntent(intent);
+    ArrayList<Record> records = this.nfcForeground.newIntentEvent(intent);
+    if(records.size() > 0) {
+        this.onNfcScanned(records);
+    }
+}  
+\end{lstlisting}
+\begin{description}
+\item[Line 3] The intent that \lstinline|onNewIntent| in \autoref{lst:onNewIntent} takes is the pending intent that was created in \autoref{nfcForegroundOnCreate}.
+\item[Line 5] The method \lstinline|newIntentEvent| of the class \lstinline|NfcForeground| is run with the intent and a list of records is returned.
+\item[Lines 6-7] If any records were found \lstinline|onNfcScanned| is called with these.
+\end{description}
+As seen in \autoref{lst:onNewIntent} on line 5, the records are gathered trough the use of \lstinline|this.nfcForeground.newIntentEvent(intent);| which can be seen in \autoref{lst:newIntentEvent}.
+
+\begin{lstlisting}[language=java, label=lst:newIntentEvent, caption=newIntentEvent]
+public ArrayList<Record> newIntentEvent(Intent intent) {
+  Parcelable[] messages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+  ArrayList<Record> foundRecords = new ArrayList<Record>();
+
+  if (messages != null) {
+    for (int i = 0; i < messages.length; i++) {
+
+      List<Record> records = new Message((NdefMessage)messages[i]);
+
+      for(int k = 0; k < records.size(); k++) {
+        Record record = records.get(k);
+        foundRecords.add(record);
+      }
+    }
+  }
+  return foundRecords;
+}
+\end{lstlisting}
+\begin{description}
+\item[Line 2] Extract the messages from the \ac{nfc} tag.
+\item[Line 3] A list is prepared for results.
+\item[Lines 5-15] All records of all messages are gathered and added to the \lstinline|foundRecords|. If no messages are present on the tag, nothing will be returned.
+\item[Line 16] Return the list of records.
+\end{description}
+
+In \autoref{lst:newIntentEvent} it is worth noticing that the \lstinline|Record| class is from a third party library, NDEF Tools for Android \citep{ndeftools}. This makes the parsing of NDEF records a very easy process.\\\\
+As seen in \autoref{lst:onNewIntent} on line 7, the method \lstinline|onNfcScanned| is called with the records found on the \ac{nfc} tag. This method is abstract and hence must be overwritten in all activities that extends \lstinline|NfcForegroundActivity|. This allows for a very easy way to handle the records that lie on the \ac{nfc} tag separately for each activity.
+
+In \autoref{lst:onNfcScanned} we have shown how \lstinline|onNfcScanned| is overwritten for the \lstinline|MainActivity|. This activity needs to send the user to the \lstinline|TabActivity| if he already exists or create a new user if not.
+
+\begin{lstlisting}[language=java, label=lst:onNfcScanned, caption=onNfcScanned]
+@Override
+protected void onNfcScanned(ArrayList<Record> records) {
+    long exhibId = 0L;
+    long currentBoothId = 0L;
+
+    for (int i = 0; i < records.size(); i++) {
+
+        if (records.get(i) instanceof AndroidApplicationRecord) {
+            AndroidApplicationRecord appRecord = (AndroidApplicationRecord) records.get(i);
+        } else if (records.get(i) instanceof TextRecord) {
+            TextRecord textRecord = (TextRecord) records.get(i);
+
+            if (i == 0) {
+                exhibId = Long.valueOf(textRecord.getText());
+            } else if (i == 1 && records.size() > 2) {
+                currentBoothId = Long.valueOf(textRecord.getText());
+            }
+        }
+    }
+
+    Long userId = this.findUserId(this.readIdFile(), exhibId);
+
+    if(userId != null) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(MainActivity.EXHIB_ID, exhibId);
+        bundle.putLong(MainActivity.BOOTH_ID, currentBoothId);
+        bundle.putLong(MainActivity.USER_ID, userId);
+
+        Intent intent = new Intent(this, TabActivity.class);
+        intent.putExtras(bundle);
+        this.startActivity(intent);
+    } else {
+        this.requestCreateUser(exhibId);
+    }
+}
+\end{lstlisting}
+\begin{description}
+\item[Lines 1-2] \lstinline|onNfcScanned| in an abstract method and takes the records found in \lstinline|newIntentEvent|. See \autoref{lst:newIntentEvent}.
+\item[Lines 3-4] Two variables are declared. One to hold the exhibition id and one to hold the current booth id.
+\item[Lines 8-11] For each record, check whether it is an application record or a text record and instantiate it as an object of the appropriate class. The classes for these are imported trough the NDEF Tools for Android \citep{ndeftools} library.
+\item[Lines 13-14] If the record is a text record and is the first element in the list of records, \lstinline|records|, we know that it is the exhibition id, see \autoref{sec:nfcdata}, and we set the variable that we declared on line 3, \lstinline|exhibId|.
+\item[Lines 15-16] If the record is a text record and has the index 1 in the record list, we know that it is a booth id, see \autoref{sec:nfcdata}. We then set the variable that we declared on line 4, \lstinline|currentBoothId|.
+\item[Line 21] The current user id is gathered. The user id is stored in a text file next to the application on the device. The file has user ids and exhibition ids grouped together, and when we know the current exhibition id, we can quickly gather the matching user id.
+\item[Lines 23-31] If the user id is not null we know that the user already has a user registered for this exhibition. We then take all the information from the \ac{nfc} tag and the user id and package this in a bundle, ready for sending to the \lstinline|TabActivity|. The \lstinline|TabActivity| is then started with this bundle.
+\item[Line 33] If the returned user id is null, we know that the user have not gotten a user created for him yet for this particular exhibition, and we send a request to the server to create one.
+\end{description}
 
 
-
-
-NDEF Tools for Android \citep{ndeftools}
