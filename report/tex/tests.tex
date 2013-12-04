@@ -30,7 +30,7 @@ Text
 {Save phone memory}
 
 \testcase
-{Scan tag while reading a feed}
+{Scan an \ac{nfc} tag while reading a feed}
 {The feed window should close and show the booth on the map}
 {Connected to the internet, tab activity open}
 {Foreground mode}
@@ -56,36 +56,92 @@ Text
 \end{center}
 
 % SIMON; SKRIV EFTER DENNE LINJE
+
+\newcommand{\casefive}{New feeds}
+\newcommand{\casesix}{Register a user}
+\newcommand{\caseseven}{Snap to booth}
+\newcommand{\caseeight}{Navigate to booth}
+\newcommand{\casenine}{Register new exhibition}
+
 \testcase
-{Choose different booths and see if feeds updates accordingly}
+{\casefive}
 {Make sure the feed list is updated when new booths are chosen}
 {Connected to the Internet, registered to an exhibition}
 {Change booth subscriptions}
 
+%Indsæt din her Jesper
 
 \testcase
-{Scan an \ac{nfc} tag with and without a registered user}
+{\casesix}
 {Make sure that when scanning without a registered user, you have to choose categories and scanning with a registered user you do not}
 {Connected to the Internet, \ac{nfc} is on}
 {Register a user, booth subscriptions}
 
+\begin{center}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Scan an \ac{nfc} tag & \textit{The application opens}\\
+\hline
+2 & Choose your categories and press submit & \textit{The tab activity opens}\\
+\hline
+3 & Exit the application & \\
+4 & Scan the same tag again & The tab activity should open\\
+\hline
+\end{tabular}
+\end{center}
+
 \testcase
-{Scan an \ac{nfc} tag while in the tab activity}
+{\caseseven}
 {The application should change tab to "Map" and snap to the booth that matches the boothID on the tag}
 {Connected to the Internet,  tab activity open, \ac{nfc} is on}
 {Snap to the booth the user is located at}
 
+\begin{center}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Scan a booth \ac{nfc} tag& \textit{Change to "Map" tab and snap to booth}\\
+\hline
+\end{tabular}
+\end{center}
+
 \testcase
-{Click a booth on the map and navigate to it}
+{\caseeight}
 {The user should get the shortest path from where he last scanned a tag and to the booth he wants to navigate to}
 {Connected to the Internet, be on the "Map" tab}
 {Route planner}
 
+\begin{center}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Press a booth on the map & \textit{Booth info window should open}\\
+\hline
+2 & Press the "Navigate to" button & \textit{The shortest path should be drawn on the floor plan}\\
+\hline
+\end{tabular}
+\end{center}
+
 \testcase
-{Have the tab activity open and scan a different exhibID}
+{\casenine}
 {End current exhibition session and start a new one with the new exhibID and prompt the user to choose categories}
 {Connect to the Internet, tab activity open}
 {Support for multiple exhibitions}
+\begin{center}
+\begin{tabular}{| c | p{4.6cm} | p{4.6cm} |}
+\hline
+\textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
+\hline
+1 & Scan an \ac{nfc} tag & \textit{End current exhibition and open a new one}\\
+\hline
+2 & Choose categories for the new exhibition and press submit & \textit{The tab activity should open}\\
+\hline
+\end{tabular}
+\end{center}
 
 \section{White-box testing}
 
