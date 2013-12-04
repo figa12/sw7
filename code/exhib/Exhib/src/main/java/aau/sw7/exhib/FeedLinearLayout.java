@@ -1,5 +1,6 @@
 package aau.sw7.exhib;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
@@ -127,7 +128,7 @@ public class FeedLinearLayout extends ListLinearLayout<FeedItem> {
         @Override
         public void onClick(View v) {
             FeedLinearLayout.this.feedIntent.putExtra(FeedLinearLayout.FEED_ITEM, this.feedItem);
-            FeedLinearLayout.this.getContext().startActivity(FeedLinearLayout.this.feedIntent);
+            ((Activity) FeedLinearLayout.this.getContext()).startActivityForResult(FeedLinearLayout.this.feedIntent, TabActivity.FEED_ITEM_ACTIVITY);
         }
     }
 }

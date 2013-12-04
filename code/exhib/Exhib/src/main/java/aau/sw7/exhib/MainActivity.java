@@ -55,8 +55,29 @@ public class MainActivity extends NfcForegroundActivity {
         actionBar.setHomeButtonEnabled(false);
         actionBar.setDisplayUseLogoEnabled(true);
 
+        this.startRecent();
     }
 
+    private void startRecent() {
+        String fileContents = this.readIdFile();
+
+        if(fileContents == null || fileContents.equals(""))
+            return;
+
+        String[] idPairs = fileContents.split("\n");
+        String[] ids = idPairs[idPairs.length-1].split(",");
+        long exhibId = Long.valueOf(ids[0]);
+        long userId = Long.valueOf(ids[1]);
+
+        Intent intent = new Intent(this, TabActivity.class);
+        intent.putExtra(MainActivity.EXHIB_ID, exhibId);
+        intent.putExtra(MainActivity.USER_ID, userId);
+        this.startActivity(intent);
+    }
+
+    private void changeOrder(String[] idPairs) {
+        
+    }
 
     @Override
     protected void onNfcScanned(ArrayList<Record> records) {
@@ -148,6 +169,10 @@ public class MainActivity extends NfcForegroundActivity {
         // it is silly to get the id's as a result when we could just save them in this class, but why not
         long exhibId = extras.getLong(MainActivity.EXHIB_ID);
         long userId = extras.getLong(MainActivity.USER_ID);
+        long nodeId = extras.getLong(MainActivity.BOOTH_ID);
+
+        // If the result contained a nodeId, then fetch it (shouldn't currently happen)
+        this.currentBoothId = nodeId != 0L ? nodeId : this.currentBoothId;
 
         Bundle bundle = new Bundle();
         bundle.putLong(MainActivity.EXHIB_ID, exhibId);

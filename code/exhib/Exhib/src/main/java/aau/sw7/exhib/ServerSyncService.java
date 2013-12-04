@@ -1,5 +1,6 @@
 package aau.sw7.exhib;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -108,16 +109,13 @@ public class ServerSyncService extends AsyncTask<NameValuePair, Integer, String>
         return alertDialogBuilder.create();
     }
 
-    private static AlertDialog alertDialog = null;
-
     private void displayAlert(String logMessage) {
         Log.e(ServerSyncService.class.getName(), logMessage);
 
-        if(alertDialog == null)
-            this.alertDialog = this.createAlertDialog();
+        AlertDialog alertDialog = this.createAlertDialog();
 
-        if(!this.alertDialog.isShowing())
-            this.alertDialog.show();
+        if(!alertDialog.isShowing())
+            alertDialog.show();
     }
 
     @Override

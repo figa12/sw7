@@ -1,6 +1,7 @@
 package aau.sw7.exhib;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,11 @@ import map.OnInfoWindowElemTouchListener;
 
 
 public class TabActivity extends NfcForegroundFragment implements ActionBar.TabListener, FloorFragment.OnFloorFragmentListener {
+    public static final int FEED_ITEM_ACTIVITY = 1;
+    public static final int CATEGORIES_ACTIVITY = 2;
+
+    public static final int TAB_ACTIVITY_CLOSE = 3;
+
     public static MapController mapController;
     private static Graph graph;
     private static ArrayList<BoothItem> boothItems;
@@ -127,8 +133,19 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             }
         }
 
+        if(exhibId != 0L) {
+            this.checkExhibId(exhibId);
+        }
+
         if(nodeId != 0L){
             this.showOnMap(nodeId);
+        }
+    }
+
+    private void checkExhibId(long scannedExhibId) {
+        if(this.exhibId != scannedExhibId) {
+            Toast.makeText(this, "Different exhibition scanned, please scan again", Toast.LENGTH_SHORT).show();
+            super.finish();
         }
     }
 
@@ -303,13 +320,31 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         categoriesIntent.putExtra(MainActivity.EXHIB_ID, this.exhibId);
         categoriesIntent.putExtra(MainActivity.USER_ID, this.userId);
 
-        this.startActivityForResult(categoriesIntent, 0);
+        this.startActivityForResult(categoriesIntent, TabActivity.CATEGORIES_ACTIVITY);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        this.appSectionsPagerAdapter.notifyDataSetChanged();
+
+        switch (requestCode) {
+            case TabActivity.CATEGORIES_ACTIVITY:
+                this.appSectionsPagerAdapter.notifyDataSetChanged();
+                break;
+            case TabActivity.FEED_ITEM_ACTIVITY:
+                Bundle extras = data.getExtras();
+                long exhibId = extras.getLong(MainActivity.EXHIB_ID);
+                long nodeId = extras.getLong(MainActivity.BOOTH_ID);
+
+                if(exhibId != 0L) {
+                    this.checkExhibId(exhibId);
+                }
+
+                if(nodeId != 0L){
+                    this.showOnMap(nodeId);
+                }
+                break;
+        }
     }
 
     @Override
@@ -333,7 +368,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         this.appSectionsPagerAdapter.onDestroy();
         this.appSectionsPagerAdapter = null;
         this.viewPager = null;
-        boothItems = null;
+        TabActivity.boothItems = null;
+        TabActivity.graph = null;
+        TabActivity.targetBooth = null;
+        TabActivity.sourceNode = null;
+        TabActivity.mapController = null;
     }
 
     @Override

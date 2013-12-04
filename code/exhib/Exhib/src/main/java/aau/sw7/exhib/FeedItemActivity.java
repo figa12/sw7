@@ -1,5 +1,7 @@
 package aau.sw7.exhib;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.ndeftools.Record;
+import org.ndeftools.externaltype.AndroidApplicationRecord;
+import org.ndeftools.wellknown.TextRecord;
 
 import java.util.ArrayList;
 
@@ -34,7 +38,32 @@ public class FeedItemActivity extends NfcForegroundActivity {
 
     @Override
     protected void onNfcScanned(ArrayList<Record> records) {
-        //TODO
+        long exhibId = 0L;
+        long nodeId = 0L;
+
+        for (int i = 0; i < records.size(); i++) {
+
+            if (records.get(i) instanceof AndroidApplicationRecord) {
+                AndroidApplicationRecord appRecord = (AndroidApplicationRecord) records.get(i);
+            } else if (records.get(i) instanceof TextRecord) {
+                TextRecord textRecord = (TextRecord) records.get(i);
+
+                if (i == 0) {
+                    exhibId = Long.valueOf(textRecord.getText());
+                } else if (i == 1 && records.size() > 2) {
+                    nodeId = Long.valueOf(textRecord.getText()); //this can either be a node ID
+                }
+            }
+        }
+
+        if(nodeId != 0L || exhibId != 0L) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(MainActivity.EXHIB_ID, exhibId);
+            resultIntent.putExtra(MainActivity.BOOTH_ID, nodeId);
+
+            super.setResult(Activity.RESULT_OK, resultIntent);
+            super.finish();
+        }
     }
 
     @SuppressWarnings("deprecation")
