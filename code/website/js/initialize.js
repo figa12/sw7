@@ -720,8 +720,8 @@ function JsonEdge(from,to,weight){
     this.weight = weight;
 }
 function JsonBooth(id,dbid,desc,topLeft,bottomRight,category,company,newComp,newCat){
-    this.dbid = dbid;
     this.id = id;
+    this.dbid = dbid;
     this.description = desc;
     this.topLeft = topLeft;
     this.bottomRight = bottomRight;
@@ -757,6 +757,7 @@ function getJsonElements(nodesArray, edgeArray, boothArray, exhibit,companiesArr
     var newEdges = [];
     for (var x = edgeArray.length - 1; x >= 0; x--) {
         var newEdge = new JsonEdge(edgeArray[x].from.name, edgeArray[x].to.name, edgeArray[x].weight);
+        console.log(newEdge);
         newEdges.push(newEdge);
     };
 
@@ -812,8 +813,7 @@ function getJsonElements(nodesArray, edgeArray, boothArray, exhibit,companiesArr
             }
         };
 
-
-        var newBooth = new JsonBooth(boothArray[i].dbid, boothArray[i].boothId, boothArray[i].description, topLeft, bottomRight,curBoothCategory,curBoothCompany,newComp,newCat);
+        var newBooth = new JsonBooth(boothArray[i].boothId, boothArray[i].dbid, boothArray[i].description, topLeft, bottomRight,curBoothCategory,curBoothCompany,newComp,newCat);
         newBooths.push(newBooth);
     };
 
