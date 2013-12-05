@@ -28,7 +28,6 @@ if(isset($_POST["nodes"]) && $_POST["nodes"] != "" &&
 	$returnCategoryIds = array();
 	$returnExhibId = '0';
 //exhib insert
-	//insert into table (id, name, age) values(1, "A", 19) on duplicate key update name=values(name), age=values(age)
 	if(!($sqli = $mysqli->prepare( 'INSERT INTO exhib (id,name,address,zip,country,description,logo) 
 									VALUES (?, ?, ?, ?, ?, ?, ?) on duplicate key update name=values(name),address=values(address),zip=values(zip),country=values(country),description=values(description),logo=values(logo)')))
 	{
@@ -44,7 +43,7 @@ if(isset($_POST["nodes"]) && $_POST["nodes"] != "" &&
 	$_logoval = $exhibData["logo"];
 
 
-	if(!$sqli->bind_param('issssss', $_idval, $_nameval,$_addressval,$_zipval,$_countryval,$_descriptionval,$_logoval))
+	if(!$sqli->bind_param('ississs', $_idval, $_nameval,$_addressval,$_zipval,$_countryval,$_descriptionval,$_logoval))
 	{
 		echo "Binding parameters failed: (" . $sqli->errno . ") " . $sqli->error;
 	}
@@ -54,7 +53,7 @@ if(isset($_POST["nodes"]) && $_POST["nodes"] != "" &&
 		echo "Execute failed: (" . $sqli->errno . ") " . $sqli->error;
 	}
 		
-	$returnExhibId = $_idval != NULL ? $mysqli->insert_id : $_idval;
+	$returnExhibId = $_idval == NULL ? $mysqli->insert_id : $_idval;
 //Companies insert
 if(isset($_POST["companies"]) && $_POST["companies"] != "")
 {
@@ -156,7 +155,7 @@ if(isset($_POST["categories"]) && $_POST["categories"] != "")
 				$sqli->execute();
 			}
 			
-		$return = $_idval != NULL ? $mysqli->insert_id : $_idval;
+		$return = $_idval == NULL ? $mysqli->insert_id : $_idval;
 		array_push($returnBoothsIds, $return);
 	}
 //Booth coordinates
@@ -233,7 +232,7 @@ if(isset($_POST["categories"]) && $_POST["categories"] != "")
 		}
 
 
-		$_boothidval = $value["boothId"] == "" ? NULL : $mysqli->real_escape_string($returnBoothsIds[$_boothidDBval]);
+		$_boothidval = $value["boothId"] == NULL ? NULL : $mysqli->real_escape_string($returnBoothsIds[$_boothidDBval]);
 		$_exhibidval = $returnExhibId;
 
 		if(!$sqli->bind_param('ddiii', $_xval, $_yval, $_isroadval, $_boothidval, $_exhibidval))

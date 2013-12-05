@@ -59,8 +59,8 @@ function Node(name, point){
 		return neighbours;
 	};
 }
-
-function Booth(boothId, rect, desc) {
+function Booth(dbid, boothId, rect, desc) {
+	this.dbid = dbid;
 	this.boothId = boothId;
 	this.rect = rect;
 	this.description = desc;
