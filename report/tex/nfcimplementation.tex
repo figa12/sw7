@@ -87,7 +87,7 @@ In \autoref{lst:onNfcScanned} we have shown how \lstinline|onNfcScanned| is over
 @Override
 protected void onNfcScanned(ArrayList<Record> records) {
     long exhibId = 0L;
-    long currentBoothId = 0L;
+    long nodeId = 0L;
 
     for (int i = 0; i < records.size(); i++) {
 
@@ -99,7 +99,7 @@ protected void onNfcScanned(ArrayList<Record> records) {
             if (i == 0) {
                 exhibId = Long.valueOf(textRecord.getText());
             } else if (i == 1 && records.size() > 2) {
-                currentBoothId = Long.valueOf(textRecord.getText());
+                nodeId = Long.valueOf(textRecord.getText());
             }
         }
     }
@@ -109,7 +109,7 @@ protected void onNfcScanned(ArrayList<Record> records) {
     if(userId != null) {
         Bundle bundle = new Bundle();
         bundle.putLong(MainActivity.EXHIB_ID, exhibId);
-        bundle.putLong(MainActivity.BOOTH_ID, currentBoothId);
+        bundle.putLong(MainActivity.NODE_ID, nodeId);
         bundle.putLong(MainActivity.USER_ID, userId);
 
         Intent intent = new Intent(this, TabActivity.class);
@@ -122,10 +122,10 @@ protected void onNfcScanned(ArrayList<Record> records) {
 \end{lstlisting}
 \begin{description}
 \item[Lines 1-2] \lstinline|onNfcScanned| in an abstract method and takes the records found in \lstinline|newIntentEvent|. See \autoref{lst:newIntentEvent}.
-\item[Lines 3-4] Two variables are declared. One to hold the exhibition id and one to hold the current booth id.
+\item[Lines 3-4] Two variables are declared. One to hold the exhibition id and one to hold the node id that is scanned.
 \item[Lines 8-11] For each record, check whether it is an application record or a text record and instantiate it as an object of the appropriate class. The classes for these are imported trough the NDEF Tools for Android \citep{ndeftools} library.
 \item[Lines 13-14] If the record is a text record and is the first element in the list of records, \lstinline|records|, we know that it is the exhibition id, see \autoref{sec:nfcdata}, and we set the variable that we declared on line 3, \lstinline|exhibId|.
-\item[Lines 15-16] If the record is a text record and has the index 1 in the record list, we know that it is a booth id, see \autoref{sec:nfcdata}. We then set the variable that we declared on line 4, \lstinline|currentBoothId|.
+\item[Lines 15-16] If the record is a text record and has the index 1 in the record list, we know that it is a node id, see \autoref{sec:nfcdata}. We then set the variable that we declared on line 4, \lstinline|nodeId|.
 \item[Line 21] The current user id is gathered. The user id is stored in a text file next to the application on the device. The file has user ids and exhibition ids grouped together, and when we know the current exhibition id, we can quickly gather the matching user id.
 \item[Lines 23-31] If the user id is not null we know that the user already has a user registered for this exhibition. We then take all the information from the \ac{nfc} tag and the user id and package this in a bundle, ready for sending to the \lstinline|TabActivity|. The \lstinline|TabActivity| is then started with this bundle.
 \item[Line 33] If the returned user id is null, we know that the user have not gotten a user created for him yet for this particular exhibition, and we send a request to the server to create one.

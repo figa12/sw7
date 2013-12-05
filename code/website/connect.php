@@ -3,16 +3,16 @@
 // Input your information for the database here
 
 // Host name
-$host = "localhost";
+$host = "figz.dk";
 
 // Database username
-$username = "root";
+$username = "sw7";
 
 // Database password
-$password = "";
+$password = "sw7";
 
 // Name of database
-$database = "test";
+$database = "sw7";
 
 $mysqli = new mysqli($host, $username, $password, $database);
 

@@ -9,6 +9,14 @@
 var allPoints = [];
 var allBooths = [];
 var allMarkers = [];
+var allCategories = [];
+var allExhibts = [];
+var categoriesToInsert = []
+var companiesToInsert = []
+var allCompanies = [];
+var boothCategories = [];
+var boothCompanies = [];
+var exhib;
 var roadMapPoints = [];
 var routeMapPoints = [];
 var boothMarker = [];
@@ -26,6 +34,36 @@ var mode = modeEnum.placeRoad;
 var boothCount = 0;
 
 //setting for drawing the polyline, also called the roadmap
+
+function Exhibition(id,name, address, zip, country, description, logo){
+    this.id = id;
+    this.name = name;
+    this.address = address;
+    this.zip = zip;
+    this.country = country;
+    this.description = description;
+    this.logo = logo;
+}
+
+function Category(id, name){
+    this.id = id;
+    this.name = name;
+}
+
+function boothCategory(boothId,categoryId){
+    this.boothId = boothId;
+    this.categoryId = categoryId;
+}
+function boothCompany(boothId,companyId){
+    this.boothId = boothId;
+    this.companyId = companyId;
+}
+
+function Company(id, name, logo){
+    this.id = id;
+    this.name = name;
+    this.logo = logo;
+}
 
 function redrawGraph()
 {
@@ -76,15 +114,18 @@ function redrawGraph()
     //graph used to find a route between points
 }
 
-for (var i = 0; i < guidePathPoints.length; i++) {
-    routeMapPoints.push(guidePathPoints[i].location);
+function calculateGraph()
+{
+    for (var i = 0; i < guidePathPoints.length; i++) {
+        routeMapPoints.push(guidePathPoints[i].location);
+    }
+    var routePath = new google.maps.Polyline({
+        path:routeMapPoints,
+        strokeColor:"#FF0000",
+        strokeOpacity:1,
+        strokeWeight:1.5
+    });
 }
-var routePath = new google.maps.Polyline({
-    path:routeMapPoints,
-    strokeColor:"#FF0000",
-    strokeOpacity:1,
-    strokeWeight:1.5
-});
 
 function removeLine() {
     roadPath.setMap(null);
