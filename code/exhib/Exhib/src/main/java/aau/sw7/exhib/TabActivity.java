@@ -180,6 +180,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     infoSnippet.setText(marker.getSnippet());
                     BoothItem boothItem = findBoothByName(marker.getTitle());
                     if(boothItem != null){
+                        infoImage.setImageResource(R.drawable.white);
                         imageLoader.displayImage(boothItem.getCompanyLogo(), infoImage, imageLoaderOptions);
                     }else{
                         //imgview none, is standard ic_launcher.png
@@ -241,7 +242,6 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         mapController.removePreviousUserLocationerMarker(); //Remove the previous red marker
 
         LatLng userLocation;
-
         if(sourceNode.getBoothId() == -1L){
              userLocation = sourceNode.getPosition();
         }else{
