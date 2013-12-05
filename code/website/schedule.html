@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	
+<header align="center">
+		<ul class="nav nav-tabs">
+			<li><a href="feed.html">Feeds</a></li>
+			<li><a href="company.html">Company</a></li>
+			<li><a href="booth.html">Booth</a></li>
+			<li><a href="category.html">Category</a></li>
+			<li><a href="user.html">User</a></li>
+			<li><a href="exhib.html">Exhib</a></li>
+			<li><a href="map.html">Map</a></li>
+			<li class="active"><a href="schedule.html">Schudule</a></li>
+		</ul>
+	</header>
+
+	<h2> Input your information :) </h2>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.simple-dtpicker.js"></script>
+	<script type = "text/javascript">
+	   $.getJSON('loadBooths.php', function(jsonData) {
+        for (var i = 0; i < jsonData.length; i++) {
+            $("#boothSelect").append($("<option></option>")
+                .attr("value",jsonData[i]["id"])
+                .text(jsonData[i]["name"]));
+        };
+    });
+
+
+
+
+	// Validate the user input
+	function validateSubmit()
+	{
+		// if header is empty, give an alert
+		var x = document.forms["inputForm"]["boothid"].value;
+		if (x == null || x == "")
+		{
+			alert("Booth id must be filled out");
+			return false;
+		}
+		  
+		// if description is empty, give an alert
+		var y = document.forms["inputForm"]["name"].value;
+		if (y == null || y == "")
+		{
+			alert("Name must be filled out");
+			return false;
+		}
+		  
+		
+		var z = document.forms["inputForm"]["starttime"].value;
+		if (z == null || z == "")
+		 {
+			alert("Start time must be chosen");
+			return false;
+		 } 
+		 
+		var w = document.forms["inputForm"]["endtime"].value;
+		if (w == null || w == "")
+		 {
+			alert("End time must be chosen");
+			return false;
+		 } 
+	}
+	
+	
+	
+	</script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link type="text/css" href="css/jquery.simple-dtpicker.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<!-- Sets up the form to be used for typing in the information -->
+		<form name="inputForm" action="scheduleSide.php" method="post" onsubmit = "return validateSubmit();"
+      		  enctype = "multipart/form-data">
+
+			<table border ="0">
+			<tr>
+				<td>BoothId:</td>
+
+				<td><select style="width:100%" type="text" name="boothid" id="boothSelect"></select><br></td>
+				</tr>
+
+				<td>Name:</td>
+				<td><input style="width:100%" type="text" name="name"><br></td>
+				</tr>
+
+				<td>StartTime:</td>
+				<td>
+					<input style="width:100%" type="text" id="stime" name="starttime">
+					<script type="text/javascript">
+						$(function(){
+							$('*[name=starttime]').appendDtpicker({
+								"inline": true,
+								"dateFormat": "DD-MM-YYYY hh:mm:00"
+							});
+						});
+					</script>
+					<br>
+				</td>
+				</tr>
+
+
+
+				<td>EndTime:</td>
+				<td>
+					<input style="width:100%" type="text" id="etime" name="endtime">
+					<script type="text/javascript">
+						$(function(){
+							$('*[name=endtime]').appendDtpicker({
+								"inline": true,
+								"dateFormat": "DD-MM-YYYY hh:mm:00"
+							});
+						});
+					</script>
+					<br>
+				</td>
+				</tr>
+				
+				<td><button type="submit" class="btn">Submit</td>
+				</tr>
+		</form>
+
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>
