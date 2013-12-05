@@ -11,11 +11,15 @@
 			<li><a href="user.html">User</a></li>
 			<li><a href="exhib.html">Exhib</a></li>
 			<li class="active"><a href="map.html">Map</a></li>
+			<li><a href="schedule.html">Schudule</a></li>
 		</ul>
 	</header>
 
 	<h2> Map: </h2>
+	<h3 id="exhibitionName"></h3>
+	<hidden id="finalexhibitionName"></hidden>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" /> 
 	<link href="http://code.google.com//apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false"></script>
     <script src="js/graph.js"></script>
@@ -25,13 +29,43 @@
 	</head>
 
 	<body>
+		<select id="exhibSelect">
+		</select>
 		<select id="typeSelect">
 			<option value="marker">Marker</option>
 			<option value="booth">Booth</option>
 		</select>
+		<button class="btn" id="Save" onClick="makeJson()">Save</button>
+		<button class="btn" id="CreateExhibition" onClick="createExhibition()">Create Exhibition</button>
 		<div id="map-canvas"></div>
+
+
+		<div id="exhibDialog" title="Create Exhibition">
+			<input class="form-control" id="exhibName" placeholder="Name"> </br>
+			<input class="form-control" id="exhibAddress" placeholder="Address"> </br>
+			<input class="form-control" id="exhibZip" placeholder="Zip code"> </br>
+			<input class="form-control" id="exhibCountry" placeholder="Country"> </br>
+			<input class="form-control" id="exhibDescription" placeholder="Description"> </br>
+			<form id="exhibForm" enctype="multipart/form-data" action="upload.php" method="POST">
+				<input type="file" class="form-control" id="exhibLogo" placeholder="Logo"  accept="image/*" name="filename">
+				<input name="finalName" id="exhibfinalName"></input>
+			</form>
+		</div>
+
+		<div id="boothDialog" title="Create Booth">
+			<input class="form-control" id="boothName" placeholder="Name"></br>
+			<input class="form-control" id="boothDescription" placeholder="Description"></br>
+			<input class="form-control" id="boothCategory" placeholder="Category"></br>
+			<input class="form-control" id="boothCompanyName" placeholder="Company Name">
+			<form id="boothForm" enctype="multipart/form-data" action="upload.php" method="POST">
+				<input type="file" class="form-control" id="boothCompanyLogo" placeholder="Company Logo" accept="image/*" name="filename">
+				<input name="finalName" id="boothfinalName"></input>
+			</form>
+		</div>
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.form.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	</body>
 </html>

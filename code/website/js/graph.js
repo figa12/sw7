@@ -60,9 +60,10 @@ function Node(name, point){
 	};
 }
 
-function Booth(boothId, rect) {
+function Booth(boothId, rect, desc) {
 	this.boothId = boothId;
 	this.rect = rect;
+	this.description = desc;
 }
 
 function BoothMarker(boothId, markerId) {
