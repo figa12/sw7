@@ -108,6 +108,22 @@ When you are successfully registered at the exhibition, then you get to the core
 
 \autoref{fig:map} shows the tab displaying the map of the exhibition. Below the map there is a lock button, which locks the user to navigating the map e.g. swiping left and right on the map. If it is not locked then swiping right will change to the schedule tab. Inside the map there should be pinned booths which can be clicked on. When clicking the booths the activity shown in \autoref{fig:booth} is opened. The booth activity shows its attached icon, a name, and information concerning the booth.
 
+\section*{Application requirements}
+Based on the prototypes and the functionality we want from the application, we have come up with the following requirements for our application
+
+\begin{description}
+\item[User registration] A user must be able to register to an exhibition in order to get customizable feeds
+\item[Subscription] A user must be able to subscribe to the booths they find interesting
+\item[Change subscriptions] Incase a user wants to change their subscriptions, they must be able to do so
+\item[Feeds] The user must only receive feeds from the booths they are subscribed to, if they change these subscriptions, the feeds must change as well
+\item[Load feeds] The device's screen might not be able to show all feeds at once, so the user must be able to load all feeds
+\item[New feeds] When booths make new feeds the user should be able to choose when these feeds are loaded
+\item[Long feeds] Some feeds might be too long to read on the feed list, so the user should be able to press the feed  and see the full feed
+\item[You are here] The user must be able to somehow locate himself on the map in-order for them to see where they are on the exhibition
+\item[Navigation] The user must be able to navigate to a booth of their choosing from their last known location
+\item[New exhibition] The user must be able to sign up to anew exhibitions 
+\end{description}
+
 \section{Final Application Design}
 
 We did not create the \textit{BoothActivity} which is showed in \autoref{fig:booth}, because we realised that we might as well show all the booth information in the marker information window on the map. This is shown later in this section. The final application consists of the following activities and fragments:
@@ -179,7 +195,7 @@ It is also possible for the user to change the booths they have subscribed to, i
 \end{minipage}
 \end{figure}
 
-Some of the feeds are too long to display all the text in the list of feeds, so in order to read the full feed you can press the feed and a pop-up will come up displaying the full feed, as shown on \autoref{fig:popupfeed}. This is different from the prototype, because we thought it would be more convenient for the user to have a pop-up. During the exhibition, the booths might send new feeds, when this happens a button will be displayed, telling the user that more feeds are available, allowing them to choose when they want to load the new feeds so they always can make sure they have read all feeds before loading new ones. This can be seen on \autoref{fig:feedsnewitem}.
+Some of the feeds are too long to display all the text in the list of feeds, so in order to read the full feed you can press the feed and a pop-up will come up displaying the full feed, as shown on \autoref{fig:popupfeed}. This is different from the prototype, because we thought it would be more convenient for the user to have a pop-up. During the exhibition, the booths might send new feeds, when this happens a button will be displayed, telling the user that more feeds are available, allowing them to choose when they want to load the new feeds so they always can make sure they have read all feeds before loading new ones. This can be seen on \autoref{fig:feedsnewitem}. Note that this is only when the user has the feed list open, if they are on another tab or has the application closed, the new feeds will automatically be loaded.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
