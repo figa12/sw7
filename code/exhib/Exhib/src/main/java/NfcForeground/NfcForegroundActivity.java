@@ -52,6 +52,11 @@ public abstract class NfcForegroundActivity extends Activity {
         }
     }
 
+    protected boolean isStartedFromTag() {
+        Intent intent = super.getIntent();
+        return !this.used && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction());
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

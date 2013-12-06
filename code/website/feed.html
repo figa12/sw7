@@ -16,8 +16,16 @@
 	</header>
 
 	<h2> Input your information :) </h2>
-
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script type = "text/javascript">
+
+	$.getJSON('loadBooths.php', function(jsonData) {
+        for (var i = 0; i < jsonData.length; i++) {
+            $("#boothSelect").append($("<option></option>")
+                .attr("value",jsonData[i]["id"])
+                .text(jsonData[i]["name"]));
+        };
+    });
 
 	// Validate the user input
 	function validateSubmit()
@@ -76,13 +84,14 @@
 				</tr>
 
 				<td>Booth ID:</td>
-				<td><input style="width:100%" type="text" name="id"><br></td>
+				<td><select style="width:100%" type="text" name="id" id="boothSelect"></select><br></td>
 				</tr>
+
+
 				
 				<td><button type="submit" class="btn">Submit</td>
 				</tr>
 		</form>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 	</body>
 </html>
