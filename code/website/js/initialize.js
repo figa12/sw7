@@ -10,7 +10,6 @@ var floorPlanTypeOptions = {
     var bitShiftY = (1 << zoom) - (normalizedCoord.y - 1);
     return url + zoom + '/' + normalizedCoord.x +'/'+ bitShiftY +'.png';
 },
-
 tileSize: new google.maps.Size(256, 256),
 maxZoom: 6,
 minZoom: 2,

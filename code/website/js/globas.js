@@ -102,6 +102,7 @@ function redrawGraph()
     google.maps.event.addListener(roadPath, 'click', function(event) {
     if(document.getElementById("typeSelect").value == "booth")
     {
+        console.log(this);
         if (mode == modeEnum.bindBooth)
         {
             if(boothEntries != null) { boothEntries.setMap(null); }
@@ -131,12 +132,13 @@ function removeLine() {
     roadPath.setMap(null);
 }
 
+//http://www.bdcc.co.uk/Gmaps/BdccGeo.js as help
 function clickMarker(event)
 {
         var curX = event.latLng.lng();
         var curY = event.latLng.lat();
 
-        var smallestCross = null;
+        var smallestDist = null;
         var index = 0;
         var value = false;
         for (var i = 0; i < allPoints.length -1; i++) {
@@ -146,6 +148,38 @@ function clickMarker(event)
                     continue;
                 }
             console.log("changes " + allPoints[i].name);
+
+            var first = new google.maps.LatLng(allPoints[i].location.lat(),allPoints[i].location.lng());
+            var second = new google.maps.LatLng(allPoints[i+1].location.lat(),allPoints[i+1].location.lng());
+            var testPath = new google.maps.Polyline({
+                path:[first,second],
+                strokeWeight:4
+            });
+
+            //var tolerance = Math.pow(map.getZoom(), -(map.getZoom()/50)); 
+            //var tolerance = 00000000000001;
+            //console.log("tolerance: " + tolerance);
+            console.log("mouse point: " +event.latLng);
+            console.log("first point: " +first);
+            console.log("second point: " +second);
+            console.log(testPath);
+            var dist = bdccGeoDistanceToPolyMtrs(testPath,event.latLng);
+            if(smallestDist == null) {
+                smallestDist = dist;
+                index = i;
+            }
+            else
+            {
+                if(dist < smallestDist) {
+                    smallestDist = dist;
+                    index = i;       
+                }
+            }
+            /*if(google.maps.geometry.poly.containsLocation(event.latLng,testPath))//,tolerance))
+            {
+                index = i;
+            }*/
+/*
             var dxc = curX - allPoints[i].location.lng();
             var dyc = curY - allPoints[i].location.lat();
 
@@ -186,7 +220,7 @@ function clickMarker(event)
                     }
                     smallestCross = cross;
                 }
-            }
+            }*/
         };
         console.log("Cross @" + value.toString() + " Index @" + index.toString());
 
