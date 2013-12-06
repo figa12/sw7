@@ -1,5 +1,7 @@
 \section{Black-box testing}
-Text
+We have created some black-box test cases for our Android application. We are performing the tests ourselves, we do this in order to test that all the different functionality requirements are working and producing correct results.
+
+All test cases are presented in the form of a case header consisting of the case name, objective of the test, preconditions for the test, and the requirement we are satisfying. After the header we have made a procedure describing the steps that should be performed in the case and for each step we have a success criteria describing the expected outcome of the step.
 
 \newcommand{\testcase}[4]
 {
@@ -36,6 +38,7 @@ Text
 \hline
 2 & Scroll to the bottom of the list & Older feeds are loaded from the server\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -56,6 +59,7 @@ Text
 \hline
 3 & Scan a booth \ac{nfc} tag & The feed window closes and the tab changes to the map and snaps to a booth\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -76,10 +80,9 @@ Text
 \hline
 3 & Click the button in the top of the tab & $X$ new feed items are loaded at the top of the feed list\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
-
-% SIMON; SKRIV EFTER DENNE LINJE
 
 \newcommand{\casefive}{New feeds}
 \newcommand{\casesix}{Register a user}
@@ -110,6 +113,7 @@ Text
 \hline
 6 & Check that the feed list changed accordingly to your new subscriptions & Feeds changed successfully\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -131,6 +135,7 @@ Text
 3 & Exit the application & \\
 4 & Open up the application again & The tab activity should open\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -147,6 +152,7 @@ Text
 \hline
 1 & Scan a booth \ac{nfc} tag& \textit{Change to "Map" tab and snap to booth}\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -165,6 +171,7 @@ Text
 \hline
 2 & Press the "Navigate to" button & \textit{The shortest path should be drawn on the floor plan}\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -182,6 +189,7 @@ Text
 \hline
 2 & Choose categories for the new exhibition and press submit & \textit{The tab activity should open}\\
 \hline
+\multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
 \end{center}
 
@@ -196,6 +204,3 @@ Text
 \item[\caseeight] This test was a success. When clicking the booth the information box comes up and if  you press the "Navigate to" button a route is drawn from your last known location and to the booth
 \item[\casenine] This test resulted in failure. When scanning a different \ac{nfc} tag the application crashes. If already signed up to an exhibition the application skips the exhibitionID on the tag and tries to snap to the booth, which boothID is on tag. This causes the application to crash if the boothID on the tag does not exist at the current exhibition.
 \end{description}
-
-\section{White-box testing}
-

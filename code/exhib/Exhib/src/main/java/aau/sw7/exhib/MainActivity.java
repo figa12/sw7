@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -20,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import NfcForeground.NfcForegroundActivity;
 
@@ -55,7 +55,9 @@ public class MainActivity extends NfcForegroundActivity {
         actionBar.setHomeButtonEnabled(false);
         actionBar.setDisplayUseLogoEnabled(true);
 
-        this.startRecent();
+        if(!super.isStartedFromTag()) {
+            this.startRecent();
+        }
     }
 
     private void startRecent() {
@@ -73,10 +75,6 @@ public class MainActivity extends NfcForegroundActivity {
         intent.putExtra(MainActivity.EXHIB_ID, exhibId);
         intent.putExtra(MainActivity.USER_ID, userId);
         this.startActivity(intent);
-    }
-
-    private void changeOrder(String[] idPairs) {
-        
     }
 
     @Override
@@ -106,12 +104,16 @@ public class MainActivity extends NfcForegroundActivity {
             }
         }
 
-        Long userId = this.findUserId(this.readIdFile(), exhibId);
+        String fileContents = this.readIdFile();
+        Long userId = this.findUserId(fileContents, exhibId);
 
         if(exhibId == 0L) {
             // The tag does not contain valid data
             return;
         } else if(userId != null) {
+            fileContents = this.changeRecent(fileContents, userId);
+            this.writeIdFile(fileContents);
+
             Bundle bundle = new Bundle();
             bundle.putLong(MainActivity.EXHIB_ID, exhibId);
             bundle.putLong(MainActivity.BOOTH_ID, this.currentBoothId);
@@ -137,10 +139,41 @@ public class MainActivity extends NfcForegroundActivity {
         // server will respond in onUserCreated
     }
 
+    private String changeRecent(String fileContents, long mostRecentUserId) {
+        ArrayList<String> idPairs = new ArrayList(Arrays.asList(fileContents.split("\n")));
+
+        if(!fileContents.contains(",")) {
+            return fileContents;
+        }
+
+        boolean changed = false;
+
+        for (int i = 0; i < idPairs.size(); i++) {
+            String[] ids = idPairs.get(i).split(",");
+            if (Long.valueOf(ids[1]) == mostRecentUserId) {
+                String mostRecent =idPairs.remove(i);
+                idPairs.add(mostRecent);
+                changed = true;
+                break;
+            }
+        }
+
+        if(changed) {
+            fileContents = "";
+            for (String pair : idPairs) {
+                fileContents += pair + "\n";
+            }
+        }
+
+        return fileContents;
+    }
+
     public void onUserCreated(long exhibId, long userId) {
         // Save the userId in the file
         String registration = exhibId + "," + userId + "\n";
-        this.writeIdFile(this.readIdFile() + registration);
+        String fileContents = this.readIdFile();
+        fileContents = this.changeRecent(fileContents, userId);
+        this.writeIdFile(fileContents + registration);
 
         // Ready to scan tags again
         this.waitingServerResponse = false;

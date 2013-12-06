@@ -243,9 +243,9 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
 
         LatLng userLocation;
         if(sourceNode.getBoothId() == -1L){
-             userLocation = sourceNode.getPosition();
+            userLocation = sourceNode.getPosition();
         }else{
-             userLocation = findBoothById(sourceNode.getBoothId()).getSquareCenter();
+            userLocation = findBoothById(sourceNode.getBoothId()).getSquareCenter();
         }
 
         mapController.drawUserLocationMarker(userLocation);

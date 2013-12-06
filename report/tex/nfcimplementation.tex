@@ -1,5 +1,14 @@
 \section{Implementation of NFC}
-We have created a class called \lstinline|NfcForegroundActivity| which every activity that we want to enable \ac{nfc} on can extend. \lstinline|NfcForegroundActivity| gives an activity foreground mode and contains methods which enables the activity to read and process\ac{nfc} tags.
+We have created a class called \lstinline|NfcForegroundActivity| which every activity that we want to enable \ac{nfc} on can extend. \lstinline|NfcForegroundActivity| enables the Foreground Dispatch System and contains methods which enables the activity to read and process \ac{nfc} tags.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\linewidth, page=2]{img/nfcdiagram.pdf}
+\caption{NFC class diagram}
+\label{fig:nfcdiagram}
+\end{figure}
+
+\lstinline|NfcForegroundActivity| is an abstract class with one abstract method called \lstinline|onNfcScanned()|. All our activities inherits from this. This allows for a very easy way to handle the records that lie on the \ac{nfc} tag separately for each activity. Some of the important methods for \lstinline|NfcForegroundActivity| are shown in the diagram, and they are also explained in this section.
 
 \subsection*{Foreground Dispatch System}
 \label{sec:foreground}
@@ -26,15 +35,21 @@ protected void onResume() {
 	IntentFilter[] TagFilters = new IntentFilter[] { tagDetected };
 	this.nfcAdapter.enableForegroundDispatch(this.context, this.nfcPendingIntent, TagFilters);
 }
-\end{lstlisting}\todo{Beskriv onPause()}
+
+@Override
+protected void onPause() {
+    this.nfcAdapter.disableForegroundDispatch(this.context);
+}
+\end{lstlisting}
 \begin{description}
 \item[Line 2] \lstinline|onResume()| is run every time the activity is started.
 \item[Line 4] An \lstinline|IntentFilter| is created. This particular filter tells the system that we want to override the behavior when an \ac{nfc} tag is scanned.
 \item[Line 5] The filter is added to an array. This is required because you can have multiple filters.
 \item[Line 6] Foreground Dispatch System is enabled with the pending intent created in \autoref{nfcForegroundOnCreate} and the intent filter.
+\item[Lines 10-12] Every time the activity is paused we disable the Foreground Dispatch System.
 \end{description}
 
-\subsubsection*{Handling of NFC Intent}
+\subsection*{Handling of NFC Intent}
 When an \ac{nfc} tag is scanned the method shown in \autoref{lst:onNewIntent} is called. This method is a part of \lstinline|NfcForegroundActivity|.
 \begin{lstlisting}[language=java, label=lst:onNewIntent, caption=\lstinline|onNewIntent()| method]
 @Override
@@ -75,13 +90,13 @@ public ArrayList<Record> newIntentEvent(Intent intent) {
 \begin{description}
 \item[Line 2] Extract the \ac{ndef} messages from the \ac{nfc} tag.
 \item[Line 3] A list is prepared for results.
-\item[Lines 5-15] All records of all messages are gathered and added to the \lstinline|foundRecords|. If no messages are present on the tag, nothing will be returned.\todo{Messages i flere tal, hvorfor?}
+\item[Lines 5-15] All records of all messages are gathered and added to the \lstinline|foundRecords|. If no messages are present on the tag, nothing will be returned.
 \item[Line 16] Return the list of records.
 \end{description}
 
-In \autoref{lst:newIntentEvent} it is worth noticing that the \lstinline|Record| class is from a third party library \ac{ndef} Tools for Android \citep{ndeftools}. This makes the parsing of \ac{ndef} records a very easy process. As seen in \autoref{lst:onNewIntent} on line 7, the method \lstinline|onNfcScanned()| is called with the records found on the \ac{nfc} tag. This method is abstract and hence must be overwritten in all activities that extends \lstinline|NfcForegroundActivity|. This allows for a very easy way to handle the records that lie on the \ac{nfc} tag separately for each activity.
+In \autoref{lst:newIntentEvent} it is worth noticing that the \lstinline|Record| class is from a third party library \ac{ndef} Tools for Android \citep{ndeftools}. This makes the parsing of \ac{ndef} records a very easy process.
 
-In \autoref{lst:onNfcScanned} we have shown how \lstinline|onNfcScanned()| is overwritten for the \lstinline|MainActivity|. This activity needs to send the user to the \lstinline|TabActivity| if he already exists or create a new user if not.\todo{onNfcScanned() bliver forklaret sendt. Måske i starten med et klassediagram?}
+In \autoref{lst:onNfcScanned} we have shown how \lstinline|onNfcScanned()| is overwritten for the \lstinline|MainActivity|. This activity needs to send the user to the \lstinline|TabActivity| if he already exists, or create a new user if not.
 
 \begin{lstlisting}[language=java, label=lst:onNfcScanned, caption=onNfcScanned]
 @Override
