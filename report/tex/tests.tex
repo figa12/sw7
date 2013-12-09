@@ -57,7 +57,7 @@ All test cases are presented in the form of a case header consisting of the case
 \hline
 2 & Click a feed item & A window opens with the full feed descriptions\\
 \hline
-3 & Scan a booth \ac{nfc} tag & The feed window closes and the tab changes to the map and snaps to a booth\\
+3 & Scan a booth \ac{nfc} tag & The feed window closes and the tab changes to the floor plan and snaps to a booth\\
 \hline
 \multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
@@ -167,7 +167,7 @@ All test cases are presented in the form of a case header consisting of the case
 \hline
 \textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
 \hline
-1 & Press a booth on the map & \textit{Booth info window should open}\\
+1 & Press a booth on the floor plan & \textit{Booth info window should open}\\
 \hline
 2 & Press the "Navigate to" button & \textit{The shortest path should be drawn on the floor plan}\\
 \hline
@@ -200,7 +200,7 @@ All test cases are presented in the form of a case header consisting of the case
 \item[\casefour] This test was a success. When a booth creates a new feed, the button shows up and allows the user to manually load the new feed
 \item[\casefive] This test was a success. When subscribing or unsubscribing to booths, their feeds are added and removed accordingly 
 \item[\casesix] This test was a success. The first time the \ac{nfc} tag was scanned the application opened and we had to choose which booths to subscribe to, and after closing and opening the application again it opens up directly in the tab activity without having to choose categories
-\item[\caseseven] This test was a success. When scanning an \ac{nfc} tag with a boothID the "Map" tab opened and snapped to the booth on the map
+\item[\caseseven] This test was a success. When scanning an \ac{nfc} tag with a boothID the "Map" tab opened and snapped to the booth on the floor plan
 \item[\caseeight] This test was a success. When clicking the booth the information box comes up and if  you press the "Navigate to" button a route is drawn from your last known location and to the booth
 \item[\casenine] This test resulted in failure. When scanning a different \ac{nfc} tag the application crashes. If already signed up to an exhibition the application skips the exhibitionID on the tag and tries to snap to the booth, which boothID is on tag. This causes the application to crash if the boothID on the tag does not exist at the current exhibition.
 \end{description}

@@ -1,22 +1,27 @@
 \subsection*{Exhibition system}
 
-Our idea is to make a visit to an exhibition more informative and personalised. \todo{britisk} With our mobile application the visitor should be able to get a personalised \todo{britisk} route around the exhibition, and also get additional information about a booth by scanning a tag placed at the booth. The mobile application should also provide a schedule for events happening around the exhibition. A live news feed will also be available for the visitor, the live feed will provide the visitor with information about small events at the booths like: give-aways, contest, etc. The feed list is meant as a place where the booths can make themselves attractive to the visitors. The exhibition will also need to manage the information on the mobile application, provide it with a floor plan, schedule and position of booths on the floor plan. The exhibition can make use of a website to administrate all these properties.
+Our idea is to make a visit to an exhibition more informative and personalised. The system will be split up into two components, a website for the organizers of the exhibitions, allowing them to set up an exhibition and a mobile application for the attendees at the exhibition.
+
+The mobile application should provide the user with a personalised experience of the exhibition, this could be in form of a personalised route around the exhibition, different live feeds matching their interests. These live feeds could be information about small events at different booths like: give-aways, contest, etc. The feed list is meant as a place where the booths can make themselves attractive to the visitors who are interested in them. The mobile application should also provide a schedule for larger events happening around the exhibition. The application should also have floor plan of the exhibition displaying the location of all booths allowing the user to navigate between the different booths
 
 \subsection*{Website Application}
+The website application is designed for the organizers as a tool to help setting up an exhibition. From here they should be able to register the different companies attending the exhibition and make a layout of the exhibition and plot the location of the different booths.
 \todo{Write a description to understand the website application/administration tool}
 \begin{itemize}
-\item Application to load a floor plan and make it suitable to make a map.
-\item Administration website, a place where workers of the exhibition can enter information about the booths of the exhibition and insert their locations on the floor plan.
+\item Add and edit companies to the exhibition
+\item Add and edit categories
+\item Add abd edut booths to the exhibition, including booth information and categories
+\item Tool for setting up a floor plan of the exhibition and plotting in the different booths.
 \end{itemize}
 \subsection*{Mobile Application}
 
-The mobile application is designed for the end-user, and can load any given exhibition using the system. When entering the exhibition, the visitor can scan a \ac{nfc} tag to subscribe to the exhibition. After subscribing to an exhibition the visitor will have to choose categories that they find interesting. 
+The mobile application is designed for the visitor, and can load any given exhibition using the system. When entering the exhibition, the visitor has to subscribe to that specific exhibition. After subscribing to an exhibition the visitor will have to choose categories that they find interesting. 
 
-The floor plan will show a route around the exhibition to the booths that the visitor finds interesting. The visitor can only update his location on the floor plan by scanning \ac{nfc} tags at the booths. When scanning an \ac{nfc} tag at a booth, the visitor will be presented with additional information about the booth. 
+The floor plan will show a route around the exhibition to the booths that the visitor finds interesting. The visitor can only update his location on the floor plan by registering at a booth. When registering at a booth, the visitor will be presented with additional information about the booth. 
 
 The schedule will be filled with big events that are planned by the booths and exhibition. The visitor will also receive a live feed from booths, this will update the visitor on small current events happening at the exhibition. Below is listed some of the important implementations that have to be made.
 \begin{itemize}
-\item \ac{nfc} reader, to read \ac{nfc} chips around the exhibition.
+\item A way to register the user around the exhibition.
 \item Time schedule of events
 \item View floor plan, for directions around the exhibition.
 \item Overview of all the feeds that will be coming from the booths that are interesting to the visitor.

@@ -1,7 +1,7 @@
-When a visitor first visits the exhibition he most likely do not have the application installed on their phones, so it has to be possible for them to easily get the application without having to find it themselves. This can be done using static data storage like \ac{nfc} or QR codes. This also allows us to store additional information, such as an identifier to identify which exhibition the user is at and other information that might be needed. The following section briefly explains \ac{nfc} and QR codes and their use. 
+When a visitor first visits the exhibition they have to register using the application, however they most likely do not have the application installed on their phones when first entering the exhibition, so it has to be possible for them to easily get it without having to find it themselves. This can be done using static data storage like \ac{nfc} or \ac{qr}. These two ways of storing information allows us to install/launch the application, identify which exhibition the user is at and other information that might be needed. The following section briefly explains \ac{nfc} and \ac{qr}s and their use. 
 
-\section*{NFC}
-\ac{nfc} is a way to transfer data wirelessly \todo{Er det overhovedet et ord?} between two \ac{nfc} enabled devices. 
+\section{NFC}
+\ac{nfc} is a way wireless way to transfer data between two \ac{nfc} enabled devices. 
 An \ac{nfc} tag is a small data storage unit, which allows you to store small amount of information that can then be transferred to an \ac{nfc} device. 
 
 A standard \ac{nfc} tag can contain around 41 characters, whereas the NTAG203 tags can store around 132 characters\citep{nfccap}. Most of the tags store data in a format called \ac{ndef}, this defines a message format used when transfering information between a device and a tag, or two devices. An \ac{ndef} message consists of one or more of so-called \ac{ndef} records. \autoref{fig:ndef} shows general view of an \ac{ndef} message.
@@ -51,14 +51,14 @@ An \ac{ndef} can not only be an URL like in the example, but it could also be a 
 
 A text record can contain letters, symbols and numbers. If a record contains is a package name and the tag is scanned, if you have the package installed then the application will launch, else it will take you to the Google Play Store where you can install the application. 
 
-\section*{QR code}
+\section{QR code}
 
-A QR code is sort of like a barcode that is seen on groceries at the supermarket, except a normal barcode is only capable of storing 20 digits, where as a QR code can store up to 7,089 characters. Even if a QR code is dirty or damaged, it is possible to restore the data due to its error correction capability. However there are limits to how damaged, up to 30\% of the information can be restored. It is also possible to scan a QR code from any direction  because of the patterns located at the three corners of the code, as seen on \autoref{fig:symbolImage}. \citep{qrcode}
+A QR code is sort of like a barcode that is seen on groceries at the supermarket, except a normal barcode is only capable of storing 20 digits, where as a \ac{qr} can store up to 7,089 characters. Even if a \ac{qr} is dirty or damaged, it is possible to restore the data due to its error correction capability. However there are limits to how damaged, up to 30\% of the information can be restored. It is also possible to scan a \ac{qr} from any direction  because of the patterns located at the three corners of the code, as seen on \autoref{fig:symbolImage} \citep{qrcode}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=1.5\textwidth]{img/symbolImage.png}
-\caption{QR Code\citep{qrcode}}
+\caption{\ac{qr}\citep{qrcode}}
 \label{fig:symbolImage}
 \end{figure}
 
@@ -67,7 +67,7 @@ The message data on the code is placed in a zigzag pattern as seen on \autoref{f
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{img/qrplacement.png}
-\caption{QR Code\citep{qrcode}}
+\caption{Zigzag pattern in a \ac{qr}\citep{qrcode1}}
 \label{fig:qrplacement}
 \end{figure}
 
@@ -79,7 +79,7 @@ The encoding mode consists of four bits, indicating what encoding mode is used a
 \item 0100 - Byte encoding (8 bits per character)
 \end{description}
 
-For example, if you were to encode the word "QR Code" in numeric mode, the mode indicator is 0001.
+For example, if you were to encode the word "\ac{qr}" in numeric mode, the mode indicator is 0001.
 
 \begin{table}[H]
 \centering
@@ -98,9 +98,9 @@ For example, if you were to encode the word "QR Code" in numeric mode, the mode 
 \label{tab:qrversion}
 \end{table}
 
-After the encoding mode, there is a length field that tells how many characters is encoded in the mode specified. The number of bits in the field depends on the encoding and symbol version\citep{qrcode1}. The symbol version, as seen in \autoref{tab:qrversion} can range between 1 an 40. Each version has a different number of modules, modules being the small black and white dots that make up a QR code\citep{qrversion}. 
+After the encoding mode, there is a length field that tells how many characters is encoded in the mode specified. The number of bits in the field depends on the encoding and symbol version\citep{qrcode1}. The symbol version, as seen in \autoref{tab:qrversion} can range between 1 an 40. Each version has a different number of modules, modules being the small black and white dots that make up a \ac{qr}\citep{qrversion}. 
 
-\section*{Our choice of data storage}
+\section{Our choice of data storage}
 We chose to use \ac{nfc} tags as our way of storing the data. Even though you have to buy the \ac{nfc} tags instead of printing them yourself like you can with QR-codes. The tags are easy to use, you can even have the supplier write them and make them read-only for you. The \ac{nfc} tags are not too expensive, and when buying in bulks some sites even offer a discount up to $25\%$\citep{nfczonen}. 
 
-We also found it to be an inconvenience for the user to have to use the camera to scan a QR-code, compared to an NFC-reader which just runs in the background. However the main reason we chose to use \ac{nfc} instead of QR-codes is because a QR-code you can scan from far away, and we want to know exactly where a user stands when scanning, so with the short range of \ac{nfc}, we can make sure that the user is actually next to the tag and thereby get their location.
+We also found it to be an inconvenience for the user to have to use the camera to scan a QR code, compared to an NFC-reader which just runs in the background. However the main reason we chose to use \ac{nfc} instead of QR-codes is because a QR code you can scan from far away, and we want to know exactly where a user stands when scanning, so with the short range of \ac{nfc}, we can make sure that the user is actually next to the tag and thereby get their location.
