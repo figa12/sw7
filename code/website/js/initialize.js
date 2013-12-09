@@ -6,13 +6,14 @@ var floorPlanTypeOptions = {
         return null;
     }
     var url = 'http://figz.dk/dl/FloorPlan/';
+    //var bitShiftY = (1 << zoom) - (normalizedCoord.y - 1);
     var bound = Math.pow(2, zoom);
-    var bitShiftY = (1 << zoom) - (normalizedCoord.y - 1);
-    return url + zoom + '/' + normalizedCoord.x +'/'+ bitShiftY +'.png';
+    return url + zoom + '/' + normalizedCoord.x +'/'+ (bound - normalizedCoord.y - 1) +'.png';
 },
 tileSize: new google.maps.Size(256, 256),
 maxZoom: 6,
 minZoom: 2,
+radius: 6378100,
 name: 'Floorplan'
 };
 
@@ -102,7 +103,7 @@ function placeMarker(location) {
                 console.log("Marker@@@ " + markerIndex);
                 break;
             }
-        }; 
+        };
     });
 
     google.maps.event.addListener(marker, 'rightclick', function(event) {
@@ -117,7 +118,7 @@ function placeMarker(location) {
                 markerIndex = allPoints.length;
                 break;
             }
-        }; 
+        };
         redrawGraph();
     });
 
@@ -144,7 +145,7 @@ function placeBooth (location) {
         editable: true,
         draggable: true
     });
-    
+
     var rectOptsLocked = {
         strokeColor: '#00FF00',
         fillColor: '#00FF00',
@@ -350,13 +351,13 @@ function loadExhib() {
             var topLefty = null;
             var bottomRightx = null;
             var bottomRighty = null;
-            
+
             for (var x = json["coordinates"].length - 1; x >= 0; x--) {
                 console.log(json["coordinates"][x]["isroad"]);
                 if(json["coordinates"][x]["isroad"]) {continue;}
                 if(json["coordinates"][x]["boothid"] == null) {continue;}
                 if(json["coordinates"][x]["boothid"] == json["booths"][i]["dbid"]) {
-                    
+
                     if(topLeftx == null) {
                         topLeftx = json["coordinates"][x]["x"];
                         topLefty = json["coordinates"][x]["y"];
@@ -402,7 +403,7 @@ function loadExhib() {
         /*
         json["booths"] //
         json["edges"] //
-        json["coordinates"]*/ 
+        json["coordinates"]*/
         //roadMapGraphFinal.nodes = json["nodes"];
         //roadMapGraphFinal.edges = json["edges"];
         //allBooths = json["nodes"];
@@ -564,6 +565,7 @@ function initialize() {
         center: myCenter,
         zoom: 3,
         streetViewControl: false,
+        mapTypeId: 'floorPlan',
         mapTypeControlOptions: {
             mapTypeIds: ['floorPlan']
         }
@@ -595,7 +597,7 @@ function redrawLine(event){
             clickable: false
         });
 
-        
+
         boothLine.setMap(map);
     }
 }
@@ -656,7 +658,7 @@ function removeAllMarkers(markerArray) {
                 }
             }
         };
-    };    
+    };
 }
 
 function createExhibition() {
