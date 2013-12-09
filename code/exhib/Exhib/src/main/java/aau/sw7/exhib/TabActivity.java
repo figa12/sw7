@@ -212,7 +212,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
             else{
                 Node scannedNode = graph.findNodeById(nodeId);
                 if(scannedNode.getBoothId() == -1){
-                    mapController.animateCamera(scannedNode.getPosition(), 5);
+                    mapController.animateCamera(scannedNode.getPosition(), 4);
                     this.updateUserLocation(nodeId);
                 }
                 else{
@@ -255,10 +255,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
         if(targetBooth != null && sourceNode.getBoothId() == targetBooth.getBoothId()){
             targetBooth = null;
             mapController.removePreviousRoute();
+            Toast.makeText(this, "Destination reached", Toast.LENGTH_SHORT);
+        }else{
+            //draw the route from sourceNode to target
+            calculateAndDrawRoute();
         }
-
-        //draw the route from sourceNode to target
-        calculateAndDrawRoute();
     }
 
     private static void calculateAndDrawRoute(){
@@ -561,7 +562,7 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                     return "Schedule";
 
                 case 3:
-                    return "Map";
+                    return "Floor plan";
 
                 default:
                     return null;

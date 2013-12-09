@@ -168,7 +168,7 @@ public class MapController {
 
         /*for(Node n : graph.getNodes()){
             if(!n.getPosition().equals(new LatLng(0.0,0.0))){
-                drawMarker(n.getPosition(), "" + n.getID());
+                drawMarker(n.getPosition(), "" + n.getId());
             }
         }*/
     }
@@ -194,7 +194,7 @@ public class MapController {
 
     public void animateCameraToBooth(BoothItem boothItem){
         if(boothItem != null){
-            animateCamera(boothItem.getSquareCenter(),5);
+            animateCamera(boothItem.getSquareCenter(),4);
         }
     }
 
