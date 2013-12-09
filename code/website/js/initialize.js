@@ -6,14 +6,13 @@ var floorPlanTypeOptions = {
         return null;
     }
     var url = 'http://figz.dk/dl/FloorPlan/';
-    //var bitShiftY = (1 << zoom) - (normalizedCoord.y - 1);
     var bound = Math.pow(2, zoom);
+    var bitShiftY = (1 << zoom) - (normalizedCoord.y - 1);
     return url + zoom + '/' + normalizedCoord.x +'/'+ (bound - normalizedCoord.y - 1) +'.png';
 },
 tileSize: new google.maps.Size(256, 256),
 maxZoom: 6,
 minZoom: 2,
-radius: 6378100,
 name: 'Floorplan'
 };
 
@@ -62,7 +61,7 @@ function uniqeBoothName (boothName) {
 }
 
 //function to placemarkers, this is used for debug for easy calculation of coords
-function placeMarker(location) {
+function placeMarker(location,edges) {
     var marker = new google.maps.Marker({
         position: location,
         map: map,
@@ -71,17 +70,16 @@ function placeMarker(location) {
     //Nodes for making the graph and polyline
     count++;
     var tempStore = new Node("node"+count.toString(), new google.maps.LatLng(location.lat(), location.lng()));
+    //tempStore.addEdge();
+
     console.log("markerIndex is: " + markerIndex);
-    //var x = new Node(allPoints[markerIndex-1].name, allPoints[markerIndex-1].location);
-    var x = allPoints[markerIndex-1];
 
     //DEBUG!
-    //console.log(x);
     if(markerIndex == allPoints.length)
     {
         console.log("Total length");
-        allPoints.splice(markerIndex, 0, tempStore);
-        allPoints.splice(markerIndex+1, 0, allPoints[markerIndex]);
+        allPoints.splice(markerIndex+1, 0, tempStore);
+        //allPoints.splice(markerIndex+1, 0, allPoints[markerIndex]);
     }
     else
     {
@@ -103,7 +101,7 @@ function placeMarker(location) {
                 console.log("Marker@@@ " + markerIndex);
                 break;
             }
-        };
+        }; 
     });
 
     google.maps.event.addListener(marker, 'rightclick', function(event) {
@@ -118,7 +116,7 @@ function placeMarker(location) {
                 markerIndex = allPoints.length;
                 break;
             }
-        };
+        }; 
         redrawGraph();
     });
 
@@ -145,7 +143,7 @@ function placeBooth (location) {
         editable: true,
         draggable: true
     });
-
+    
     var rectOptsLocked = {
         strokeColor: '#00FF00',
         fillColor: '#00FF00',
@@ -320,6 +318,14 @@ function loadAllExhibitions() {
 
 function loadExhib() {
     console.log("START LOAD...");
+    allPoints = [];
+    allBooths = [];
+    allMarkers = [];
+    categoriesToInsert = []
+    companiesToInsert = []
+    boothCategories = [];
+    boothCompanies = [];
+    boothMarker = [];
     var namevar = $("#finalexhibitionName").text();
     console.log(namevar);
     $.getJSON('loadExhibtion.php', {name: namevar}, function(json) {
@@ -332,7 +338,7 @@ function loadExhib() {
             json["exhibition"]["country"],
             json["exhibition"]["description"],
             json["exhibition"]["logo"]);
-        for (var i = json["coordinates"].length - 1; i >= 0; i--) {
+        /*for (var i = json["coordinates"].length - 1; i >= 0; i--) {
             if(json["coordinates"][i]["isroad"]) {
                 var topLeftx = json["coordinates"][i]["x"];
                 var topLefty = json["coordinates"][i]["y"];
@@ -340,9 +346,9 @@ function loadExhib() {
                     position: new google.maps.LatLng(topLefty,topLeftx),
                     map: map,
                 });
-                placeMarker(new google.maps.LatLng(topLefty,topLeftx));
+                //placeMarker(new google.maps.LatLng(topLefty,topLeftx));
             }
-        };
+        };*/
 
 
         for (var i = json["booths"].length - 1; i >= 0; i--) {
@@ -351,13 +357,13 @@ function loadExhib() {
             var topLefty = null;
             var bottomRightx = null;
             var bottomRighty = null;
-
+            
             for (var x = json["coordinates"].length - 1; x >= 0; x--) {
                 console.log(json["coordinates"][x]["isroad"]);
                 if(json["coordinates"][x]["isroad"]) {continue;}
                 if(json["coordinates"][x]["boothid"] == null) {continue;}
                 if(json["coordinates"][x]["boothid"] == json["booths"][i]["dbid"]) {
-
+                    
                     if(topLeftx == null) {
                         topLeftx = json["coordinates"][x]["x"];
                         topLefty = json["coordinates"][x]["y"];
@@ -399,18 +405,8 @@ function loadExhib() {
             allBooths.push(tmpBooth);
         }
     });
-
-        /*
-        json["booths"] //
-        json["edges"] //
-        json["coordinates"]*/
-        //roadMapGraphFinal.nodes = json["nodes"];
-        //roadMapGraphFinal.edges = json["edges"];
-        //allBooths = json["nodes"];
-        //After correct insert into AllMarkers, AllPointers, boothCompany, boothCategory
-        //redrawGraph();
-    //roadMapGraphFinal.nodes and edges
-    //allBooths, rectangles and stuff also, booth relations
+    loadCategories();
+    loadCompanies();
 }
 
 var exhibLogoName;
@@ -494,7 +490,6 @@ function initialize() {
 
 
             var tmpBooth = new Booth(null,retVal,curBooth,$("#boothDescription").val());
-            boothCount++;
             allBooths.push(tmpBooth);
             boothCategories.push(new boothCategory(tmpBooth.boothId,$("#boothCategory").val()));
             boothCompanies.push(new boothCompany(tmpBooth.boothId,$("#boothCompanyName").val()));
@@ -549,12 +544,13 @@ function initialize() {
         for (var i = allCompanies.length - 1; i >= 0; i--) {
             if($("#boothCompanyName").val() == allCompanies[i].name)
             {
-                $("#boothCompanyLogo").hide();
+                //FIX
+                //$("#boothCompanyLogo").hide();
                 break;
             }
             else
             {
-                $("#boothCompanyLogo").show();
+                //$("#boothCompanyLogo").show();
                 break;
             }
         };
@@ -565,7 +561,6 @@ function initialize() {
         center: myCenter,
         zoom: 3,
         streetViewControl: false,
-        mapTypeId: 'floorPlan',
         mapTypeControlOptions: {
             mapTypeIds: ['floorPlan']
         }
@@ -597,7 +592,7 @@ function redrawLine(event){
             clickable: false
         });
 
-
+        
         boothLine.setMap(map);
     }
 }
@@ -658,7 +653,7 @@ function removeAllMarkers(markerArray) {
                 }
             }
         };
-    };
+    };    
 }
 
 function createExhibition() {
@@ -675,6 +670,8 @@ function createExhibition() {
 }
 
 function createBooth() {
+    loadCompanies();
+    loadCategories();
     $("#boothName").val("");
     $("#boothDescription").val("");
     $("#boothCategory").val("");
@@ -783,7 +780,6 @@ function getJsonElements(nodesArray, edgeArray, boothArray, exhibit,companiesArr
                                 newComp = true;
                             }
                         };
-
                         if(newComp != true)
                             curBoothCompany = companiesArray[x].id;
                     }

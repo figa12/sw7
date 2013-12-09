@@ -31,7 +31,6 @@ var modeEnum = {
     bindBooth : "bind"
 }
 var mode = modeEnum.placeRoad;
-var boothCount = 0;
 
 //setting for drawing the polyline, also called the roadmap
 
@@ -81,6 +80,7 @@ function redrawGraph()
         strokeOpacity:0.5,
         strokeWeight:4
     });
+    console.log(allPoints);
     roadMapGraphFinal = makeGraph(allPoints);
 
     try {
@@ -102,7 +102,6 @@ function redrawGraph()
     google.maps.event.addListener(roadPath, 'click', function(event) {
     if(document.getElementById("typeSelect").value == "booth")
     {
-        console.log(this);
         if (mode == modeEnum.bindBooth)
         {
             if(boothEntries != null) { boothEntries.setMap(null); }
@@ -135,124 +134,71 @@ function removeLine() {
 //http://www.bdcc.co.uk/Gmaps/BdccGeo.js as help
 function clickMarker(event)
 {
-        var curX = event.latLng.lng();
-        var curY = event.latLng.lat();
+    var smallestDist = null;
+    var index = 0;
+    for (var i = 0; i < allPoints.length -1; i++) {
 
-        var smallestDist = null;
-        var index = 0;
-        var value = false;
-        for (var i = 0; i < allPoints.length -1; i++) {
-
-            if(allPoints[i].name == allPoints[i+1].name)
-                {
-                    continue;
-                }
-            console.log("changes " + allPoints[i].name);
-
-            var first = new google.maps.LatLng(allPoints[i].location.lat(),allPoints[i].location.lng());
-            var second = new google.maps.LatLng(allPoints[i+1].location.lat(),allPoints[i+1].location.lng());
-            var testPath = new google.maps.Polyline({
-                path:[first,second],
-                strokeWeight:4
-            });
-
-            //var tolerance = Math.pow(map.getZoom(), -(map.getZoom()/50)); 
-            //var tolerance = 00000000000001;
-            //console.log("tolerance: " + tolerance);
-            console.log("mouse point: " +event.latLng);
-            console.log("first point: " +first);
-            console.log("second point: " +second);
-            console.log(testPath);
-            var dist = bdccGeoDistanceToPolyMtrs(testPath,event.latLng);
-            if(smallestDist == null) {
-                smallestDist = dist;
-                index = i;
+        if(allPoints[i].name == allPoints[i+1].name)
+            {
+                continue;
             }
-            else
-            {
-                if(dist < smallestDist) {
-                    smallestDist = dist;
-                    index = i;       
-                }
-            }
-            /*if(google.maps.geometry.poly.containsLocation(event.latLng,testPath))//,tolerance))
-            {
-                index = i;
-            }*/
-/*
-            var dxc = curX - allPoints[i].location.lng();
-            var dyc = curY - allPoints[i].location.lat();
+        console.log("changes " + allPoints[i].name);
 
-            var dxl = allPoints[i+1].location.lng() - allPoints[i].location.lng();
-            var dyl = allPoints[i+1].location.lat() - allPoints[i].location.lat();
-
-            var cross = dxc * dyl - dyc * dxl;
-            //console.log("Index: " + i);
-            if(smallestCross == null)
-            {
-                smallestCross = cross;
-                //console.log("sCross: " + smallestCross.toString());
-                value = true;
-                index = i;
-            }
-            else
-            {
-                //console.log("AbsCross: " + Math.abs(cross).toString() + " AbsSmall: " + Math.abs(smallestCross).toString());
-                if (Math.abs(cross) < Math.abs(smallestCross)) 
-                {
-                    //console.log("Cross @" + dxl.toString() + " Index @" + dyl.toString());
-                    if(Math.abs(dxl) >= Math.abs(dyl))
-                    {
-                        value = dxl > 0 ?
-                        allPoints[i].location.lng() <= curX && curX <= allPoints[i+1].location.lng() :
-                        allPoints[i+1].location.lng() <= curX && curX <= allPoints[i].location.lng();
-                    }
-                    else
-                    {
-                        value = dyl > 0 ?
-                        allPoints[i].location.lat() <= curY && curY <= allPoints[i+1].location.lat() :
-                        allPoints[i+1].location.lat() <= curY && curY <= allPoints[i].location.lat();
-                    }
-                    if(value)
-                    {
-                        index = i;
-                        break;
-                    }
-                    smallestCross = cross;
-                }
-            }*/
-        };
-        console.log("Cross @" + value.toString() + " Index @" + index.toString());
-
-        var boothIndex;
-        for (var i = allBooths.length - 1; i >= 0; i--) {
-            if(allBooths[i].rect.getBounds().contains(basepoint))
-            {
-                boothIndex = allBooths[i].boothId;
-                var tmpBoothMarker = new BoothMarker(boothIndex, "node"+(count+1).toString());
-                boothMarker.push(tmpBoothMarker);
-                break;
-            }
-        };
-
-        console.log("Bind @" + "node"+(count+1).toString() + " --> Booth @" + boothIndex);
-
-        count++;
-        var insertNode = new Node("node"+count.toString(), event.latLng);
-        allPoints.splice(index+1,0,insertNode);
-        allPoints.splice(index+2,0,insertNode);
-        var marker = new google.maps.Marker({
-            position: event.latLng,
-            map: map,
+        var first = new google.maps.LatLng(allPoints[i].location.lat(),allPoints[i].location.lng());
+        var second = new google.maps.LatLng(allPoints[i+1].location.lat(),allPoints[i+1].location.lng());
+        var testPath = new google.maps.Polyline({
+            path:[first,second],
+            strokeWeight:4
         });
-        allMarkers.push(marker);
 
-        //HACK
-        //allPoints.splice(index, 0, allPoints[index]);
-        redrawGraph();
+        //var tolerance = Math.pow(map.getZoom(), -(map.getZoom()/50)); 
+        //var tolerance = 00000000000001;
+        //console.log("tolerance: " + tolerance);
+        console.log("mouse point: " +event.latLng);
+        console.log("first point: " +first);
+        console.log("second point: " +second);
+        console.log(testPath);
+        var dist = bdccGeoDistanceToPolyMtrs(testPath,event.latLng);
+        if(smallestDist == null) {
+            smallestDist = dist;
+            index = i;
+        }
+        else
+        {
+            if(dist < smallestDist) {
+                smallestDist = dist;
+                index = i;       
+            }
+        }
+    };
+    console.log("Index @" + index.toString());
 
+    var boothIndex;
+    for (var i = allBooths.length - 1; i >= 0; i--) {
+        if(allBooths[i].rect.getBounds().contains(basepoint))
+        {
+            boothIndex = allBooths[i].boothId;
+            var tmpBoothMarker = new BoothMarker(boothIndex, "node"+(count+1).toString());
+            boothMarker.push(tmpBoothMarker);
+            break;
+        }
+    };
 
-        smallestCross = null;
-        value = null;
+    console.log("Bind @" + "node"+(count+1).toString() + " --> Booth @" + boothIndex);
+
+    count++;
+    var insertNode = new Node("node"+count.toString(), event.latLng);
+    allPoints.splice(index+1,0,insertNode);
+    //allPoints.splice(index+2,0,insertNode);
+    var marker = new google.maps.Marker({
+        position: event.latLng,
+        map: map,
+    });
+    allMarkers.push(marker);
+
+    //HACK
+    //allPoints.splice(index, 0, allPoints[index]);
+    redrawGraph();
+    smallestCross = null;
 }
 

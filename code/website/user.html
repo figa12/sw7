@@ -2,8 +2,9 @@
 <html>
 	<head>
 
-<header align="center">
+	<header>
 		<ul class="nav nav-tabs">
+			<li><a href="index.html"><img src="icon_big.png" height="50" width="50"></a></li>
 			<li><a href="feed.html">Feeds</a></li>
 			<li><a href="company.html">Company</a></li>
 			<li><a href="booth.html">Booth</a></li>
@@ -16,7 +17,8 @@
 	</header>
 
 	<h2> Input User information: </h2>
-
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="js/jquery.form.min.js"></script>
 	<script type = "text/javascript">
 
 	// Validate the user input
@@ -29,8 +31,11 @@
 			return false;
 		 }
 	}
-	
-	
+	$("#inputForm").ajaxForm({
+	    success: function(msg) {
+	    	alert("Submitted");
+	    }
+    });
 	
 	</script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
@@ -38,7 +43,7 @@
 
 	<body>
 		<!-- Sets up the form to be used for typing in the information -->
-		<form name="inputForm" action="userSide.php" method="post" onsubmit = "return validateSubmit();"
+		<form name="inputForm" id="inputForm" action="userSide.php" method="post" onsubmit = "return validateSubmit();"
       		  enctype = "multipart/form-data">
 
 			<table border ="0">
@@ -50,7 +55,6 @@
 				<td><button type="submit" class="btn">Submit</td>
 				</tr>
 		</form>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 	</body>
 </html>
