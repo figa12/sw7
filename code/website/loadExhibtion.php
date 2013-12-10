@@ -86,7 +86,6 @@
 	}
 
 //LOAD EDGES
-
 	$coordIdString = "(";
 	foreach ($coordinates as $value) {
 		$coordIdString .= $value["dbid"].",";
@@ -112,7 +111,6 @@
 			"vertexB" => $_vertexB);
 		array_push($edges, $tmp);
 	}
-
 
 	$mysqli->close();
 

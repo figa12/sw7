@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-
-	<header align="center">
+	<header>
 		<ul class="nav nav-tabs">
+			<li><a href="index.html"><img src="icon_big.png" height="50" width="50"></a></li>
 			<li><a href="feed.html">Feeds</a></li>
 			<li><a href="company.html">Company</a></li>
 			<li><a href="booth.html">Booth</a></li>
@@ -30,12 +30,16 @@
 	</head>
 
 	<body>
-		<select id="exhibSelect">
-		</select>
+		<div>
+		Load Exhibition:  <select id="exhibSelect"/></select>
+		</div>
+		<div>
+		Type select:  
 		<select id="typeSelect">
 			<option value="marker">Marker</option>
 			<option value="booth">Booth</option>
 		</select>
+		</div>
 		<button class="btn" id="Save" onClick="makeJson()">Save</button>
 		<button class="btn" id="CreateExhibition" onClick="createExhibition()">Create Exhibition</button>
 		<div id="map-canvas"></div>
