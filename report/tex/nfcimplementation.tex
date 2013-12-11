@@ -10,6 +10,15 @@ We have created a class called \lstinline|NfcForegroundActivity| which every act
 
 \lstinline|NfcForegroundActivity| is an abstract class with one abstract method called \lstinline|onNfcScanned()|. All our activities inherits from this. This allows for a very easy way to handle the records that lie on the \ac{nfc} tag separately for each activity. Some of the important methods for \lstinline|NfcForegroundActivity| are shown in the diagram, and they are also explained in this section.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\linewidth]{img/nfcdataflow.pdf}
+\caption{NFC data flow}
+\label{fig:nfcdataflow}
+\end{figure}
+
+\autoref{fig:nfcdataflow} shows the methods executed and the state changes that occurs when an \lstinline|NfcForegroundActivity| is created and what happens when an \ac{nfc} tag is scanned. This diagram shows the flow of the \lstinline|MainActivity| and this is also the activity which is used as an example in this section. When \lstinline|onPause()| is run, the \lstinline|MainActivity| ends and the next activity is opened. When the next activity finishes, it returns to the \lstinline|MainActivity| and \lstinline|onResume()| is executed again.
+
 \subsection*{Foreground Dispatch System}
 \label{sec:foreground}
 
