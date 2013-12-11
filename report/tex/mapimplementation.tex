@@ -3,16 +3,28 @@ Ideally it should also be possible to subscribe/unsubscribe to each booth. The l
 
 \subsection*{MapView vs Mapfragment}
 Our initial thought on how to implement the map on the phone was to use the service provided by Google Maps. We knew that it could implemented on the phone because we had previously seen it being used in other applications. What we did not know, was if we could override the standard Google Maps tiles with our own custom tiles. A tile is a single picture containing a piece of the map, depending on the zoom level each tile contain a smaller piece of the actual map.\\
-\todo{show what a tile looks like, side by side with Google Maps tile}
+\todo{show what our tile looks like, side by side with Google Maps tile}
 We need to implement our own custom tiles because we want to show a floor plan of a building, instead of a world map. We read the documentation provided by Google Maps\todo{cite?}, and we found that it is not possible to override the standard tiles with your own tiles to the Android MapFragment. We then thought of implementing the map with a WebView which is basically a browser inside the application, and use JavaScript to create the map. With JavaScript it is possible to override the standard tile set with your own, but the performance on the phone was horrible so we scratched the idea.
 We did some research to try find a solution to our problem, we ended up with using the MapFragment and instead overriding the standard tile set we simply hide them, and only show our custom tile set.
 
 \subsection*{Mercator projection}
-Google Maps use Mercator projection, good idea to know how it works
-How it works.
-Side effects by using this, distortions bla bla
-\todo{show a picture explaining the Mercator projection.}
-What does it mean in our case?(don't know what to write)
+\todo{introduction, why it is good to know Google maps}
+Mercator projection is a way of displaying a sphere on a two dimensional map.
+There are a lot of ways of projecting a sphere on a map, but one of the most successful is the Mercator projection. The Mercator projection is often chosen because of it navigational properties strengths. One of the biggest navigational properties Mercator provides is it's ability to represent lines of constant course as straight lines.\\
+A Mercator projected map is illustrated by Figure  \autoref{fig:mercatorexplain}. Let the globe be a spherical balloon, the balloon is blown up inside a cylinder, and sticks to the cylinders side as it is blown up. The three first pictures on Figure \autoref{fig:mercatorexplain} shows the balloon being blowing up, the last picture shows the cylinder being cut open and displayed as a two dimensional map.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{img/mercatorexplain.png}
+\caption{Explanation of Mercator projection \citep{mercatorexplain}}
+\label{fig:mercatorexplain}
+\end{figure}
+The \autoref{fig:mercatorexplain} also shows how the top part of the spherical balloon is stretched for it to fit inside the cylinder. This is one of the disadvantages of the Mercator projection, the landmasses and continents are not scaled correctly.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{img/mercatorworld.pdf}
+\caption{The World - Mercator projection  \citep{mercatorworld}}
+\label{fig:mercatorworld}
+\end{figure} On the \autoref{fig:mercatorworld} Greenland is almost the same size as Africa, but in reality Africa is 14 times bigger than Greenland.
 
 \subsection*{Google Maps}
 Explain the Google Maps API for android\\
