@@ -1,19 +1,28 @@
-The purpose of the website is to allow the exhibition managers to make a floorplan, feeds, schedule and other concepts of an exhibition.
-It is designed as a (almost) one-page site. 
+The website is build to allow exhibition managers to manage their exhibition, as stated in the problem statement\secref{sec:problemstatement}. All concepts of an exhibtion can be added from the website, this include feeds, schedule, booths, companies, categories and a floor plan.
+The diffrent tabs manage diffrent concepts of an exhibiton:
+Feeds: Here the manager can add a feed to a booth in the databse.
+Company: Here the manager can add a company to the database, the company logo will also be uploaded to the server for futher use.
+Category: In this tab the manager can add a category to the database for futher use.
+Exhib: In the Exhib tab the manager can create a new empty exhibition.
+Schedule: In the Schedule tab the manager can create a new schedule and add it to a booth in the database.
+Map: The map tab is the heart of the website, here almost all the other concepts can be added, this include, making a new exhibition, complete with a floor plan, categories, companies, and booths. Previous created exhibitions can also be loaded for viewing or editing.
 
-The website is build using HTML, PHP and jQuery. The main tab on the website is the map-tab. This tab is build using Google Maps API. Using this tab the user can create a compelte exhibition from the ground up.
-After creating an exhibition, with booths, a floorplan and companies. The user can add feeds to the exhibition, using the Feeds tab. A schedule can be added using the the schedule tab.
-It is also possible to load an existing exhibtion from the database, for th loaded exhibition the floorplan will be shown but the user is unable to edit the floorplan in the current version.
+The problem statement\secref{sec:problemstatement} states that booths should be able to create feeds themself, this have not been used in the design of the website, but is possible with the integration of a login system on the website. This will also make sure managers only will be able to edit their own exhibitions.
 
-The website uses the ajax technology for form submit to make the website more userfriendly. The ajax posts to PHP, which handles the database interaction. When connection to the database we are using prepare statements, to make sure no malicious data is inserted into the database.
+The website is designed with the main focus on the "map" tab, this tab functions almost as a standalone one-page website, though the "feed" and "schdule" tab is also need to make a "complete" exhibition.
+
+The website is built using HTML, PHP and jQuery. The "map" tab makes use of the Google Maps API, for giving a visual presentation when creating an exhibtion.
+Here the user can place markers, which in turn make up the walkingpath of the exhibtion. The user can also place booths on the map, dragging a rectangle to the prefered position and then locking it in place. When the "booth" is locked a dialog appears and here the user can enter "Name", "Description", "Category" and "Company".
+
+After creating an exhibition the user can add feeds to the exhibition, using the "Feeds" tab, feeds are bound to an existing booth from the database. A schedule can be added using the the schedule tab, here the user selects a "name", "booth", "start time" and "end time".
+It is also possible to load an existing exhibition from the database, for the loaded exhibition the floor plan will be shown, this exhibition can then be edited and saved to the database, reflecting the changes the user has made.
+
+The website uses the AJAX technology for form submit to make the website more user-friendly. The AJAX posts to PHP, which handles the database interaction. When connecting to the database we are using prepare statements, to make sure no malicious data is inserted into the database.
 
 The design of the website is done using Twitter Bootstrap making it more slick, and uniform.
-The main focus in the website is functionallity and therefore the design and usability is not the main priorty.
+The main focus in the website is functionality and therefore the design and usability is not the main priority.
 
 
 
 
-Flowchart diagram.
-
-
-Schedule - booth with same name, doesn't 
+Flowchart diagram af map tabben.

@@ -1,0 +1,75 @@
+\begin{lstlisting}[numbers=none]
+Time: 616 ms, Memory: 2.75Mb
+OK (12 tests, 52 assertions)
+\end{lstlisting}
+
+\begin{lstlisting}[language=phpstyle, label=lst:checkTemplate, caption={checkTemplate unit test}]
+private function checkTemplate($testResult, $requestCode) {
+    // Is the json valid
+    $this->assertNotNull($testResult, "Are you missing a Type or RequestCode?");
+    // Does RequestCode exist?
+    $this->assertTrue(property_exists($testResult, "RequestCode"));
+    // Does Data exist?
+    $this->assertTrue(property_exists($testResult, "Data"));    
+    // RequestCode must be the same as the one given.
+    $this->assertEquals($testResult->RequestCode, $requestCode);
+}%$
+\end{lstlisting}
+
+\begin{lstlisting}[language=phpstyle, label=lst:testCreateUser, caption={createUser unit test}]
+public function testCreateUser() {
+    $_POST['RequestCode'] = 1;
+    $_POST['ExhibId'] = $this->exhibId;
+    $_POST['Type'] = "CreateUser";
+
+    $testResult = init();
+    $testResult = json_decode($testResult);
+
+    $this->checkTemplate($testResult, 1);
+
+    $this->assertNotEmpty($testResult->Data);
+    
+    return $testResult->Data->userId;      
+}%$
+\end{lstlisting}
+
+\begin{lstlisting}[language=phpstyle, label=lst:testCheckFeeds, caption={checkFeeds unit test}]
+/** @depends testCreateUser */
+public function testCheckFeeds($userId) {
+    $now = time();
+    $_POST["Type"] = "CheckFeeds";
+    $_POST["RequestCode"] = 1;
+    $_POST['UserId'] = $userId;
+    $_POST['TimeStamp'] = $now;
+
+    $testResult = init();
+    $testResult = json_decode($testResult);
+
+    $this->checkTemplate($testResult, 1);
+
+    $numFeeds = $testResult->Data[0];
+    $numFeeds = $numFeeds->num;
+
+    $this->assertNotNull($numFeeds);
+
+    return array($numFeeds, $now, $userId);
+}
+
+/** @depends testCheckFeeds */
+public function testCheckFeeds2($args) {
+    $numFeeds = $args[0];
+    $now = $args[1];
+    $userId = $args[2];
+
+    $this->createFeed($now);
+    
+    $newArgs = $this->testCheckFeeds($userId);
+    $newNum = $newArgs[0];
+    
+    $this->assertEquals($numFeeds + 1, $newNum);
+}
+\end{lstlisting}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "../master"
+%%% End: 
