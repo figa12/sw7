@@ -1,4 +1,10 @@
-\begin{lstlisting}[numbers=none]
+\subsection*{Serverside Unit Testing}
+We have performed unit testing on the serverside api using an open source tool called PHPUnit\citep{phpunit} which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions that you want to test and has a new class that extends \lstinline|PHPUnit_Framework_TestCase|. All public methods in this new class that are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|.
+
+
+We have performed unit tests on all the functions that our server side API uses. These unit tests were done using an open source tool called PHPUnit\citep{phpunit}. All calls to the api must return a result of the correct format, this is checked for every function, see \autoref{lst:checkTemplate}. \lstinline{checkTemplate} contains four asserts to validate the format of the result.
+ 
+\begin{lstlisting}[numbers=none, basicstyle=\ttfamily]
 Time: 616 ms, Memory: 2.75Mb
 OK (12 tests, 52 assertions)
 \end{lstlisting}
@@ -13,8 +19,8 @@ private function checkTemplate($testResult, $requestCode) {
     $this->assertTrue(property_exists($testResult, "Data"));    
     // RequestCode must be the same as the one given.
     $this->assertEquals($testResult->RequestCode, $requestCode);
-}%$
-\end{lstlisting}
+}
+\end{lstlisting}%$
 
 \begin{lstlisting}[language=phpstyle, label=lst:testCreateUser, caption={createUser unit test}]
 public function testCreateUser() {
@@ -30,8 +36,8 @@ public function testCreateUser() {
     $this->assertNotEmpty($testResult->Data);
     
     return $testResult->Data->userId;      
-}%$
-\end{lstlisting}
+}
+\end{lstlisting}%$
 
 \begin{lstlisting}[language=phpstyle, label=lst:testCheckFeeds, caption={checkFeeds unit test}]
 /** @depends testCreateUser */
