@@ -1,25 +1,25 @@
-The website is build to allow exhibition managers to manage their exhibition, as stated in the problem statement \secref{sec:problemstatement}. All concepts of an exhibtion can be added from the website, this include feeds, schedule, booths, companies, categories and a floor plan.
-The diffrent tabs manage diffrent concepts of an exhibiton:
+The website is build to allow exhibition managers to manage their exhibition, as stated in the problem statement \secref{sec:problemstatement}. All concepts of an exhibition can be added from the website, this include feeds, schedule, booths, companies, categories and a floor plan.
+The different tabs manage different concepts of an exhibition:
 
 
 \begin{itemize}
 	\item Feeds: Here the manager can add a feed to a booth in the databse.
-	\item Company: Here the manager can add a company to the database, the company logo will also be uploaded to the server for futher use.
-	\item Category: In this tab the manager can add a category to the database for futher use.
-	\item Exhib: In the Exhib tab the manager can create a new empty exhibition.
+	\item Company: Here the manager can add a company to the database, the company logo will also be uploaded to the server for further use.
+	\item Category: In this tab the manager can add a category to the database for further use.
+	\item Exhib: In the "Exhib" tab the manager can create a new empty exhibition.
 	\item Schedule: In the Schedule tab the manager can create a new schedule and add it to a booth in the database.
-	\item Map: The map tab is the heart of the website, here almost all the other concepts can be added, this include, making a new exhibition, complete with a floor plan, categories, companies, and booths. Previous created exhibitions can also be loaded for viewing or editing.
+	\item Map: The "map" tab is the heart of the website, here almost all the other concepts can be added, this include, making a new exhibition, complete with a floor plan, categories, companies, and booths. Previous created exhibitions can also be loaded for viewing or editing.
 \end{itemize}
 
 
-The problem statement \secref{sec:problemstatement} states that booths should be able to create feeds themself, this have not been used in the design of the website, but is possible with the integration of a login system on the website. This will also make sure managers only will be able to edit their own exhibitions.
+The problem statement \secref{sec:problemstatement} states that booths should be able to create feeds themselves, this have not been used in the design of the website, but is possible with the integration of a login system on the website. This will also make sure managers only will be able to edit their own exhibitions.
 
 
-The website is designed with the main focus on the "map" tab, this tab functions almost as a standalone one-page website, though the "feed" and "schdule" tab is also need to make a "complete" exhibition.
+The website is designed with the main focus on the "map" tab, this tab functions almost as a standalone one-page website, though the "feed" and "schedule" tab is also need to make a "complete" exhibition.
 
 
-The website is built using HTML, PHP and jQuery. The "map" tab makes use of the Google Maps API, for giving a visual presentation when creating an exhibtion.
-Here the user can place markers, which in turn make up the walkingpath of the exhibtion. The user can also place booths on the map, dragging a rectangle to the prefered position and then locking it in place. When the "booth" is locked a dialog appears and here the user can enter "Name", "Description", "Category" and "Company".
+The website is built using HTML, PHP and jQuery. The "map" tab makes use of the Google Maps API, for giving a visual presentation when creating an exhibition.
+Here the user can place markers, which in turn make up the walking path of the exhibition. The user can also place booths on the map, dragging a rectangle to the preferred position and then locking it in place. When the "booth" is locked a dialogue appears and here the user can enter "Name", "Description", "Category" and "Company".
 
 
 After creating an exhibition the user can add feeds to the exhibition, using the "Feeds" tab, feeds are bound to an existing booth from the database. A schedule can be added using the the schedule tab, here the user selects a "name", "booth", "start time" and "end time".
