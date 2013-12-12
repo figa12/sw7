@@ -1,9 +1,9 @@
 %%\subsection*{Serverside Unit Testing}
-We have performed unit testing on the serverside \ac{api} using an open source tool called PHPUnit\citep{phpunit} which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions that you want to test and has a new class that extends \lstinline|PHPUnit_Framework_TestCase|. All public methods in this new class that are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|.
+We have performed unit testing on the serverside \ac{api} using an open source tool called PHPUnit which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions that you want to test, the new file must have a new class that extends \lstinline|PHPUnit_Framework_TestCase|. All public methods, in this new class, that are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|\citep{phpunit}.
 
-We have made tests for every functionality on the server side \ac{api} and each of these does some specific assertions related to the specific function, and furthermore calls another test called \lstinline|checkTemplate|, see \autoref{lst:checkTemplate}. The purpose of the \lstinline|checkTemplate| function is to ensure that the format of the result that the server returns is always of the correct format, this includes that the format must be valid JSON, it must have both a ``Data'' and a ``RequestCode'' attribute, and the ``RequestCode'' must be the same as the one that were given as a parameter to the \ac{api} call.
+The testing is performed on a test database that is a copy of the original database, this is done to ensure that we do not interfere with data on the live database that could potentially cause problems or interference. As an example we create new feeds and new users when performing the tests, this could very well interfere with live data. A way of testing the application once it is in production could be to create a copy of the database once a day and run unit tests on the newly created copy and then delete it again.
 
-The testing is performed on a test database that is a copy of the original database, this is done to ensure that we don't interfere with data on the live database that could potentionally cause problems or interference. As an example we both create new feeds and new users when performing the tests, this could very well interfere with live data. A way of testing the application once it is in production could be to create a copy of the database once a day and run unit tests on the newly created copy and then delete it again.
+We have made tests for every functionality on the server side \ac{api} and each of these does some specific assertions related to the specific function, and furthermore calls another test called \lstinline|checkTemplate()|, see \autoref{lst:checkTemplate}. The purpose of the \lstinline|checkTemplate()| function is to ensure that the format of the result that the server returns is always of the correct format, this includes that the format must be valid JSON, it must have both a ``Data'' and a ``RequestCode'' attribute, and the ``RequestCode'' must be the same as the one that were given as a parameter to the \ac{api} call.
 
 \begin{lstlisting}[language=json, label=lst:jsonFormat, caption={JSON format, in this case an example of the result from \lstinline|CheckFeeds|}]
 {
@@ -16,7 +16,7 @@ The testing is performed on a test database that is a copy of the original datab
 }
 \end{lstlisting}
 \begin{description}
-\item[Lines: 1-8] This is an example of the expected format that a result must be of. It must include a ``RequestCode'' attribute and a ``Data'' attribute. The ``RequestCode'' must be an integer and nothing else, whereas the ``Data'' attribute can be either an object or an array of objects. In this case the ``Data'' attribute contains an array with one element which is an object.
+\item[Lines 1-8] This is an example of the expected result format. It must include a ``RequestCode'' attribute and a ``Data'' attribute. The ``RequestCode'' must be an integer and nothing else, whereas the ``Data'' attribute can be either an object or an array of objects. In this case the ``Data'' attribute contains an array with one element which is an object.
 \end{description}
 
 \begin{lstlisting}[language=phpstyle, label=lst:checkTemplate, caption={checkTemplate unit test}]
@@ -32,8 +32,8 @@ private function checkTemplate($testResult, $requestCode) {
 }
 \end{lstlisting}%$
 \begin{description}
-\item[Line: 1] The function takes two parameters, \lstinline|$testResult| and \lstinline|$requestCode|. \lstinline|$testResult| is the result of the underlying test, and \lstinline|$requestCode| is the request code that was send to the api call.
-\item[Lines: 2-9] It is ensured that the format of the returned JSON is correct and that the request code is the same as the one given. 
+\item[Line 1] The function takes two parameters, \lstinline|$testResult| and \lstinline|$requestCode|. \lstinline|$testResult| is the result of the underlying test, and \lstinline|$requestCode| is the request code that was sent to the \ac{api} call.
+\item[Lines 2-9] It is ensured that the format of the returned JSON is correct and that the request code is the same as the one given. 
 \end{description}
 
 \begin{lstlisting}[language=phpstyle, label=lst:testCreateUser, caption={createUser unit test}]
@@ -53,27 +53,28 @@ public function testCreateUser() {
 }
 \end{lstlisting}%$
 \begin{description}
-\item[Lines: 2-4] The appropriate POST variables are set. This is done to emulate an actual \ac{api} call.
-\item[Line: 6] The \ac{api} is wrapped in a function called init which is called to start the testing.
-\item[Line: 7] The result from the \ac{api} is decoded. This converts the result from a JSON string to a PHP object.
-\item[Line: 9] The format of the result is verified, see \autoref{lst:checkTemplate}.
-\item[Line: 11] When creating a new user the returned JSON must not have an empty ``Data'' attribute.
-\item[Line: 13] The newly created userId is returned. This is because many of the other tests depends on \lstinline|testCreateUser|.
+\item[Lines 2-4] The appropriate POST variables are set. This is done to emulate an actual \ac{api} call.
+\item[Line 6] The \ac{api} is wrapped in a function called \lstinline|init()| which is called to start the testing.
+\item[Line 7] The result from the \ac{api} is decoded. This converts the result from a JSON string to a PHP object.
+\item[Line 9] The format of the result is verified, see \autoref{lst:checkTemplate}.
+\item[Line 11] When creating a new user the returned JSON must not have an empty ``Data'' attribute.
+\item[Line 13] The newly created \lstinline|userId| is returned. This is because many of the other tests depends on \lstinline|testCreateUser|.
 \end{description}
 
 \begin{lstlisting}[language=phpstyle, label=lst:testCheckFeeds, caption={checkFeeds unit test}]
 /** @depends testCreateUser */
 public function testCheckFeeds($userId) {
     $now = time();
+    $requestCode = 1;
     $_POST["Type"] = "CheckFeeds";
-    $_POST["RequestCode"] = 1;
+    $_POST["RequestCode"] = $requestCode;
     $_POST['UserId'] = $userId;
     $_POST['TimeStamp'] = $now;
 
     $testResult = init();
     $testResult = json_decode($testResult);
 
-    $this->checkTemplate($testResult, 1);
+    $this->checkTemplate($testResult, $requestCode);
 
     $numFeeds = $testResult->Data[0];
     $numFeeds = $numFeeds->num;
@@ -98,23 +99,23 @@ public function testCheckFeeds2($args) {
 }
 \end{lstlisting}%$
 \begin{description}
-\item[Line 1:] PHPUnit is informed that this test is dependant of \lstinline|testCreateUser|.
-\item[Line 2:] Since this test is dependant of \lstinline|testCreateUser| it takes the userId that \lstinline|testCreateUser| returns as a parameter.
-\item[Line 3-7:] The POST variables are set.
-\item[Lines 9-10:] The \ac{api} is run and the result is decoded from JSON.
-\item[Line 12:] The format of the result is verified.
-\item[Lines 14-15:] The number of feeds are gathered from the returned data.
-\item[Line 17:] An assert is made to make sure that number of feeds are not null. It should be 0 or more.
-\item[Line 19:] The number of feeds, the current time and the userId is returned. The test \lstinline|testCheckFeeds2| is dependent of \lstinline|testCheckFeeds|.
-\item[Line 22:] \lstinline|testCheckFeeds2| is dependent of \lstinline|testCheckFeeds|.
-\item[Line 24-26:] The arguments are gathered from the array.
-\item[Line 28:] A new feed is made for testing using the current time as timestamp.
-\item[Lines 30-31:] \lstinline|testCheckFeeds| is run again and the new number of feeds is received.
-\item[Line 33:] An assert is made to ensure that the new number of feeds are one greater than the initial number of feeds.
+\item[Line 1] PHPUnit is informed that this test is dependant of \lstinline|testCreateUser()|.
+\item[Line 2] Since this test is dependant of \lstinline|testCreateUser()| it takes the \lstinline|userId| that \lstinline|testCreateUser()| returns as a parameter.
+\item[Lines 5-8] The POST variables are set.
+\item[Lines 10-11] The \ac{api} is run and the result is decoded from JSON.
+\item[Line 13] The format of the result is verified.
+\item[Lines 15-16] The number of feeds are gathered from the returned data.
+\item[Line 18] An assert is made to make sure that number of feeds are not null. It should be 0 or more.
+\item[Line 20] The number of feeds, the current time and the \lstinline|userId| is returned. The test \lstinline|testCheckFeeds2()| is dependent of \lstinline|testCheckFeeds()|.
+\item[Line 23] \lstinline|testCheckFeeds2()| is dependent of \lstinline|testCheckFeeds()|.
+\item[Lines 25-27] The arguments are gathered from the array.
+\item[Line 29] A new feed is made for testing using the current time as timestamp.
+\item[Lines 31-32] \lstinline|testCheckFeeds()| is run again and the new number of feeds is received.
+\item[Line 34] An assert is made to ensure that the new number of feeds are one greater than the initial number of feeds.
 \end{description}
-When PHPUnit is run with all the tests that we have made this is the following result:
+When PHPUnit is run with all the tests that we have made, this is the following result:
 
-\begin{lstlisting}[numbers=none, basicstyle=\ttfamily, caption={The result of PHPUnit}]
+\begin{lstlisting}[numbers=none, basicstyle=\ttfamily, caption={The result of our PHPUnit test}]
 Time: 616 ms, Memory: 2.75Mb
 OK (12 tests, 52 assertions)
 \end{lstlisting}
