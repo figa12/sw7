@@ -5,7 +5,6 @@ The reader is expected to be familiar with standard Android components. Some com
 \item[Activity] An activity is a single focused thing that the user can do. You can also say that it is a window which is either full-screen or floating. \citep{activity}
 \item[Fragment] A fragment inherits from activity and thus has its own lifecycle. Fragments are nested in activities, and can be used to build a multi-pane user interface. \citep{fragment}
 \end{description}
-\todo{Maybe add LinearLayout to the the list}
 
 \section{Application Design}\label{sec:appdesign}
 
@@ -30,7 +29,7 @@ We decided that using tabs, like Skype in  \autoref{fig:skype}, was a good way f
 We recognised that we were going to create a few different lists for the application e.g. a list of feeds and a schedule, for this we looked at Twitter \autoref{fig:twitter} and tried to capture their simplicity of tweets in our list items.
 
 \subsection*{Story}
-Julie opens our application Exhib. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the "Map" tab which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, map of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the floor plan she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
+Julie opens our application Exhib. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the "Floor Plan" tab which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, map of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the floor plan she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
 
 \section{Prototype Design}
 
@@ -108,7 +107,7 @@ When you are successfully registered at the exhibition, then you get to the core
 
 \autoref{fig:floorplan} shows the tab displaying the floor plan of the exhibition. Below the map there is a lock button, which locks the user to navigating the floor plan e.g. swiping left and right on the map. If it is not locked then swiping right will change to the schedule tab. Inside the floor plan there should be pinned booths which can be clicked on. When clicking the booths the activity shown in \autoref{fig:booth} is opened. The booth activity shows its attached icon, a name, and information concerning the booth.
 
-\section*{Application requirements}
+\section{Application requirements}
 Based on the prototypes and the functionality we want from the application, we have come up with the following requirements for our application
 
 \begin{description}
@@ -173,7 +172,7 @@ When opening the application the first screen you encounter is one telling the u
 \end{minipage}
 \end{figure}
 
-After having submitted the categories the user want to subscribe to, the user will be taken to an "Info" tab, this is a simple tab displaying information about exhibition the user are currently at, such as exhibition logo, name and a description of the exhibition. This can be seen on \autoref{fig:infoscreen}  at the top. Next to "Info" there are three other tabs: "Feeds", "Schedule", and "Map". These four tabs can be navigated to and from, from any of the other tabs either by swiping from side to side or by clicking on the tab itself at the top.
+After having submitted the categories the user want to subscribe to, the user will be taken to an "Info" tab, this is a simple tab displaying information about exhibition the user are currently at, such as exhibition logo, name and a description of the exhibition. This can be seen on \autoref{fig:infoscreen}  at the top. Next to "Info" there are three other tabs: "Feeds", "Schedule", and "Floor Plan". These four tabs can be navigated to and from, from any of the other tabs either by swiping from side to side or by clicking on the tab itself at the top.
 
 The tab "Feeds", as seen on\autoref{fig:feedsscreen}, shows a list feeds made by booths at the exhibition, note that the feeds do not have a header like shown on the prototypes. We decided against this because we felt it would take up too much space. The application uses the booths that the user subscribed to before, the user only receives feeds from the booths that they subscribed to after scanning the \ac{nfc} tag. Each feed has a timestamp telling the user when it was made.
 
@@ -207,17 +206,24 @@ Some of the feeds are too long to display all the text in the list of feeds, so 
 \hspace{0.5cm}
 \begin{minipage}[b]{0.5\columnwidth}
 \centering
-%\includegraphics[width=0.7\columnwidth]{img/finaldesign/feedsnewitem.png}
-\caption{Floor plan}
-\label{fig:floorplan1}
-%
-\missingfigure{}
+\includegraphics[width=0.7\columnwidth]{img/finaldesign/map1.png}
+\caption{Floor plan with "you are here" dot}
+\label{fig:map1}
 \end{minipage}
-\end{figure}\todo{Picture of map goes here}
+\end{figure}
 
 The "Schedule" tab shows the events that is going on at the exhibition itself, if the booths have a larger presentation they can add it to the schedule. This can be seen on \autoref{fig:schedule1}. Each event in the schedule has a countdown to when it will happen. 
 
-The last tab is "Map", this is a map showing the exhibition with all its booths displayed. If you scan an \ac{nfc} on one of the booths, the floor plan will snap to that booth on the floor plan and display a red circle to show where you are, this can be seen on \autoref{fig:floorplan1}. You can also press the info icon on each booth, to receive information about this booth.\todo{Hvad sker der når man scanner booth tag, ingen låse knap}
+The last tab is "Floor Plan", this is a map showing the exhibition with all its booths displayed. The blue line between the booths are the walk paths around the exhibition. If you scan an \ac{nfc} on one of the booths, the floor plan will snap to that booth on the floor plan and display a red circle to show where you are. It also snaps to this booth. This is seen on \autoref{fig:map1}. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{img/finaldesign/map2.png}
+\caption{Floor plan with booth}
+\label{fig:map2}
+\end{figure}
+
+You can also press the info icon on each booth, to receive information about this booth, this is seen on \autoref{fig:map2}. Note the "Navigate to" button, this allows the user to get a route from their last scanned booth and to the booth of their choice. If the user chooses to navigate to a specific booth, the walk path from their current position and to the booth will be highlighted with red instead of blue. This can also be seen on \autoref{fig:map2}. Note that unlike the prototype, the "Floor Plan" tab does not have a "lock" button, instead the whole tabs locks automatically when swiped to and the user has to press one of the other tabs in order to change tabs.
 
 \autoref{fig:flowchart} shows the application flow between these different activities. Note that the \textit{TabActivity} consists only of tabs, each tab is defined in a fragment.
 
@@ -237,3 +243,13 @@ As mentioned in the previous section, when scanning an \ac{nfc} tag for the firs
 If the user opens up the application without scanning a tag then they are taken to the tab activity of the most recent exhibition. 
 
 If a user deletes the application, the file is deleted as well which means the user loses their user ID. Due to our application not having any login system requiring username and password, the only data that is lost is their booth subscriptions. Next time they install the application and scan a tag they will be assigned a new user ID and have to choose booth subscriptions again.
+
+\section{System Architecture}
+
+Here is architecture:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{img/components.pdf}
+\caption{System architecture\label{fig:architecture}}
+\end{figure}
