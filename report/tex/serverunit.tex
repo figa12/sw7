@@ -5,6 +5,8 @@ The testing is performed on a test database that is a copy of the original datab
 
 We have made tests for every functionality on the server side \ac{api} and each of these does some specific assertions related to the specific function, and furthermore calls another test called \lstinline|checkTemplate()|, see \autoref{lst:checkTemplate}. The purpose of the \lstinline|checkTemplate()| function is to ensure that the format of the result that the server returns is always of the correct format, this includes that the format must be valid JSON, it must have both a ``Data'' and a ``RequestCode'' attribute, and the ``RequestCode'' must be the same as the one that were given as a parameter to the \ac{api} call.
 
+We have created several unit tests of the server's functionalities, the following is a few examples of some of the tests.
+
 \begin{lstlisting}[language=json, label=lst:jsonFormat, caption={JSON format, in this case an example of the result from \lstinline|CheckFeeds|}]
 {
     "RequestCode": "1",
@@ -19,7 +21,7 @@ We have made tests for every functionality on the server side \ac{api} and each 
 \item[Lines 1-8] This is an example of the expected result format. It must include a ``RequestCode'' attribute and a ``Data'' attribute. The ``RequestCode'' must be an integer and nothing else, whereas the ``Data'' attribute can be either an object or an array of objects. In this case the ``Data'' attribute contains an array with one element which is an object.
 \end{description}
 
-\begin{lstlisting}[language=phpstyle, label=lst:checkTemplate, caption={checkTemplate unit test}]
+\begin{lstlisting}[language=phpstyle, label=lst:checkTemplate, caption={\lstinline|checkTemplate| unit test}]
 private function checkTemplate($testResult, $requestCode) {
     // Is the json valid
     $this->assertNotNull($testResult, "Are you missing a Type or RequestCode?");
@@ -36,7 +38,7 @@ private function checkTemplate($testResult, $requestCode) {
 \item[Lines 2-9] It is ensured that the format of the returned JSON is correct and that the request code is the same as the one given. 
 \end{description}
 
-\begin{lstlisting}[language=phpstyle, label=lst:testCreateUser, caption={createUser unit test}]
+\begin{lstlisting}[language=phpstyle, label=lst:testCreateUser, caption={\lstinline|createUser| unit test}]
 public function testCreateUser() {
     $_POST['RequestCode'] = 1;
     $_POST['ExhibId'] = $this->exhibId;
@@ -61,7 +63,7 @@ public function testCreateUser() {
 \item[Line 13] The newly created \lstinline|userId| is returned. This is because many of the other tests depends on \lstinline|testCreateUser|.
 \end{description}
 
-\begin{lstlisting}[language=phpstyle, label=lst:testCheckFeeds, caption={checkFeeds unit test}]
+\begin{lstlisting}[language=phpstyle, label=lst:testCheckFeeds, caption={\lstinline|checkFeeds| unit tests}]
 /** @depends testCreateUser */
 public function testCheckFeeds($userId) {
     $now = time();
@@ -114,11 +116,11 @@ public function testCheckFeeds2($args) {
 \item[Line 34] An assert is made to ensure that the new number of feeds are one greater than the initial number of feeds.
 \end{description}
 When PHPUnit is run with all the tests that we have made, this is the following result:
-
 \begin{lstlisting}[numbers=none, basicstyle=\ttfamily, caption={The result of our PHPUnit test}]
 Time: 616 ms, Memory: 2.75Mb
 OK (12 tests, 52 assertions)
 \end{lstlisting}
+From these tests we conclude that all of the server requests always return the correct JSON template which the application requires in order to read the JSON object successfully. Furthermore we have also tested that basic functionalities of the different requests works.
 
 %%% Local Variables: 
 %%% mode: latex
