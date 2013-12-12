@@ -30,7 +30,7 @@ On the \autoref{fig:mercatorworld} Greenland is almost the same size as Africa, 
 \section{Google Maps}
 \todo{Explain the Google Maps \ac{api} for android} We use the service provided by Google, called Google Maps, to present our floor plan. This service is normally used for displaying the Earth and for navigation. Google Maps for projection of the Earth. Google Maps uses the Mercator projection which is explained in a earlier \secref{sec:mercatorprojection}. Normally a map is distorted by the Mercator projection, but in our case this is not a problem, since our floor plan already is a plane. 
 \subsection*{Tiles}
-The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor plan is shown on \autoref{fig:floorplan}. Zooming on the floor plan allows us to present the floor plan in more detail. For this to work we need to split our original floor plan picture into small tiles, the tiles are always the size 256$x$256 pixels. As the zoom level increases the more tiles are needed to present the floor plan, so at zoom level 2 the floor plan will be rendered as  a 4$x$4 grid. At zoom level 3 a 8$x$8 grid, and so on. \autoref{fig:tilecoordinates} shows how the original picture is split into tiles on zoom level 2.
+The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor plan is shown on \autoref{fig:floorplan}. Zooming on the floor plan allows us to present the floor plan in more detail. For this to work we need to split our original floor plan picture into small tiles, the tiles are always the size 256$x$256 pixels. As the zoom level increases the more tiles are needed to present the floor plan, so at zoom level 2 the floor plan will be rendered as  a 4$x$4 grid. At zoom level 3 a 8$x$8 grid, and so on. \autoref{fig:tilecoordinates} shows how the original picture is split into tiles at zoom level 2.
 
 \begin{figure}[H]
 \centering
@@ -42,9 +42,13 @@ The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor pl
 \subsection*{Map Elements}
 The Google Maps \ac{api} also allows us to draw different shapes and elements onto the floor plan. In this section we will show and explain how these elements are created and used.
 \subsubsection*{Markers}
+Markers are used to identify locations on the floor plan. The marker's icon is customisable so it can be used to differentiate between the types of locations. Markers are also equipped with a info windows, which popup if the marker is pressed. The info windows is used to give a short description about the location.
 
+ 
 Markers how to make them? how they are structured, show examples
 \subsubsection*{Polylines}
+Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of Latitude and Longitude locations, and creates a connected line between all the location in a ordered sequence. The polyline's colour, zIndex.
+
 
 Polylines how to make them? how they are structured, show examples
 \subsubsection*{Polygons}
