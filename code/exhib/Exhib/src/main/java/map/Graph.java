@@ -86,19 +86,20 @@ public class Graph {
     public void makePolyLine(){
         this.polylinePath = new ArrayList<Node>();
         for(Edge edge : this.getEdges()){
-            int indexFrom = this.polylinePath.indexOf(edge.getFrom());
-            int indexTo = this.polylinePath.indexOf(edge.getTo());
-            if(indexTo != -1){
-                this.polylinePath.add(indexTo + 1, edge.getFrom());
-                this.polylinePath.add(this.polylinePath.indexOf(edge.getFrom())+1, edge.getTo());
+            int indexNodeA = this.polylinePath.indexOf(edge.getNodeA());
+            int indexNodeB = this.polylinePath.indexOf(edge.getNodeB());
+
+            if(indexNodeB != -1){
+                this.polylinePath.add(indexNodeB + 1, edge.getNodeA());
+                this.polylinePath.add(this.polylinePath.indexOf(edge.getNodeA())+1, edge.getNodeB());
             }
-            else if(indexFrom != -1 ){
-                this.polylinePath.add(indexFrom + 1, edge.getTo());
-                this.polylinePath.add(this.polylinePath.indexOf(edge.getTo())+1, edge.getFrom());
+            else if(indexNodeA != -1 ){
+                this.polylinePath.add(indexNodeA + 1, edge.getNodeB());
+                this.polylinePath.add(this.polylinePath.indexOf(edge.getNodeB())+1, edge.getNodeA());
             }
             else{
-                this.polylinePath.add(edge.getFrom());
-                this.polylinePath.add(edge.getTo());
+                this.polylinePath.add(edge.getNodeA());
+                this.polylinePath.add(edge.getNodeB());
             }
         }
 
@@ -161,8 +162,8 @@ public class Graph {
 
     public boolean existEdge(ArrayList<Edge> edges, Edge edge){ //contains will not work, we need this.
         for(Edge e : edges){
-            if(e.getFrom() == edge.getFrom() && e.getTo() == edge.getTo() ||
-                    e.getFrom() == edge.getTo() && e.getTo() == edge.getFrom()){
+            if(e.getNodeA() == edge.getNodeA() && e.getNodeB() == edge.getNodeB() ||
+                    e.getNodeA() == edge.getNodeB() && e.getNodeB() == edge.getNodeA()){
                 return true;
             }
         }

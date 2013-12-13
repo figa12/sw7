@@ -18,11 +18,11 @@ public class Edge {
         this.to.addEdge(this);
     }
 
-    public Node getFrom() {
+    public Node getNodeA() {
         return from;
     }
 
-    public Node getTo() {
+    public Node getNodeB() {
         return to;
     }
 
