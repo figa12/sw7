@@ -53,17 +53,55 @@ Polygons are similar to polylines in that they consist of a series of latitude a
 
 \section{Implementation of Floor Plan}
 In this section we will explain how we implemented our map of the floor plan using  Google Maps. Implementing the default map on an Android phone is actually simple. All that is needed is to implement a fragment called "MapFragment" onto an activity.
-\subsection*{Tile provider}
+\subsection*{Tile Provider}
 With the implemented MapFragment it is possible to display an overlay with your own custom tile set. This is done by providing the MapFragment with a UrlTileProvider\citep{tilecoordinates}, this class will have a method called getTileUrl() that describes how to get each tile. The method will be automatically called by the MapFragment every time the user moves into an region where the tiles still hasn't been loaded. The parameters for getTileUrl() is the x,y coordinate, as seen on \autoref{fig:tilecoordinates}, and the actual zoom level.\\
 Our tile set is stored on the URL "figz.dk/dl/FloorPlan/". The folder structure of the tile set is "zoom-level/x/y.png". When our custom tile set is functional we can simply hide the standard Earth tile set, this is simply to avoid loading unnecessary data. 
-\subsection*{Loading the walk path}
+\subsection*{Loading the Walk Path}
 With the MapFragment implemented and the tiles loaded, we can draw the walk path of the exhibition. The walk path has previously been made and uploaded to the database by our web tool, which will be explained in the following \secref{sec:websiteimplementation}. When uploaded to database the walk path is described as a undirected graph, we load the nodes and edges from the database and make a polyline of the graph.\\ 
-The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair a line segment is drawn. The polyline's coordinates are defined as if you were to make a walk path on a map, but you could never let go or lift the pencil from the paper. Meaning in order to create the polyline we might need to define an edge more than once.
-\subsection*{Route}
+The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair, a line segment is drawn. The polyline's coordinates are defined as if you were to make a walk path on a map, but you could never let go or lift the pencil from the paper. Meaning in order to create the polyline we might need to define an edge more than once. \autoref{lst:makePolyLine} shows the method that we use to make our polyline from the undirected graph.
+\begin{lstlisting}[language=java, label=lst:makePolyLine, caption=makePolyLine]
+public void makePolyLine(){
+        this.polylinePath = new ArrayList<Node>();
+        for(Edge edge : this.getEdges()){
+            int indexNodeA = this.polylinePath.indexOf(edge.getNodeA());
+            int indexNodeB = this.polylinePath.indexOf(edge.getNodeB());
+            
+            if(indexNodeB != -1){
+               this.polylinePath.add(indexNodeB + 1, edge.getNodeA());
+               this.polylinePath.add(this.polylinePath.indexOf(edge.getNodeA())+1, edge.getNodeB());
+            }
+            else if(indexNodeA != -1 ){
+               this.polylinePath.add(indexNodeA + 1, edge.getNodeB());
+               this.polylinePath.add(this.polylinePath.indexOf(edge.getNodeB())+1, edge.getNodeA());
+            }
+            else{
+               this.polylinePath.add(edge.getNodeA());
+               this.polylinePath.add(edge.getNodeB());
+            }
+        }
 
-Explain how the tiles is loaded into the app(google map)\\
-Explain how thing are loaded from the database.\\
-Location stuff
+        ArrayList<LatLng> polyLine = new ArrayList<LatLng>();
+        for(Node n : this.polylinePath){
+            polyLine.add(n.getPosition());
+        }
+    }
+\end{lstlisting}
+\begin{description}
+\item[Line 2] Start by creating a local array called  \textit{polyLinePath}, which consists of nodes.
+\item[Line 3-5] For each edge in our undirected graph, get the index of Node A and B in the newly created array \textit{polyLinePath}.
+\item[Lines 7-10] If Node B already exists in the \textit{polyLinePath} insert the two nodes in the following order (...,NodeB, NodeA, NodeB, ...)
+\item[Lines 11-14] If Node A already exists in the \textit{polyLinePath} insert the two nodes in the following order (...,NodeA, NodeB, NodeA, ...)
+\item[Lines 15-18] Else just add the two nodes to the array, this will only be done once.
+\item[Line 21-24] Now that the loop is done, simply add every node's latitude and longitude to an array called \textit{polyLinePath}, which is the result of the function. 
+\end{description}
+
+\subsection*{Route and Limitations}
+Now that we can present the graph on the map, with the polyline walk path. We want to find the shortest path between two nodes, for this we use the Dijkstra's shortest path algorithm. I will not go into detail how this is implemented since it is fairly simple. But basically the weights of the edges is simply the distance between two nodes, and from this we can find the shortest route between the two nodes, source and target.\\ 
+A user can set his target/destination by pressing on a booth's marker and press the button "Navigate to" in the info window, a red polyline will appear on the floor plan showing the route, but only if the user has a known position.\\
+If a \ac{nfc} tag is scanned and the tag has a node id stored on it. The application will automatically show the floor plan and zoom onto the location of the node, and display a red dot, showing and updating the user's position/source. The red polyline route between the target and the user's new position is drawn. This is done every time the user scans a \ac{nfc} tag with a node id.\\
+If the scanned node is connected to a booth, meaning the node is a booth's entry point, then the red dot's position will be portrayed on the booth instead on the walk path.\todo{either ref or show a picture of this.}\\ 
+At the moment the floor plan implementation can only show a route between two points, It is not possible to show a route between multiple destinations or points. Also it is not possible to unsubscribe from a booth, directly from the floor plan.
+
 
 
 
