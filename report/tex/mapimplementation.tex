@@ -41,10 +41,17 @@ The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor pl
 \subsection*{Map Elements}
 The Google Maps \ac{api} also allows us to draw different shapes and elements onto the floor plan. In this section we will show and explain how these elements are created and used.
 \subsubsection*{Markers}
-Markers are used to identify locations on the floor plan. The marker's icon is customisable so it can be used to differentiate between the types of locations. Markers are also equipped with a info windows, which popup if the marker is pressed. The info windows is used to give a short description about the location. We use the markers the display the information about the booths and also the position of the user on the floor plan.
-\todo{show picture a marker}
+Markers are used to identify locations on the floor plan. The marker's icon is customisable so it can be used to differentiate between the types of locations. Markers are also equipped with a info windows, which popup if the marker is pressed. The info windows is used to give a short description about the location. We use the markers the display the information about the booths and also the position of the user on the floor plan. An example on markers are the small info markers, as seen on \autoref{fig:markerandboothexample}. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/markerandbooth.png}
+\caption{Marker and booth example}
+\label{fig:markerandboothexample}
+\end{figure}
+
 \subsubsection*{Polylines}
-Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of latitude and longitude coordinates, and creates a connected line between all the coordinates in a ordered sequence. The polyline's colour can also be customised to differentiate between other lines. We use the polyline to show the walk path on the floor plan, and also showing the route to different booths from the user's location. \autoref{fig:polylineexample} shows an example of a polyline, to 
+Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of latitude and longitude coordinates, and creates a connected line between all the coordinates in a ordered sequence. The polyline's colour can also be customised to differentiate between other polylines. We use the polyline to show the walk path on the floor plan, and also showing the route to different booths from the user's location. \autoref{fig:polylineexample} shows an example of a polyline, the array that defines the polyline on \autoref{fig:polylineexample} would look like this \lstinline|{NodeA, NodeB, NodeC, NodeB, NodeD}|.  
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{img/polylineExample.png}
@@ -54,16 +61,19 @@ Polylines presents a set a of connected line segments on the floor plan. The Pol
 
 \subsubsection*{Polygons}
 Polygons are similar to polylines in that they consist of a series of latitude and longitude coordinates. But instead it being a line segment that is open, the polygons are designed to be a closed region. The polygon's interior is also filled with a colour. With makes it perfect for showing booths on our floor plan.
-\todo{show picture a polygon}
+On \autoref{fig:markerandboothexample} the green shape shows a polygon, The green shape represents a booth.
 
 \section{Implementation of Floor Plan}
 In this section we will explain how we implemented our map of the floor plan using Google Maps. Implementing the default map on an Android phone is actually simple. All that is needed is to implement a fragment called "MapFragment" onto an activity.
 \subsection*{Tile Provider}
 With the implemented MapFragment it is possible to display an overlay with your own custom tile set. This is done by providing the MapFragment with a UrlTileProvider\citep{tilecoordinates}. This class has a method called \lstinline|getTileUrl()| that specifies how to get each tile. The method will be automatically called by the MapFragment every time the user moves into an region where tiles still hasn't been loaded. The parameters for \lstinline|getTileUrl()| is the tile's x,y coordinate, as seen on \autoref{fig:tilecoordinates}, and the current zoom level.\\
 Our tile set is stored on the URL "figz.dk/dl/FloorPlan/". A tile is uniquely identified with the URL "figz.dk/dl/FloorPlan/zoom-level/x/y.png". We have created tiles from zoom level 2 to 6, meaning that we have $4^2+8^2+16^2+32^2+64^2 = 5456$ tiles. We could easily have created more zoom-levels and thereby tiles, but our example floor plan does not require much detail, and it would be confusing if the user could zoom closer. When our custom tile set is created and shown, we can simply hide the standard Google Maps Earth tile set. This is done simply to avoid loading unnecessary data.
+
+\todo{graph afsnit?}
+
 \subsection*{Loading the Walk Path}
-With the MapFragment implemented and the tiles loaded, we can draw the walk path of the exhibition. The walk path has previously been made and uploaded to the database by our web tool, which will be explained in the following \secref{sec:websiteimplementation}. When uploaded to database the walk path is described as a undirected graph, we load the nodes and edges from the database and make a polyline of the graph.\\ 
-The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair, a line segment is drawn. The polyline's coordinates are defined as if you were to make a walk path on a map, but you could never let go or lift the pencil from the paper. Meaning in order to create the polyline we might need to define an edge more than once. \autoref{lst:makePolyLine} shows the method that we use to make our polyline from the undirected graph.
+With the MapFragment implemented and the tiles loaded, we can draw the walk path of the exhibition. The walk path has previously been made and uploaded to the database by our web tool, which will be explained in the following \secref{sec:websiteimplementation}. When the walk path has been created, we load the nodes and edges from the database. With the nodes and edges we create a graph object, and from this undirected graph we create a polyline.\\ 
+The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair, a line segment is drawn. The polyline's coordinates are defined as if you were to draw a walk path on a map, but you could never let go or lift the pencil from the paper, as seen on\autoref{fig:polylineexample}. Meaning that in order to create the polyline we might need to define an edge more than once. \autoref{lst:makePolyLine} shows the method that we use to make our polyline from the undirected graph.
 \begin{lstlisting}[language=java, label=lst:makePolyLine, caption=makePolyLine]
 public void makePolyLine(){
         this.polylinePath = new ArrayList<Node>();
@@ -105,7 +115,7 @@ Now that we can present the graph on the map, with the polyline walk path. We wa
 A user can set his target/destination by pressing on a booth's marker and press the button "Navigate to" in the info window, a red polyline will appear on the floor plan showing the route, but only if the user has a known position.\\
 If a \ac{nfc} tag is scanned and the tag has a node id stored on it. The application will automatically show the floor plan and zoom onto the location of the node, and display a red dot, showing and updating the user's position/source. The red polyline route between the target and the user's new position is drawn. This is done every time the user scans a \ac{nfc} tag with a node id.\\
 If the scanned node is connected to a booth, meaning the node is a booth's entry point, then the red dot's position will be portrayed on the booth instead on the walk path.\todo{either ref or show a picture of this.}\\ 
-At the moment the floor plan implementation can only show a route between two points, It is not possible to show a route between multiple destinations or points. Also it is not possible to unsubscribe from a booth, directly from the floor plan.
+At the moment the floor plan implementation can only show a route between two nodes, It is not possible to show a route between multiple destinations or nodes. Also it is not possible to unsubscribe from a booth, directly from the floor plan.
 
 
 
