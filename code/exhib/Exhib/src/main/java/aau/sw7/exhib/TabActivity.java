@@ -339,7 +339,11 @@ public class TabActivity extends NfcForegroundFragment implements ActionBar.TabL
                 this.appSectionsPagerAdapter.notifyDataSetChanged();
                 break;
             case TabActivity.FEED_ITEM_ACTIVITY:
-                Bundle extras = data.getExtras();
+                Bundle extras;
+                if(data == null || (extras = data.getExtras()) == null) {
+                    return;
+                }
+
                 long exhibId = extras.getLong(MainActivity.EXHIB_ID);
                 long nodeId = extras.getLong(MainActivity.BOOTH_ID);
 
