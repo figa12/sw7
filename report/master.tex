@@ -102,7 +102,7 @@
 \label{lastpage}% brugt i titelblad til total sidetal
 
 % hvis den sidste side er et lige sidetal så skal der indsættes en ekstra blank bagside
-\ifthenelse{\isodd{\thepage}}
+\ifthenelse{\isodd{\pageref{lastpage}}}
 {% ulige sidetal = højre side
 % do nothing
 }

@@ -28,6 +28,13 @@ function Edge(weight, from, to){
 	this.getWeight = function(){
 		return this.weight;
 	};
+
+	this.getFrom = function(){
+		return this.from;
+	};
+	this.getTo = function(){
+		return this.to;
+	};
 }
 
 //Node object.
@@ -80,13 +87,14 @@ function Graph(){
 	/*Adds a edge with weight between two node 
 	multiple edges between the two nodes cannot exist.*/
 	this.addEdge = function(weight, node1, node2){
+		//console.log(node1);
+		//console.log(node2);
 		var indexMyNode1 = doesNodeAlreadyExist(this.nodes, node1);
 
 		if(indexMyNode1 == -1){
 			this.nodes.push(node1);
 			indexMyNode1 = this.nodes.indexOf(node1);
 		}
-
 		var indexMyNode2 = doesNodeAlreadyExist(this.nodes, node2);
 		if(indexMyNode2 == -1){
 			this.nodes.push(node2);
@@ -100,6 +108,13 @@ function Graph(){
 			this.nodes[indexMyNode1].addEdge(this.edges[this.edges.indexOf(myEdge)]);
 			this.nodes[indexMyNode2].addEdge(this.edges[this.edges.indexOf(myEdge)]);
 		}
+	};
+
+	this.getEdges = function() {
+		return this.edges;
+	};
+	this.getNodes = function() {
+		return this.nodes;
 	};
 
 	/*Given a index the function returns the node.*/
@@ -126,11 +141,47 @@ function Graph(){
 function makeGraph(points){
 	var myGraph = new Graph();
 
-	for (var i = 0; i < points.length - 1; i++) {
+	for (var i = 0; i < points.length -1; i++) {
 		if(points[i].name != points[i+1].name){
 			myGraph.addEdge(dist(points[i].location, points[i+1].location), points[i], points[i+1]);
 		}
 	}
+	return myGraph;
+}
+
+function makeGraph2(nodes, edges){
+	var myGraph = new Graph();
+	var myNodes = [];
+	for (var i = 0; i < nodes.length; i++) {
+		myNodes.push(new Node(nodes[i]["dbid"],new google.maps.LatLng(nodes[i]["y"],nodes[i]["x"])));
+	};
+
+	var verA= null;
+	var verB= null;
+	for (var i = 0; i < edges.length; i++) {
+		//console.log(i);
+		verA= null;
+		verB= null;
+		for (var x = 0; x < myNodes.length; x++) {
+			//console.log(x);
+			if(myNodes[x].name == edges[i]["vertexA"])
+			{
+				verA = myNodes[x];
+				//console.log(verA);
+			}
+			if(myNodes[x].name == edges[i]["vertexB"])
+			{
+				verB = myNodes[x];
+				//console.log(verB);
+			}
+			if(verA != null && verB != null)
+			{
+				break;
+			}
+		};
+		//console.log(verA);
+		myGraph.addEdge(edges[i]["weight"],verA,verB);
+	};
 	return myGraph;
 }
 
@@ -149,6 +200,7 @@ function doesEdgeAlreadyExist(edges, edge){
 /*Makes sure that we don't make the same node twice, 
   also return the index of the node if it found.*/
 function doesNodeAlreadyExist(nodes, node){
+	//console.log(node);
 	for (var i = 0; i < nodes.length; i++) {
 		if(nodes[i].name == node.name){
 			return i;

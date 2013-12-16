@@ -61,7 +61,7 @@ function uniqeBoothName (boothName) {
 }
 
 //function to placemarkers, this is used for debug for easy calculation of coords
-function placeMarker(location,edges) {
+function placeMarker(location,newBoothName) {
     var marker = new google.maps.Marker({
         position: location,
         map: map,
@@ -70,7 +70,10 @@ function placeMarker(location,edges) {
     //Nodes for making the graph and polyline
     count++;
     var tempStore = new Node("node"+count.toString(), new google.maps.LatLng(location.lat(), location.lng()));
-    //tempStore.addEdge();
+    if(newBoothName != null) {
+        console.log(newBoothName);
+        tempStore.name = newBoothName;
+    }
 
     console.log("markerIndex is: " + markerIndex);
 
@@ -121,7 +124,7 @@ function placeMarker(location,edges) {
     });
 
     //graph used to find a route between points
-    redrawGraph();
+    //redrawGraph();
     //routePath.setMap(map);
 }
 
@@ -326,6 +329,7 @@ function loadExhib() {
     boothCategories = [];
     boothCompanies = [];
     boothMarker = [];
+    roadMapGraphFinal = new Graph();
     var namevar = $("#finalexhibitionName").text();
     console.log(namevar);
     $.getJSON('loadExhibtion.php', {name: namevar}, function(json) {
@@ -338,18 +342,36 @@ function loadExhib() {
             json["exhibition"]["country"],
             json["exhibition"]["description"],
             json["exhibition"]["logo"]);
-        /*for (var i = json["coordinates"].length - 1; i >= 0; i--) {
-            if(json["coordinates"][i]["isroad"]) {
-                var topLeftx = json["coordinates"][i]["x"];
-                var topLefty = json["coordinates"][i]["y"];
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(topLefty,topLeftx),
-                    map: map,
-                });
-                //placeMarker(new google.maps.LatLng(topLefty,topLeftx));
-            }
-        };*/
+        
 
+
+        roadMapGraphFinal = makeGraph2(json["coordinates"], json["edges"]);
+        console.log(roadMapGraphFinal);
+
+
+        var tmpAllPoints = makePolyLine(roadMapGraphFinal);
+        console.log("THIS HERE!");
+        console.log(tmpAllPoints);
+
+        allPoints = [];
+        var string = "";
+        for (var i = 0; i < tmpAllPoints.length; i++) {
+            string += tmpAllPoints[i].name +","
+            var newBoothName = null;
+            for (var x = 0; x < allPoints.length; x++) {
+                if(tmpAllPoints[i].location.equals(allPoints[x].location))
+                {
+                    newBoothName = allPoints[x].name;
+                    console.log(newBoothName);
+                    break;
+                }
+            };
+            console.log(tmpAllPoints[i]);
+            placeMarker(tmpAllPoints[i].location,newBoothName);
+        };
+        console.log(allPoints);
+        console.log(string);
+        redrawGraph();
 
         for (var i = json["booths"].length - 1; i >= 0; i--) {
             //var tmpBooth = new Booth(null,retVal,curBooth,$("#boothDescription").val());
@@ -359,7 +381,6 @@ function loadExhib() {
             var bottomRighty = null;
             
             for (var x = json["coordinates"].length - 1; x >= 0; x--) {
-                console.log(json["coordinates"][x]["isroad"]);
                 if(json["coordinates"][x]["isroad"]) {continue;}
                 if(json["coordinates"][x]["boothid"] == null) {continue;}
                 if(json["coordinates"][x]["boothid"] == json["booths"][i]["dbid"]) {
@@ -397,16 +418,54 @@ function loadExhib() {
                 editable: false,
                 draggable: false
             });
+
             //var tmpBooth = new Booth(null,retVal,curBooth,$("#boothDescription").val());
             var tmpBooth = new Booth(json["booths"][i]["dbid"],
                 json["booths"][i]["name"],
                 rect,
                 json["booths"][i]["description"]);
+            boothCategories.push(new boothCategory(json["booths"][i]["name"],json["booths"][i]["category"]));
+            boothCompanies.push(new boothCompany(json["booths"][i]["name"],json["booths"][i]["company"]));
+
             allBooths.push(tmpBooth);
         }
     });
     loadCategories();
     loadCompanies();
+}
+
+function makePolyLine(graphElement){
+    var polylinePath = [];
+
+    for (var i = graphElement.getEdges().length -1; i >= 0 ; i--) {
+
+        var curEdge = graphElement.getEdges()[i];
+
+        //var indexFrom = polylinePath.indexOf(curEdge.getFrom());
+        //var indexTo = polylinePath.indexOf(curEdge.getTo());
+
+        if(polylinePath[polylinePath.length-1] != curEdge.getFrom()){
+            polylinePath.push(curEdge.getFrom());
+        }
+        polylinePath.push(curEdge.getTo());
+        continue;
+/*
+        if(indexTo != -1) {
+            polylinePath.splice(indexTo+1,0, curEdge.getFrom());
+            //polylinePath.splice(polylinePath.indexOf(curEdge.getFrom())+1,0, curEdge.getTo());
+        }
+        else if(indexFrom != -1) {
+            polylinePath.splice(indexFrom+1,0, curEdge.getTo());
+            //polylinePath.splice(polylinePath.indexOf(curEdge.getTo())+1,0, curEdge.getFrom());
+        }
+        else {
+            polylinePath.push(curEdge.getFrom());
+            polylinePath.push(curEdge.getTo());
+        }
+        */
+    };
+
+    return polylinePath;
 }
 
 var exhibLogoName;
@@ -571,6 +630,10 @@ function initialize() {
     map.setMapTypeId('floorPlan');
     //map.fitBounds(new google.maps.LatLngBounds());
 
+    /*google.maps.event.addListener(map, 'mousemove', function (event) {
+        $("#coords").text(event.latLng);
+    });*/
+
     redoMapListeners();
 
 }
@@ -605,7 +668,8 @@ function redoMapListeners(){
         {
             mode = modeEnum.placeMarker;
             console.log("Marker @" + event.latLng.toString());
-            placeMarker(event.latLng);
+            placeMarker(event.latLng,null);
+            redrawGraph();
         }
         else if(document.getElementById("typeSelect").value == "booth")
         {
@@ -737,10 +801,10 @@ function JsonPoint(x,y)
 function getJsonElements(nodesArray, edgeArray, boothArray, exhibit,companiesArray,categoriesArray)
 {
     var newNodes = [];
-    for (var i = nodesArray.length - 1; i >= 0; i--) {
+    for (var i = 0; i < nodesArray.length; i++) {
         var location = new JsonPoint(nodesArray[i].location.lng(), nodesArray[i].location.lat())
         var boothBind = null;
-        for (var q = boothMarker.length - 1; q >= 0; q--) {
+        for (var q = 0; q < boothMarker.length; q++) {
             if(boothMarker[q].markerId == nodesArray[i].name)
             {
                 boothBind = boothMarker[q].boothId;
@@ -760,20 +824,20 @@ function getJsonElements(nodesArray, edgeArray, boothArray, exhibit,companiesArr
     };
 
     var newBooths = [];
-    for (var i = boothArray.length - 1; i >= 0; i--) {
+    for (var i = 0; i < boothArray.length; i++) {
         var topLeft = new JsonPoint(boothArray[i].rect.getBounds().getSouthWest().lng(), boothArray[i].rect.getBounds().getNorthEast().lat());
         var bottomRight = new JsonPoint(boothArray[i].rect.getBounds().getNorthEast().lng(), boothArray[i].rect.getBounds().getSouthWest().lat());
         var newCat = false;
         var newComp = false;
 
         var curBoothCompany = null;
-        for (var z = boothCompanies.length - 1; z >= 0; z--) {
+        for (var z = 0; z < boothCompanies.length; z++) {
             if(boothCompanies[z].boothId == boothArray[i].boothId)
             {
-                for (var x = companiesArray.length - 1; x >= 0; x--) {
-                    if(companiesArray[x].name == boothCompanies[z].companyId)
+                for (var x = 0; x < companiesArray.length; x++) {
+                    if(companiesArray[x].name == boothCompanies[z].companyId || companiesArray[x].id == boothCompanies[z].companyId)
                     {
-                        for (var k = companiesToInsert.length - 1; k >= 0; k--) {
+                        for (var k = 0; k < companiesToInsert.length; k++) {
                             if(companiesToInsert[k].name == companiesArray[x].name)
                             {
                                 curBoothCompany = k;
@@ -789,13 +853,13 @@ function getJsonElements(nodesArray, edgeArray, boothArray, exhibit,companiesArr
 
 
         var curBoothCategory = null;
-        for (var z = boothCategories.length - 1; z >= 0; z--) {
+        for (var z = 0; z < boothCategories.length; z++) {
             if(boothCategories[z].boothId == boothArray[i].boothId)
             {
-                for (var x = categoriesArray.length - 1; x >= 0; x--) {
-                    if(categoriesArray[x].name == boothCategories[z].categoryId)
+                for (var x = 0; x < categoriesArray.length; x++) {
+                    if(categoriesArray[x].name == boothCategories[z].categoryId || categoriesArray[x].id == boothCategories[z].categoryId)
                     {
-                        for (var k = categoriesToInsert.length - 1; k >= 0; k--) {
+                        for (var k = 0; k < categoriesToInsert.length; k++) {
                             if(categoriesToInsert[k].name == categoriesArray[x].name)
                             {
                                 curBoothCategory = k;
@@ -824,6 +888,7 @@ function makeJson()
 {
     //categoriesToInsert
     //companiesToInsert
+    console.log(roadMapGraphFinal);
     var myJson = getJsonElements(roadMapGraphFinal.nodes, roadMapGraphFinal.edges, allBooths, exhib,allCompanies,allCategories);
     console.log("Nodes: " + JSON.stringify(myJson[0]));
     var myNodes = JSON.stringify(myJson[0]);
