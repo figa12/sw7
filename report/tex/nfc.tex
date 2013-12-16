@@ -1,4 +1,4 @@
-When a visitor first visits the exhibition they have to register using the application, however they most likely do not have the application installed on their phones when first entering the exhibition, so it has to be possible for them to easily get it without having to find it themselves. This can be done using static data storage like \ac{nfc} or \ac{qr}. These two ways of storing information allows us to install/launch the application, identify which exhibition the user is at and other information that might be needed. The following section briefly explains \ac{nfc} and \ac{qr}s and their use. 
+When a visitor first visits the exhibition they have to register using the application, however they most likely do not have the application installed on their phones when first entering the exhibition, so it has to be possible for them to easily get it without having to find it themselves. This can be done using data storage units like \ac{nfc} or \ac{qr}. These two ways of storing information allows us to install/launch the application, identify which exhibition the user is at and other information that might be needed. The following section briefly explains \ac{nfc} and \ac{qr}s and their use. 
 
 \section{NFC}
 \ac{nfc} is a way wireless way to transfer data between two \ac{nfc} enabled devices. 
@@ -100,7 +100,7 @@ For example, if you were to encode the word "\ac{qr}" in numeric mode, the mode 
 
 After the encoding mode, there is a length field that tells how many characters is encoded in the mode specified. The number of bits in the field depends on the encoding and symbol version\citep{qrcode1}. The symbol version, as seen in \autoref{tab:qrversion} can range between 1 an 40. Each version has a different number of modules, modules being the small black and white dots that make up a \ac{qr}\citep{qrversion}. 
 
-\section{Our choice of data storage}
+\section{Our choice of identification technologies}
 We chose to use \ac{nfc} tags as our way of storing the data. Even though you have to buy the \ac{nfc} tags instead of printing them yourself like you can with QR-codes. The tags are easy to use, you can even have the supplier write them and make them read-only for you. The \ac{nfc} tags are not too expensive, and when buying in bulks some sites even offer a discount up to $25\%$\citep{nfczonen}. 
 
 We also found it to be an inconvenience for the user to have to use the camera to scan a QR code, compared to an NFC-reader which just runs in the background. However the main reason we chose to use \ac{nfc} instead of QR-codes is because a QR code you can scan from far away, and we want to know exactly where a user stands when scanning, so with the short range of \ac{nfc}, we can make sure that the user is actually next to the tag and thereby get their location.
