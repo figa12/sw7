@@ -26,6 +26,7 @@ if(isset($_POST["nodes"]) && $_POST["nodes"] != "" &&
 	$returnBoothsIds = array();
 	$returnCompanyIds = array();
 	$returnCategoryIds = array();
+	$deleteCoor = array();
 	$returnExhibId = '0';
 //exhib insert
 	if(!($sqli = $mysqli->prepare( 'INSERT INTO exhib (id,name,address,zip,country,description,logo) 
@@ -150,9 +151,22 @@ if(isset($_POST["categories"]) && $_POST["categories"] != "")
 			//DELETE COORDINATES
 			if($_idval != NULL)
 			{
-				$sqli = $mysqli->prepare("DELETE FROM coordinates WHERE boothid = ?");
-				$sqli->bind_param('i', $_idval);
+				$sqli = $mysqli->prepare("SELECT id FROM coordinates WHERE exhibid = ?");
+				$sqli->bind_param('i',$returnExhibId);
 				$sqli->execute();
+				$sqli->bind_result($_Bidval);
+				$coordIdString = "(";
+				while ($sqli->fetch()) {
+					$coordIdString .= $_Bidval.",";
+				}
+				$coordIdString = substr($coordIdString, 0, -1).")";
+
+				$sqli = $mysqli->prepare("DELETE FROM coordinates WHERE exhibid = ?");
+				$sqli->bind_param('i', $returnExhibId);
+				$sqli->execute();
+
+				$sqli->execute();
+				$sqli = $mysqli->prepare('DELETE FROM edges where vertexA in '.$coordIdString.' or vertexB in '.$coordIdString);
 			}
 			
 		$return = $_idval == NULL ? $mysqli->insert_id : $_idval;

@@ -80,7 +80,7 @@ function redrawGraph()
         strokeOpacity:0.5,
         strokeWeight:4
     });
-    console.log(allPoints);
+    //console.log(allPoints);
     roadMapGraphFinal = makeGraph(allPoints);
 
     try {
