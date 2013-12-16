@@ -29,7 +29,7 @@ The \autoref{fig:mercatorexplain} also shows how the top part(latitude) of the s
 \section{Google Maps}
 \todo{Explain the Google Maps \ac{api} for android, maybe also explain that there are different APIs, one for Android and one for JavaScript} We use the service provided by Google, called Google Maps, to present our floor plan. This service is normally used for displaying the Earth and for navigation. Google Maps uses the Mercator projection which is explained in a earlier \secref{sec:mercatorprojection}. Normally a map is distorted by the Mercator projection, but in our case this is not a problem, since our floor plan already is a plane. The Google Maps' \ac{api}  
 \subsection*{Tiles}
-The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor plan is shown on \autoref{fig:cassiopeia}. Zooming on the floor plan allows us to present the floor plan in more detail. For this to work we need to split our original floor plan picture into small tiles, the tiles are always the size 256$x$256 pixels. As the zoom level increases the more tiles are needed to present the floor plan, so at zoom level 2 the floor plan will be rendered as  a 4$x$4 grid. At zoom level 3 a 8$x$8 grid, and so on. \autoref{fig:tilecoordinates} shows how the original picture is split into tiles at zoom level 2.
+The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor plan is shown on \autoref{fig:cassiopeia}. Zooming on the floor plan allows us to present the floor plan in more detail. For this to work we need to split our original floor plan picture into small tiles, the tiles are always the size 256$x$256 pixels. As the zoom level increases the more tiles are needed to present the floor plan, so at zoom level 2 the floor plan will be rendered as  a 4$x$4 grid. At zoom level 3 a 8$x$8 grid, and so on. \autoref{fig:tilecoordinates} shows how the original picture is split into tiles at zoom level 2. Each zoom level has to be stored on either a server or locally.
 
 \begin{figure}[H]
 \centering
@@ -44,18 +44,23 @@ The Google Maps \ac{api} also allows us to draw different shapes and elements on
 Markers are used to identify locations on the floor plan. The marker's icon is customisable so it can be used to differentiate between the types of locations. Markers are also equipped with a info windows, which popup if the marker is pressed. The info windows is used to give a short description about the location. We use the markers the display the information about the booths and also the position of the user on the floor plan.
 \todo{show picture a marker}
 \subsubsection*{Polylines}
-Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of latitude and longitude coordinates, and creates a connected line between all the coordinates in a ordered sequence. The polyline's colour can also be customised to differentiate between other lines. We use the polyline to show the walk path on the floor plan, and also showing the route to different booths from the user's location.
-\todo{show picture a polyline}
+Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of latitude and longitude coordinates, and creates a connected line between all the coordinates in a ordered sequence. The polyline's colour can also be customised to differentiate between other lines. We use the polyline to show the walk path on the floor plan, and also showing the route to different booths from the user's location. \autoref{fig:polylineexample} shows an example of a polyline, to 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{img/polylineExample.png}
+\caption{Polyline example}
+\label{fig:polylineexample}
+\end{figure}
 
 \subsubsection*{Polygons}
 Polygons are similar to polylines in that they consist of a series of latitude and longitude coordinates. But instead it being a line segment that is open, the polygons are designed to be a closed region. The polygon's interior is also filled with a colour. With makes it perfect for showing booths on our floor plan.
 \todo{show picture a polygon}
 
 \section{Implementation of Floor Plan}
-In this section we will explain how we implemented our map of the floor plan using  Google Maps. Implementing the default map on an Android phone is actually simple. All that is needed is to implement a fragment called "MapFragment" onto an activity.
+In this section we will explain how we implemented our map of the floor plan using Google Maps. Implementing the default map on an Android phone is actually simple. All that is needed is to implement a fragment called "MapFragment" onto an activity.
 \subsection*{Tile Provider}
-With the implemented MapFragment it is possible to display an overlay with your own custom tile set. This is done by providing the MapFragment with a UrlTileProvider\citep{tilecoordinates}, this class will have a method called getTileUrl() that describes how to get each tile. The method will be automatically called by the MapFragment every time the user moves into an region where the tiles still hasn't been loaded. The parameters for getTileUrl() is the x,y coordinate, as seen on \autoref{fig:tilecoordinates}, and the actual zoom level.\\
-Our tile set is stored on the URL "figz.dk/dl/FloorPlan/". The folder structure of the tile set is "zoom-level/x/y.png". When our custom tile set is functional we can simply hide the standard Earth tile set, this is simply to avoid loading unnecessary data. 
+With the implemented MapFragment it is possible to display an overlay with your own custom tile set. This is done by providing the MapFragment with a UrlTileProvider\citep{tilecoordinates}. This class has a method called \lstinline|getTileUrl()| that specifies how to get each tile. The method will be automatically called by the MapFragment every time the user moves into an region where tiles still hasn't been loaded. The parameters for \lstinline|getTileUrl()| is the tile's x,y coordinate, as seen on \autoref{fig:tilecoordinates}, and the current zoom level.\\
+Our tile set is stored on the URL "figz.dk/dl/FloorPlan/". A tile is uniquely identified with the URL "figz.dk/dl/FloorPlan/zoom-level/x/y.png". We have created tiles from zoom level 2 to 6, meaning that we have $4^2+8^2+16^2+32^2+64^2 = 5456$ tiles. We could easily have created more zoom-levels and thereby tiles, but our example floor plan does not require much detail, and it would be confusing if the user could zoom closer. When our custom tile set is created and shown, we can simply hide the standard Google Maps Earth tile set. This is done simply to avoid loading unnecessary data.
 \subsection*{Loading the Walk Path}
 With the MapFragment implemented and the tiles loaded, we can draw the walk path of the exhibition. The walk path has previously been made and uploaded to the database by our web tool, which will be explained in the following \secref{sec:websiteimplementation}. When uploaded to database the walk path is described as a undirected graph, we load the nodes and edges from the database and make a polyline of the graph.\\ 
 The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair, a line segment is drawn. The polyline's coordinates are defined as if you were to make a walk path on a map, but you could never let go or lift the pencil from the paper. Meaning in order to create the polyline we might need to define an edge more than once. \autoref{lst:makePolyLine} shows the method that we use to make our polyline from the undirected graph.
@@ -87,12 +92,12 @@ public void makePolyLine(){
     }
 \end{lstlisting}
 \begin{description}
-\item[Line 2] Start by creating a local array called  \textit{polyLinePath}, which consists of nodes.
-\item[Line 3-5] For each edge in our undirected graph, get the index of Node A and B in the newly created array \textit{polyLinePath}.
-\item[Lines 7-10] If Node B already exists in the \textit{polyLinePath} insert the two nodes in the following order (...,NodeB, NodeA, NodeB, ...)
-\item[Lines 11-14] If Node A already exists in the \textit{polyLinePath} insert the two nodes in the following order (...,NodeA, NodeB, NodeA, ...)
+\item[Line 2] Start by creating a local array called  \lstinline|polyLinePath|, which consists of nodes.
+\item[Line 3-5] For each edge in our undirected graph, get the index of Node A and B in the newly created array \lstinline|polyLinePath|.
+\item[Lines 7-10] If Node B already exists in the \lstinline|polyLinePath| insert the two nodes in the following order (...,NodeB, NodeA, NodeB, ...)
+\item[Lines 11-14] If Node A already exists in the \lstinline|polyLinePath| insert the two nodes in the following order (...,NodeA, NodeB, NodeA, ...)
 \item[Lines 15-18] Else just add the two nodes to the array, this will only be done once.
-\item[Line 21-24] Now that the loop is done, simply add every node's latitude and longitude to an array called \textit{polyLinePath}, which is the result of the function. 
+\item[Line 21-24] Now that the loop is done, simply add every node's latitude and longitude to an array called \lstinline|polyLinePath|, which is the result of the function. 
 \end{description}
 
 \subsection*{Route and Limitations}
