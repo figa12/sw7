@@ -252,7 +252,8 @@ If a user deletes the application, the file is deleted as well which means the u
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{img/components.pdf}
-\caption{System architecture\label{fig:architecture}}
+\caption{System architecture}
+\label{fig:architecture}
 \end{figure}
 
 \autoref{fig:architecture} shows the architecture of the entire system. The application only has a \textit{Model} component which contains simple classes for feeds, schedule items, etc. The application does not have a \textit{Functions} component because most of the functionalities are provided by the server's functions. The organiser i.e. the website, currently alters the data component directly. A better solution would be to only let the server \textit{Functions} alter the data in order to encapsulate the it.
