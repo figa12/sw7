@@ -1,12 +1,12 @@
 \section{ServerSyncService}
 
-To communicate with the server from the application we have created a class called \lstinline|ServerSyncServices| that manages all server communication. The class inherits from the abstract class \lstinline|AsyncTask| which makes it easy to run a task on a new thread and send the results back to the UI thread. We must override the abstract method \lstinline|doInBackground()| which is what is run on a new thread, and the result of the computation is send to \lstinline|onPostExecute(result)| which is run on the \ac{ui} thread.
+To communicate with the server from the application we created a class called \lstinline|ServerSyncServices| that manages all server communication. The class inherits from the abstract class \lstinline|AsyncTask| which makes it easy to run a task on a new thread and send the results back to the \ac{ui} thread. We override the abstract method \lstinline|doInBackground()| which is what is run on a new thread, and the result of the computation is sent to \lstinline|onPostExecute(result)| which is run on the \ac{ui} thread.
 
 \lstinline|ServerSyncService| sends a request to the server, parses the response, and sends the result to the correct receiver. Every request consists of a \lstinline|"RequestCode"| and a \lstinline|"Type"|. The value of \lstinline|"RequestCode"| is a unique static final integer which the server sends back as part of the result, we use it in the \lstinline|ServerSyncService| to know how to process the response and where to send the result. The value of \lstinline|"Type"| is the actual request we make to the server. Each type may also have some parameters.
 
 \autoref{lst:serverrequest} shows how to make a request to the server. This example is a request made from the \lstinline|ExhibitionInfoFragment|.
 
-\lstinline|BasicNameValuePair| is a class that consists of a name and a value bound to that name. \todo{Skriv måske hvordan det egentlig bliver læst på serveren}
+\lstinline|BasicNameValuePair| is a class that consists of a name and a value bound to that name. %\todo{Skriv måske hvordan det egentlig bliver læst på serveren}
 
 \begin{lstlisting}[language=java, label=lst:serverrequest, caption={Get exhibition information request}]
 new ServerSyncService(super.getContext()).execute(
@@ -19,7 +19,7 @@ new ServerSyncService(super.getContext()).execute(
 \item[Line 1] Create a new \lstinline|ServerSyncService|. We give it the context as argument so the response can be passed to the context. \lstinline|execute()| is the method that starts the request from the server, where the next lines are the arguments.
 \item[Line 2] A name/value pair with the name \lstinline|"RequestCode"| and the value is a unique integer called \lstinline|GET_EXHIBITION_INFO| which we parse to a string.
 \item[Line 3] A name/value pair with the name \lstinline|"Type"| and the actual request called \lstinline|"GetExhibitionInfo"| which is the request used to display information about the exhibition in the info tab.
-\item[Line 4] For this type of request the server expects the parameter name/value pair \lstinline|"ExhibId"|. The exhibition id is saved in the \lstinline|TabActivity|.
+\item[Line 4] For this type of request the server expects the parameter name/value pair \lstinline|"ExhibId"|. The exhibition ID is saved in the \lstinline|TabActivity|.
 \end{description}
 \autoref{lst:doinbackground} is our implementation of the abstract method \lstinline|doInBackground()|. When \lstinline|execute()| is run it creates a new thread for us and runs our implementation of \lstinline|doInBackground()| on that thread with the provided \lstinline|NameValuePair| array.
 
@@ -44,11 +44,11 @@ protected String doInBackground(NameValuePair... pairs) {
 \end{lstlisting}
 
 \begin{description}
-\item[Line 3] Get some basic \ac {http} parameters.
-\item[Lines 5-6] Set timeouts on the \ac {http} parameters. Allow 15 seconds to create a connection, and allow 15 seconds to to get a response.
-\item[Line 8] Create the \ac {http} client with our \ac {http} parameters.
+\item[Line 3] Get some basic \ac{http} parameters.
+\item[Lines 5-6] Set timeouts on the \ac{http} parameters. Allow 15 seconds to create a connection, and allow 15 seconds to to get a response.
+\item[Line 8] Create the \ac{http} client with our \ac{http} parameters.
 \item[Lines 10-11] Create an \lstinline|HttpPost| object with the server address. Convert our name/value pairs to \lstinline|UrlEncodedFormEntity| and set the entity as the request.
-\item[Line 13] Executes the \ac {http} request on the \ac {http} client and saves the response. This pauses the thread until a response is received.
+\item[Line 13] Executes the \ac{http} request on the \ac{http} client and saves the response. This pauses the thread until a response is received.
 \item[Lines 15-16] Get the response as an entity, convert the entity to a string, and return it.
 \end{description}
 After \lstinline|doInBackground()| returns the result, the \lstinline|AsyncTask| automatically passes the result to \lstinline|onPostExecute()|. \autoref{lst:onpostexecute} shows our implementation of this method and how we treat the response from the server.
@@ -75,8 +75,8 @@ protected void onPostExecute(String result) {
 
 \begin{description}
 \item[Lines 3-5] If the result is empty, then we did not find the server. Display alert to user.
-\item[Lines 6-8] If the server were missing the type parameter or the request code, then it could not process the request. Display alert to user.
-\item[Lines 9-11] If the timeout limit was reached, then display alert to user. \todo{It would be a good idea to handle these kinds of errors in a better way, like letting the user know that a connection was not established and maybe allowing him to try again.}
+\item[Lines 6-8] If the server was missing, the type parameter or the request code, then it could not process the request. Display alert to user.
+\item[Lines 9-11] If the timeout limit was reached, then display alert to user. %\todo{It would be a good idea to handle these kinds of errors in a better way, like letting the user know that a connection was not established and maybe allowing him to try again.}
 \item[Lines 14-16] Create a stream reader, read the stream, and close it.
 \end{description}
 \autoref{lst:readjsonstream} shows \lstinline|readJsonStream()| which is where we read the JSON response from the server. The listing has been simplified; we only show one case in the switch. The full implementation has a case for each request that we can make to the server. See \secref{sec:com} for a full list of requests that we can make on the server.
@@ -109,15 +109,15 @@ private void readJsonStream(InputStream stream) throws IOException {
 \end{lstlisting}
 
 \begin{description}
-\item[Line 2] Here we create a new \ac{json} reader from our byte array stream.
-\item[Line 5] Let the reader know that the stream should now contain the beginning of a \ac{json} object.
-\item[Lines 6-22] \lstinline|hasNext()| looks ahead in the \ac{json} stream to check if there are more values and as long as there are more in the \ac{json} stream we loop our code that reads the stream.
-\item[Line 7] \lstinline|nextName()| returns the name of the next property in the \ac{json} stream.
+\item[Line 2] Here we create a new JSON reader from our byte array stream.
+\item[Line 5] Let the reader know that the stream should now contain the beginning of a JSON object.
+\item[Lines 6-22] \lstinline|hasNext()| looks ahead in the JSON stream to check if there are more values and as long as there are more in the JSON stream we loop our code that reads the stream.
+\item[Line 7] \lstinline|nextName()| returns the name of the next property in the JSON stream.
 \item[Lines 9-10] Ensures that we do not get null exceptions.
 \item[Lines 11-12] Check if the name equals the property \lstinline|"RequestCode"| and parse the property to our integer \lstinline|requestCode|.
-\item[Lines 13-18] Check if the name equals the property \lstinline|"Data"|. Note that the \lstinline|"RequestCode"| must always appear before the \lstinline|"Data"| in the \ac{json} object.
+\item[Lines 13-18] Check if the name equals the property \lstinline|"Data"|. Note that the \lstinline|"RequestCode"| must always appear before the \lstinline|"Data"| in the JSON object.
 \item[Lines 15-17] This is the case for \lstinline|GET_EXHIBITION_INFO| which calls the appropriate method for reading exhibition information.
-\item[Lines 19-21] If we do not recognise the name from the \ac{json} stream, then skip the value. This should not happen but it can make debugging easier.
-\item[Line 23] Let the \ac{json} stream know that the object should end.
+\item[Lines 19-21] If we do not recognise the name from the JSON stream, then skip the value. This should not happen but it can make debugging easier.
+\item[Line 23] Let the JSON stream know that the object should end.
 \end{description}
-We will not show the implementation of \lstinline|readExhibitionInformation()| since it simply reads from the \ac{json} stream and then send the result to the correct location.
+We will not show the implementation of \lstinline|readExhibitionInformation()| since it simply reads from the JSON stream and then send the result to the correct location.
