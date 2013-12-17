@@ -196,11 +196,11 @@ All test cases are presented in the form of a case header consisting of the case
 \subsection*{Case results}
 \begin{description}
 \item[\casetwo] This test was a success. The application does not stall and it loads the old feeds, until there are no more feeds to load
-\item[\casethree] This test was a failure. When having a feed open and scanning an \ac{nfc} tag, nothing happened
+\item[\casethree] This test was a success. When having a feed open and scanning an \ac{nfc} tag, it snaps to the booth as intended.
 \item[\casefour] This test was a success. When a booth creates a new feed, the button shows up and allows the user to manually load the new feed
 \item[\casefive] This test was a success. When subscribing or unsubscribing to booths, their feeds are added and removed accordingly 
 \item[\casesix] This test was a success. The first time the \ac{nfc} tag was scanned the application opened and we had to choose which booths to subscribe to, and after closing and opening the application again it opens up directly in the tab activity without having to choose categories
 \item[\caseseven] This test was a success. When scanning an \ac{nfc} tag with a boothID the "Map" tab opened and snapped to the booth on the floor plan
 \item[\caseeight] This test was a success. When clicking the booth the information box comes up and if  you press the "Navigate to" button a route is drawn from your last known location and to the booth
-\item[\casenine] This test resulted in failure. When scanning a different \ac{nfc} tag the application crashes. If already signed up to an exhibition the application skips the exhibitionID on the tag and tries to snap to the booth, which boothID is on tag. This causes the application to crash if the boothID on the tag does not exist at the current exhibition.
+\item[\casenine] This test resulted in success. When scanning a different \ac{nfc} tag the user is signed out and signed in at the new exhibition, getting prompted to choose categories again.
 \end{description}
