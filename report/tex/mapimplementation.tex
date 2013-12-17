@@ -47,29 +47,82 @@ The Google Maps \ac{api} allows the user to zoom on the floor plan, the floor pl
 The Google Maps \ac{api} also allows us to draw different shapes and elements onto the floor plan. In this section we will show and explain how these elements are created and used.
 
 \subsubsection*{Markers}
-Markers are used to identify locations on the floor plan. The marker's icon is customisable so it can be used to differentiate between the types of locations. Markers are also equipped with a info windows, which popup if the marker is pressed. The info windows is used to give a short description about the location. We use the markers the display the information about the booths and also the position of the user on the floor plan. An example on markers are the small info markers, as seen on \autoref{fig:markerandboothexample}. 
+Markers are used to identify locations on the floor plan. The marker's icon is customisable so it can be used to differentiate between the types of locations. Markers are also equipped with a info windows, which popup if the marker is pressed. The info windows is used to give a short description about the location. We use the markers the display the information about the booths and also the position of the user on the floor plan. An example on markers are the small info markers, as seen on \autoref{fig:markerandboothexample}. \autoref{lst:drawmarker} also shows how to draw a marker on the floor plan.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{img/markerandbooth.png}
 \caption{Marker and booth example}
 \label{fig:markerandboothexample}
 \end{figure}
-\todo{Show how they are drawn}
+\begin{lstlisting}[language=java, label=lst:drawmarker, caption=Method for drawing a marker.]
+    public Marker drawMarker(LatLng latLng, String title, String snippet, int picture){
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(latLng)
+                .title(title)
+                .snippet(snippet)
+                .icon(BitmapDescriptorFactory.fromResource(picture));
+        Marker marker = this.googleMap.addMarker(markerOptions);
+        this.markerList.add(marker);
+        return marker;
+    }
+\end{lstlisting}
+\begin{description}
+\item[Line 1] Draw marker method, parameters are: a single latitude and longitude point, a title for the marker, and a snippet(description), and a icon picture. 
+\item[Lines 2-6] Create the \lstinline|markerOptions| object, with the parameters.
+\item[Line 7-9] Draw the marker on the floor plan with the Google Maps \ac{api}, the draw method returns the marker object. The \lstinline|marker| is stored in a list, if it should be removed or edited later. Return the \lstinline|marker| to the method caller.
+\end{description}
 
 \subsubsection*{Polylines}
-Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of latitude and longitude coordinates, and creates a connected line between all the coordinates in a ordered sequence. The polyline's colour can also be customised to differentiate between other polylines. We use the polyline to show the walk path on the floor plan, and also showing the route to different booths from the user's location. \autoref{fig:polylineexample} shows an example of a polyline, the array that defines the polyline on \autoref{fig:polylineexample} would look like this \lstinline|{NodeA, NodeB, NodeC, NodeB, NodeD}|.  
+Polylines presents a set a of connected line segments on the floor plan. The Polyline object consists of a set of latitude and longitude coordinates, and creates a connected line between all the coordinates in a ordered sequence. The polyline's colour can also be customised to differentiate between other polylines. We use the polyline to show the walk path on the floor plan, and also showing the route to different booths from the user's location. \autoref{fig:polylineexample} shows an example of a polyline, the array that defines the polyline on \autoref{fig:polylineexample} would look like this \lstinline|{NodeA, NodeB, NodeC, NodeB, NodeD}|. \autoref{lst:drawpolyline} shows how to draw a polyline on the floor plan.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{img/polylineExample.png}
 \caption{Polyline example}
 \label{fig:polylineexample}
 \end{figure}
-\todo{Show how they are drawn}
+\begin{lstlisting}[language=java, label=lst:drawpolyline, caption=Method for drawing a polyline.]
+    public Polyline drawPolyline(ArrayList<Node> nodes, float strokeWidth, int color, int zIndex){
+        ArrayList<LatLng> polyPoints = new ArrayList<LatLng>();
+        for(Node n : nodes){
+            polyPoints.add(n.getPosition());
+        }
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .addAll(polyPoints)
+                .width(strokeWidth)
+                .color(color)
+                .zIndex(zIndex);
+        Polyline polyline = this.googleMap.addPolyline(polylineOptions);
+        return polyline
+    }
+\end{lstlisting}
+\begin{description}
+\item[Line 1] The draw marker method, parameters are: an array with nodes, stroke width, a color, and a z-index. The z-index defines the order of the drawn objects,  objects with a higher z-index will be drawn on top of objects with a lower z-index. 
+\item[Lines 2-5] Extract the node's latitude and longitude, and add them to the newly created \lstinline|polyPoints|.
+\item[Lines 6-10] Create the \lstinline|polylineOptions| object, with the function parameters, and the \lstinline|polyPoints|.
+\item[Line 11] Draw the polyline on the floor plan with the Google Maps \ac{api}, the draw method returns the polyline object. Return the \lstinline|polyline| to the method caller.
+\end{description}
 
 \subsubsection*{Polygons}
 Polygons are similar to polylines in that they consist of a series of latitude and longitude coordinates. But instead it being a line segment that is open, the polygons are designed to be a closed region. The polygon's interior is also filled with a colour. With makes it perfect for showing booths on our floor plan.
-On \autoref{fig:markerandboothexample} the green shape shows a polygon, The green shape represents a booth.
-\todo{Show how they are drawn}
+On \autoref{fig:markerandboothexample} the green shape shows a polygon, The green shape represents a booth. \autoref{lst:drawpolygon} shows how to draw a polygon on the floor plan.
+\begin{lstlisting}[language=java, label=lst:drawpolygon, caption=Method for drawing a polygon.]
+    public Polygon drawPolygon(List<LatLng> latLngs, float strokeWidth, int strokeColor, int fillColor, int zIndex){
+        PolygonOptions polygonOptions = new PolygonOptions()
+                .addAll(latLngs)
+                .strokeWidth(strokeWidth)
+                .strokeColor(strokeColor)
+                .fillColor(fillColor)
+                .zIndex(zIndex);
+        Polygon polygon =  this.googleMap.addPolygon(polygonOptions);
+        polygonList.add(polygon);
+        return polygon;
+    }
+\end{lstlisting}
+\begin{description}
+\item[Line 1] Draw polygon method, parameters are: an array of four latitude and longitude points, a stroke width, a stroke colour, a interior colour, and the z-index of the object. 
+\item[Lines 2-6] Create the \lstinline|polygonOptions| object, with the parameters.
+\item[Line 7-9] Draw the polygon on the floor plan with the Google Maps \ac{api}, the draw method returns the polygon object. The \lstinline|polygon| is stored in a list, if it should be removed or edited later. Return the \lstinline|polygon| to the method caller.
+\end{description}
 
 \section{Implementation of Floor Plan}
 In this section we will explain how we implemented our map of the floor plan using Google Maps. Implementing the default map on an Android phone is actually simple. All that is needed is to implement a fragment called "MapFragment" onto an activity.
@@ -110,11 +163,11 @@ public void makePolyLine(){
 \end{lstlisting}
 \begin{description}
 \item[Line 2] Start by creating a local array called  \lstinline|polyLinePath|, which consists of nodes.
-\item[Line 3-5] For each edge in our undirected graph, get the index of Node A and B in the newly created array \lstinline|polyLinePath|.
+\item[Lines 3-5] For each edge in our undirected graph, get the index of Node A and B in the newly created array \lstinline|polyLinePath|.
 \item[Lines 7-10] If Node B already exists in the \lstinline|polyLinePath| insert the two nodes in the following order (...,NodeB, NodeA, NodeB, ...)
 \item[Lines 11-14] If Node A already exists in the \lstinline|polyLinePath| insert the two nodes in the following order (...,NodeA, NodeB, NodeA, ...)
 \item[Lines 15-18] Else just add the two nodes to the array, this will only be done once.
-\item[Line 21-24] Now that the loop is done, simply add every node's latitude and longitude to an array called \lstinline|polyLinePath|, which is the result of the function. 
+\item[Lines 21-24] Now that the loop is done, simply add every node's latitude and longitude to an array called \lstinline|polyLinePath|, which is the result of the function. 
 \end{description}
 
 \subsection*{Route and Limitations}
