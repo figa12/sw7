@@ -1,5 +1,5 @@
 \section{Implementation of NFC}
-We have created a class called \lstinline|NfcForegroundActivity| which every activity that we want to enable \ac{nfc} on can extend. \lstinline|NfcForegroundActivity| enables the Foreground Dispatch System and contains methods which enables the activity to read and process \ac{nfc} tags.
+We  created a class called \lstinline|NfcForegroundActivity| which every activity that we want to enable \ac{nfc} on can extend. \lstinline|NfcForegroundActivity| enables the Foreground Dispatch System and contains methods which enables the activity to read and process \ac{nfc} tags.
 
 \begin{figure}[H]
 \centering
@@ -24,7 +24,7 @@ We have created a class called \lstinline|NfcForegroundActivity| which every act
 
 When an activity uses Foreground Dispatch System, it forces priority over other activities when handling \ac{nfc} intents\citep{foregroundDispatch}. This enables us to handle intents when the user has the activity open and scans an \ac{nfc} tag.
 
-\begin{lstlisting}[language=java, label=nfcForegroundOnCreate, caption={Initializing the pending intent}]
+\begin{lstlisting}[language=java, label=lst:nfcForegroundOnCreate, caption={Initializing the pending intent}]
 public NfcForegroundActivity(Context context) { 
     this.nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
     Intent intent = new Intent(this.context, ((Activity) this.context).getClass());
@@ -54,9 +54,9 @@ protected void onPause() {
 \end{lstlisting}
 \begin{description}
 \item[Line 2] \lstinline|onResume()| is run every time the activity is started.
-\item[Line 4] An \lstinline|IntentFilter| is created. This particular filter tells the system that we want to override the behavior when an \ac{nfc} tag is scanned.
+\item[Line 4] An \lstinline|IntentFilter| is created. This particular filter tells the system that we want to override the behaviour when an \ac{nfc} tag is scanned.
 \item[Line 5] The filter is added to an array. This is required because you can have multiple filters.
-\item[Line 6] Foreground Dispatch System is enabled with the pending intent created in \autoref{nfcForegroundOnCreate} and the intent filter.
+\item[Line 6] Foreground Dispatch System is enabled with the pending intent created in \autoref{lst:nfcForegroundOnCreate} and the intent filter.
 \item[Lines 10-12] Every time the activity is paused we disable the Foreground Dispatch System.
 \end{description}
 
@@ -74,7 +74,7 @@ public void onNewIntent(Intent intent) {
 }  
 \end{lstlisting}
 \begin{description}
-\item[Line 3] The intent parameter for \lstinline|onNewIntent()| is the pending intent that was created in \autoref{nfcForegroundOnCreate}.
+\item[Line 3] The intent parameter for \lstinline|onNewIntent()| is the pending intent that was created in \autoref{lst:nfcForegroundOnCreate}.
 \item[Line 5] The method \lstinline|newIntentEvent()| is run with the intent and a list of records is returned. \lstinline|newIntentEvent()| is shown below.
 \item[Lines 6-7] If any records were found, \lstinline|onNfcScanned()| is called with these.
 \end{description}
@@ -105,7 +105,7 @@ public ArrayList<Record> newIntentEvent(Intent intent) {
 \item[Line 16] Return the list of records.
 \end{description}
 
-In \autoref{lst:newIntentEvent} it is worth noticing that the \lstinline|Record| class is from a third party library \ac{ndef} Tools for Android \citep{ndeftools}. This makes the parsing of \ac{ndef} records a very easy process.
+In \autoref{lst:newIntentEvent} it is worth noticing that the \lstinline|Record| class is from a third party library called \ac{ndef} Tools for Android \citep{ndeftools}. This makes the parsing of \ac{ndef} records a very easy process.
 
 In \autoref{lst:onNfcScanned} we have shown how \lstinline|onNfcScanned()| is overwritten for the \lstinline|MainActivity|. This activity needs to send the user to the \lstinline|TabActivity| if he already exists, or create a new user if not.
 
@@ -147,7 +147,7 @@ protected void onNfcScanned(ArrayList<Record> records) {
 }
 \end{lstlisting}
 \begin{description}
-\item[Lines 1-2] \lstinline|onNfcScanned()| in an abstract method and takes the records found in \lstinline|newIntentEvent()|. See \autoref{lst:newIntentEvent}.
+\item[Lines 1-2] \lstinline|onNfcScanned()| is an abstract method and takes the records found in \lstinline|newIntentEvent()|. See \autoref{lst:newIntentEvent}.
 \item[Lines 3-4] Two variables are declared. One to hold the exhibition ID and one to hold the node ID that is scanned.
 \item[Lines 8-11] For each record, check whether it is an \ac{aar} or a text record and instantiate it as an object of the appropriate class. We ignore the \ac{aar} because the application is already running. The classes for these are imported trough the \ac{ndef} Tools for Android \citep{ndeftools} library.
 \item[Lines 13-14] If the record is a text record and is the first element in the list of \lstinline|records|, we know that it is the exhibition ID, see \secref{sec:nfcdata}, and we set the variable that we declared on line 3, \lstinline|exhibId|.

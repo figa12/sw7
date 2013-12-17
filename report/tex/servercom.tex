@@ -1,36 +1,27 @@
 \chapter{Back-end design}
-This chapter describes the communication between server and client, as well as the design choices and
-implementation of database. \todo{Bør database være et kapitel for sig selv?}
+This chapter describes the communication between server and client, as well as the design choices and implementation of database. %\todo{Bør database være et kapitel for sig selv?}
 
 \section{Communication}
 \label{sec:com}
 
-The communication between the client application and the server is done by HTTP POST requests.
-The client sends a HTTP POST request to the server containing a certain list of parameters which
-define what the server is supposed to do. All requests must take at least two required parameters, a \textit{RequestCode} and a
-\textit{Type}.
+The communication between the client application and the server is done by \ac{http} POST requests.
+The client sends a \ac{http} POST request to the server containing a certain list of parameters which define what the server is supposed to do. All requests must take at least two required parameters, a \textit{RequestCode} and a \textit{Type}.
 
-\textit{RequestCode} is an integer that is simply passed through the server, it is not handled in any
-way on the server. The purpose of the RequestCode parameter is to distinguish the request on the client allowing
-it to execute the appropriate function.
+\textit{RequestCode} is an integer that is simply passed through the server, it is not handled in any way on the server. The purpose of the \textit{RequestCode} parameter is to distinguish the request on the client allowing it to execute the appropriate function.
 
-\textit{Type} is used to identify the request. A typical request is to get a list of feeds, and the
-value of the \textit{Type} parameter would be ``GetFeeds'' in this case.
+\textit{Type} is used to identify the request. A typical request is to get a list of feeds, and the value of the \textit{Type} parameter would be ``GetFeeds'' in this case.
 
-Depending on the \textit{Type} of the request, additional parameters may be required. As an example, \textit{GetFeeds} takes the following parameters:
+Depending on the \textit{Type} of the request, additional parameters may be required. As an example, \textit{GetFeeds} takes the following additional parameters:
 \begin{itemize}
 \item RequestCode
 \item UserId
 \item Limit
 \end{itemize}
 
-The approach is to process the request on the serverside, and make the right calls to the
-database. The server will then return a JSON object containing all the relevant information that was
-requested. This JSON object can easily be parsed on the client side. The reason why we chose JSON as
-a format is because it is well supported and easy to generate in both android and PHP.
+The approach is to process the request on the server side, and make the right calls to the database. The server will then return a JSON object containing all the relevant information that was requested. This JSON object can easily be parsed on the client side. The reason why we chose JSON as a format is because it is well supported and easy to generate in both Android and PHP.
 
 \begin{lstlisting}[language=phpstyle, caption=getFeeds function call]
-$requestCode = $_POST["RequestCode"];
+$requestCode = $_POST['RequestCode'];
 
 switch ($_POST['Type']) {
         case "GetFeeds":
@@ -40,11 +31,11 @@ switch ($_POST['Type']) {
 \end{lstlisting}
 
 \begin{description}
-\item[Line 1] Get the \textit{RequestCode} parameter.
-\item[Lines 3-7] If \textit{Type} equals ``GetFeeds'', call the getFeeds function.
+\item[Line 1] Get the \lstinline|RequestCode| parameter.
+\item[Lines 3-7] If \lstinline|Type| equals ``GetFeeds'', call the \lstinline|getFeeds()| function.
 \end{description}
 
-\todo{Nævn de andre cases, måske her?}
+%\todo{Nævn de andre cases, måske her?}
 
 \begin{lstlisting}[language=phpstyle, label=lst:getFeeds, caption={getFeeds function}]
 function getFeeds($con, $userId, $limit) {
@@ -83,13 +74,12 @@ function getFeeds($con, $userId, $limit) {
 
 \begin{description}
 \item[Line 1] The function takes three parameters, the MySQLi object which has a connection
-  established to the database, the user id from the client, and the limit which is also given by the client.
-\item[Line 3] Since the \textit{RequestCode} is always a required parameter the variable is global.
+  established to the database, the user ID from the client, and the limit which is also given by the client.
+\item[Line 3] Since the \lstinline|RequestCode| is always a required parameter the variable is global.
 \item[Lines 6-7] Escape special characters to avoid malicious SQL injections.
-\item[Lines 9-20] Create the SQL query with the user id and the limit parameter.
+\item[Lines 9-20] Create the SQL query with the user ID and the limit parameter.
 \item[Line 22] Execute the query.
-\item[Lines 24-31] Get the results from the database and push them to the JSON array. When
-  all of the results have been pushed to the array, the \textit{RequestCode} and the JSON array will be JSON encoded and echoed.
+\item[Lines 24-31] Get the results from the database and push them to the JSON array. When all of the results have been pushed to the array, the \textit{RequestCode} and the JSON array will be JSON encoded and echoed.
 \end{description}
 
 As seen on line 29 in \autoref{lst:getFeeds} the result is JSON encoded and then echoed. An example of a result from the \textit{GetFeeds} type request could look like the following:
@@ -124,31 +114,21 @@ As seen on line 29 in \autoref{lst:getFeeds} the result is JSON encoded and then
 
 Note that the result in \autoref{lst:jsonResult} is an object with two attributes, the data and the request code. The result will always be in this format.
 
-All of the requests to the server follows this principle. A request is made, the query is run and data is gathered, and lastly the result is returned as a JSON object that the client reads.\\\\
-Our types of requests are as follows:
-\begin{itemize}
-\item \textbf{GetFeeds}\\
- Will return all the necessary data about a certain number of feeds. They are sorted to return the newest feed first and then the next number of feeds that corresponds to the given limit parameter.
-\item \textbf{CreateUser}\\
-  Creates a new user in the database and returns the userid.
-\item \textbf{GetNewFeeds}\\
-  Returns data about all new feeds since the last update. This means that the user can manually fetch all new feeds.
-\item \textbf{CheckFeeds}\\
-  Check if any new feeds are available, and if such the number of new feeds will be returned.
-\item \textbf{GetOldFeeds}\\
-  Load a certain number of feeds that are older than the current oldest feed showing. This allows the user to load the next batch of feeds.
-\item \textbf{GetSchedule}\\
-  Returns relevant data about the schedule of the exhibition. Used for the schedule tab on the android application.
-\item \textbf{GetExhibitionInfo}\\
-  Returns all information about the exhibition, such as the description and logo.
-\item \textbf{GetCategories}\\
-  Returns a list of categories, and the booths of this category, that are associated with the current exhibition. It also contains a flag that shows whether the user is currently subscribed to a booth or not.
-\item \textbf{SetCategories}\\
-  This request is run when the ``submit'' button is pressed in the category chooser. This updates the booths that the user is subscribed to in the database.
-\end{itemize}
+All of the requests to the server follows this principle. A request is made, the query is run and data is gathered, and lastly the result is returned as a JSON object that the client reads. Our types of requests are as follows:
+\begin{description}
+\item[GetFeeds] Will return all the necessary data about a certain number of feeds. They are sorted to return the newest feed first and then the next number of feeds that corresponds to the given limit parameter.
+\item[CreateUser] Creates a new user in the database and returns the user ID.
+\item[GetNewFeeds] Returns data about all new feeds since the last update. This means that the user can manually fetch all new feeds.
+\item[CheckFeeds] Check if any new feeds are available, and if it is the case the of new feeds will be returned.
+\item[GetOldFeeds] Load a certain number of feeds that are older than the current oldest feed showing. This allows the user to load the next batch of feeds.
+\item[GetSchedule] Returns relevant data about the schedule of the exhibition. Used for the schedule tab on the Android application.
+\item[GetExhibitionInfo] Returns all information about the exhibition, such as the description and logo.
+\item[GetCategories] Returns a list of categories, and the booths of this category, that are associated with the current exhibition. It also contains a flag that shows whether the user is currently subscribed to a booth or not.
+\item[SetCategories} This request is run when the ``submit'' button is pressed in the category chooser. This updates the booths that the user is subscribed to in the database.
+\end{description}
 
 \section{Database}
-We are using a MySQL database with the MyISAM storage engine and which is located at a remote server. \todo{info om hvor osv.?}
+We are using a MySQL database with the MyISAM storage engine and which is located at a remote server.
 
 The server contains all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and some basic information about the users.
 
@@ -196,7 +176,7 @@ user: & \relation{\underline{id: int}, exhibid $\ra$ exhib: int}
 \label{tab:relations}
 \end{table}
 \todo{why zip == int?}
-\todo{Måske skriv at vi ikke kan bruge foreign keys i vores database}
+%\todo{Måske skriv at vi ikke kan bruge foreign keys i vores database}
 A coordinate can be of three different types. If \textit{boothid} is null and \textit{isroad} is not null the coordinate is simply a point on the road. If \textit{boothid} is not null and \textit{isroad} is null the coordinate is a point used to define where the booth lies. If neither of the two attributes are null the coordinate is an entrance to the booth, i.e. the point lies on the road but is a part of the booth.
 %%% Local Variables: 
 %%% mode: latex

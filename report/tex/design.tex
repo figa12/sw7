@@ -4,6 +4,7 @@ The reader is expected to be familiar with standard Android components. Some com
 \begin{description}
 \item[Activity] An activity is a single focused thing that the user can do. You can also say that it is a window which is either full-screen or floating. \citep{activity}
 \item[Fragment] A fragment inherits from activity and thus has its own lifecycle. Fragments are nested in activities, and can be used to build a multi-pane user interface. \citep{fragment}
+\todo{Intent?}
 \end{description}
 
 \section{Application Design}\label{sec:appdesign}
@@ -29,7 +30,7 @@ We decided that using tabs, like Skype in  \autoref{fig:skype}, was a good way f
 We recognised that we were going to create a few different lists for the application e.g. a list of feeds and a schedule, for this we looked at Twitter \autoref{fig:twitter} and tried to capture their simplicity of tweets in our list items.
 
 \subsection*{Story}
-Julie opens our application Exhib. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the "Floor Plan" tab which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, map of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the floor plan she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
+Julie opens our application Exhib. She is presented with a list of exhibitions that she browse. She browses the exhibitions and reads about them, she finds a software exhibition and decides that she want to go there. She clicks the "Floor Plan" tab which shows the exhibitions location. With her smartphone she can use her built-in \ac{gps} application to drive to the exhibition. When she arrives at the exhibition she quickly notices a sign that tells her to scan an \acs{nfc} tag. She scans the \acs{nfc} tag and the system registers a new user. An activity appears asking her what categories and related booths she would like to subscribe to. She picks Microsoft and clicks continue. Now she has access to everything about the exhibition: Exhibition information, floor plan of the exhibition, news feed based on her subscriptions, and a schedule. Julie gets a quick overview of major events in the schedule and the news feed, and then decides to go directly to a Microsoft booth. On the floor plan she finds a Microsoft booth, clicks it, and chose to get directions to the booth. The application remembers Julie's last known location, i.e. the last \acs{nfc} tag she scanned, and generates a route from there to the booth.
 
 \section{Prototype Design}
 
@@ -132,7 +133,7 @@ We did not create the \lstinline|BoothActivity| which is showed in \autoref{fig:
 \item[MainActivity] This is the startup activity. This activity waits for the user to scan an \ac{nfc} tag and redirect the user appropriately.
 \item[TabActivity] The core of the application, contains all the tabs i.e. fragments.
 \item[ExhibitionInformationFragment] Shows information about an exhibition such as name, description, and logo.
-\item[FloorplanFragment] Shows the map of the exhibition. The floor plan contains markers for each booth which the user can click to access information about the booth.
+\item[FloorplanFragment] Shows the floor plan of the exhibition. The floor plan contains markers for each booth which the user can click to access information about the booth.
 \item[ScheduleFragment] Is a schedule for the exhibition which shows major events happening at the exhibition.
 \item[FeedFragment] Is a list of news feeds based on the users subscriptions.
 \item[FeedActivity] Shows the feed item when it is clicked from the feed list.
@@ -173,7 +174,7 @@ When opening the application the first screen you encounter is one telling the u
 \end{minipage}
 \end{figure}
 
-After having submitted the categories the user want to subscribe to, the user will be taken to an "Info" tab, this is a simple tab displaying information about exhibition the user are currently at, such as exhibition logo, name and a description of the exhibition. This can be seen on \autoref{fig:infoscreen}  at the top. Next to "Info" there are three other tabs: "Feeds", "Schedule", and "Floor Plan". These four tabs can be navigated to and from, from any of the other tabs either by swiping from side to side or by clicking on the tab itself at the top.
+After having submitted the categories the user want to be subscribed to, the user will be taken to an "Info" tab, this is a simple tab displaying information about exhibition the user are currently at, such as exhibition logo, name and a description of the exhibition. This can be seen on \autoref{fig:infoscreen}  at the top. Next to "Info" there are three other tabs: "Feeds", "Schedule", and "Floor Plan". These four tabs can be navigated to and from, from any of the other tabs either by swiping from side to side or by clicking on the tab itself at the top.
 
 The tab "Feeds", as seen on \autoref{fig:feedsscreen}, shows a list feeds made by booths at the exhibition, note that the feeds do not have a header like shown on the prototypes. We decided against this because we felt it would take up too much space. The application uses the booths that the user subscribed to before, the user only receives feeds from the booths that they subscribed to after scanning the \ac{nfc} tag. Each feed has a timestamp telling the user when it was made.
 
@@ -233,6 +234,7 @@ You can also press the info icon on each booth, to receive information about thi
 \includegraphics[width=\columnwidth]{img/appFlowchart.pdf}
 \caption{Application actvity flow\label{fig:flowchart}}
 \end{figure}
+\todo{dette flow skal lige opdateres, den loader previous exhibition hvis man bare går ind i applikationen}
 
 \section{User ID}
 As mentioned in the previous section, when scanning an \ac{nfc} tag for the first time the user has to choose booth subscriptions. After having chosen these subscriptions, the user ID, the exhibition ID and the IDs of the subscribed booths are saved to the database. A user for this exhibition is now created. If scanning another tag, two different scenarios can occur;
