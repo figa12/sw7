@@ -70,10 +70,11 @@ With the implemented MapFragment it is possible to display an overlay with your 
 Our tile set is stored on the URL "figz.dk/dl/FloorPlan/". A tile is uniquely identified with the URL "figz.dk/dl/FloorPlan/zoom-level/x/y.png". We have created tiles from zoom level 2 to 6, meaning that we have $4^2+8^2+16^2+32^2+64^2 = 5456$ tiles. We could easily have created more zoom-levels and thereby tiles, but our example floor plan does not require much detail, and it would be confusing if the user could zoom closer. When our custom tile set is created and shown, we can simply hide the standard Google Maps Earth tile set. This is done simply to avoid loading unnecessary data.
 
 \todo{graph afsnit?}
+\subsection*{Graph object}
 
 \subsection*{Loading the Walk Path}
 With the MapFragment implemented and the tiles loaded, we can draw the walk path of the exhibition. The walk path has previously been made and uploaded to the database by our web tool, which will be explained in the following \secref{sec:websiteimplementation}. When the walk path has been created, we load the nodes and edges from the database. With the nodes and edges we create a graph object, and from this undirected graph we create a polyline.\\ 
-The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair, a line segment is drawn. The polyline's coordinates are defined as if you were to draw a walk path on a map, but you could never let go or lift the pencil from the paper, as seen on\autoref{fig:polylineexample}. Meaning that in order to create the polyline we might need to define an edge more than once. \autoref{lst:makePolyLine} shows the method that we use to make our polyline from the undirected graph.
+The polyline has a special structure, each of its elements is a latitude and longitude coordinate and between each coordinate pair, a line segment is drawn. The polyline's coordinates are defined as if you were to draw a walk path on a map, but you could never let go or lift the pencil from the paper, as seen on\autoref{fig:polylineexample}. Meaning that in order to create the polyline we might need to define an edge more than once. \autoref{lst:makePolyLine} shows the method that we use to make our walk path, and the shortest path polyline, from the undirected graph.
 \begin{lstlisting}[language=java, label=lst:makePolyLine, caption=makePolyLine]
 public void makePolyLine(){
         this.polylinePath = new ArrayList<Node>();
@@ -111,10 +112,10 @@ public void makePolyLine(){
 \end{description}
 
 \subsection*{Route and Limitations}
-Now that we can present the graph on the map, with the polyline walk path. We want to find the shortest path between two nodes, for this we use the Dijkstra's shortest path algorithm. I will not go into detail how this is implemented since it is fairly simple. But basically the weights of the edges is simply the distance between two nodes, and from this we can find the shortest route between the two nodes, source and target.\\ 
+Now that we can present the graph on the map, with the polyline walk path. We want to find the shortest path between two nodes, for this we use the Dijkstra's shortest path algorithm. We will not go into detail how this is implemented since it is fairly simple. But basically the weights of the edges is simply the distance between two nodes, and from this we can find the shortest route between the two nodes, source and target.\\ 
 A user can set his target/destination by pressing on a booth's marker and press the button "Navigate to" in the info window, a red polyline will appear on the floor plan showing the route, but only if the user has a known position.\\
-If a \ac{nfc} tag is scanned and the tag has a node id stored on it. The application will automatically show the floor plan and zoom onto the location of the node, and display a red dot, showing and updating the user's position/source. The red polyline route between the target and the user's new position is drawn. This is done every time the user scans a \ac{nfc} tag with a node id.\\
-If the scanned node is connected to a booth, meaning the node is a booth's entry point, then the red dot's position will be portrayed on the booth instead on the walk path.\todo{either ref or show a picture of this.}\\ 
+If a \ac{nfc} tag is scanned and the tag has a node id stored on it, the application will automatically show the floor plan, zoom onto the location of the node displaying a red dot, and updating the user's position/source. The shortest path(red polyline) between the target and the user's new position is calculated from the undirected graph. The result will me made into a polyline with the method  \autoref{lst:makePolyLine} and drawn onto the floor plan, like the walk path. This is done every time the user scans a \ac{nfc} and changes his position.\\
+If the scanned node is connected to a booth, meaning the node is a booth's entry point, then the red dot's position will be portrayed on the booth instead on the walk path.\\ 
 At the moment the floor plan implementation can only show a route between two nodes, It is not possible to show a route between multiple destinations or nodes. Also it is not possible to unsubscribe from a booth, directly from the floor plan.
 
 
