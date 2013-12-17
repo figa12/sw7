@@ -19,7 +19,7 @@ new ServerSyncService(super.getContext()).execute(
 \item[Line 1] Create a new \lstinline|ServerSyncService|. We give it the context as argument so the response can be passed to the context. \lstinline|execute()| is the method that starts the request from the server, where the next lines are the arguments.
 \item[Line 2] A name/value pair with the name \lstinline|"RequestCode"| and the value is a unique integer called \lstinline|GET_EXHIBITION_INFO| which we parse to a string.
 \item[Line 3] A name/value pair with the name \lstinline|"Type"| and the actual request called \lstinline|"GetExhibitionInfo"| which is the request used to display information about the exhibition in the info tab.
-\item[Line 4] For this type of request the server expects the parameter name/value pair \lstinline|"ExhibId"|. The exhibtion id is saved in the \lstinline|TabActivity|.
+\item[Line 4] For this type of request the server expects the parameter name/value pair \lstinline|"ExhibId"|. The exhibition id is saved in the \lstinline|TabActivity|.
 \end{description}
 \autoref{lst:doinbackground} is our implementation of the abstract method \lstinline|doInBackground()|. When \lstinline|execute()| is run it creates a new thread for us and runs our implementation of \lstinline|doInBackground()| on that thread with the provided \lstinline|NameValuePair| array.
 
@@ -57,7 +57,7 @@ After \lstinline|doInBackground()| returns the result, the \lstinline|AsyncTask|
 @Override
 protected void onPostExecute(String result) {
     if (result == null || result.equals("")) {
-        this.displayAlert("No connection found-ish.");
+        this.displayAlert("No connection found.");
         return;
     } else if (result.equals("Could not complete query. Missing type") || result.equals("Missing request code!")) {
         this.displayAlert(result);
@@ -79,7 +79,7 @@ protected void onPostExecute(String result) {
 \item[Lines 9-11] If the timeout limit was reached, then display alert to user. \todo{It would be a good idea to handle these kinds of errors in a better way, like letting the user know that a connection was not established and maybe allowing him to try again.}
 \item[Lines 14-16] Create a stream reader, read the stream, and close it.
 \end{description}
-\autoref{lst:readjsonstream} shows \lstinline|readJsonStream()| which is where we read the \ac{json} response from the server. The listing has been simplified; we only show one case in the switch. The full implementation has a case for each request that we can make to the server. See \secref{sec:com} for a full list of requests that we can make on the server.
+\autoref{lst:readjsonstream} shows \lstinline|readJsonStream()| which is where we read the JSON response from the server. The listing has been simplified; we only show one case in the switch. The full implementation has a case for each request that we can make to the server. See \secref{sec:com} for a full list of requests that we can make on the server.
 
 \begin{lstlisting}[language=java, label=lst:readjsonstream, caption={The method \lstinline|readJsonStream()|}]
 private void readJsonStream(InputStream stream) throws IOException {

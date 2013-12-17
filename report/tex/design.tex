@@ -113,7 +113,7 @@ Based on the prototypes and the functionality we want from the application, we h
 \begin{description}
 \item[User registration] A user must be able to register to an exhibition in order to get customizable feeds
 \item[Subscription] A user must be able to subscribe to the booths they find interesting
-\item[Change subscriptions] Incase a user wants to change their subscriptions, they must be able to do so
+\item[Change subscriptions] In case a user wants to change their subscriptions, they must be able to do so
 \item[Feeds] The user must only receive feeds from the booths they are subscribed to, if they change these subscriptions, the feeds must change as well
 \item[Load feeds] The device's screen might not be able to show all feeds at once, so the user must be able to load all feeds
 \item[New feeds] When booths make new feeds the user should be able to choose when these feeds are loaded
@@ -125,7 +125,7 @@ Based on the prototypes and the functionality we want from the application, we h
 
 \section{Final Application Design}\label{sec:finaldesign}
 
-We did not create the \textit{BoothActivity} which is showed in \autoref{fig:booth}, because we realised that we might as well show all the booth information in the marker information window on the floor plan. This is shown later in this section. The final application consists of the following activities and fragments:
+We did not create the \lstinline|BoothActivity| which is showed in \autoref{fig:booth}, because we realised that we might as well show all the booth information in the marker information window on the floor plan. This is shown later in this section. The final application consists of the following activities and fragments:
 
 \begin{description}
 \item[MainActivity] This is the startup activity. This activity waits for the user to scan an \ac{nfc} tag and redirect the user appropriately.

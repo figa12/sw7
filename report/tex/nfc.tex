@@ -4,7 +4,7 @@ When a visitor first visits the exhibition they have to register using the appli
 \ac{nfc} is a way wireless way to transfer data between two \ac{nfc} enabled devices. 
 An \ac{nfc} tag is a small data storage unit, which allows you to store small amount of information that can then be transferred to an \ac{nfc} device. 
 
-A standard \ac{nfc} tag can contain around 41 characters, whereas the NTAG203 tags can store around 132 characters\citep{nfccap}. Most of the tags store data in a format called \ac{ndef}, this defines a message format used when transfering information between a device and a tag, or two devices. An \ac{ndef} message consists of one or more of so-called \ac{ndef} records. \autoref{fig:ndef} shows general view of an \ac{ndef} message.
+A standard \ac{nfc} tag can contain around 41 characters, whereas the NTAG203 tags can store around 132 characters\citep{nfccap}. Most of the tags store data in a format called \ac{ndef}, this defines a message format used when transferring information between a device and a tag, or two devices. An \ac{ndef} message consists of one or more of so-called \ac{ndef} records. \autoref{fig:ndef} shows general view of an \ac{ndef} message.
 
 \begin{figure}[H]
 \centering
@@ -13,7 +13,7 @@ A standard \ac{nfc} tag can contain around 41 characters, whereas the NTAG203 ta
 \label{fig:ndef}
 \end{figure}
 
-An example of a record could be the URL \textit{http://nokia.com}. When reading the \ac{nfc} tag, the following hexa code has to be interpreted: 
+An example of a record could be the URL \textit{http://nokia.com}. When reading the \ac{nfc} tag, the following hex code has to be interpreted: 
 
 \begin{quote}
 03 0e d1 01 0a 55 03 6e 6f 6b 69 61 2e 63 6f 6d fe
@@ -22,9 +22,9 @@ An example of a record could be the URL \textit{http://nokia.com}. When reading 
 Each byte contains some information about what has been scanned \citep{ndef}.
 
 \begin{itemize}
-\item 03 - the first byte defines the type of the record. An NDEF record is presented by a 03.
+\item 03 - the first byte defines the type of the record. An \ac{ndef} record is presented by a 03.
 \item 0e - the second byte tells the reader how many bytes the payload consists off.
-\item d1 - Each NDEF record is of variable length, but they all have a common format which can be seen on\autoref{fig:binformat}. d1 is binary code representing different information about the record.
+\item d1 - Each \ac{ndef} record is of variable length, but they all have a common format which can be seen on\autoref{fig:binformat}. d1 is binary code representing different information about the record.
 \end{itemize}
 
 \begin{figure}[H]
@@ -75,7 +75,7 @@ The encoding mode consists of four bits, indicating what encoding mode is used a
 
 \begin{description}
 \item 0001 - Numeric encoding (10 bits per 3 digits)
-\item 0010 - Alphanumeic encoding (11 bits per 2 charaters)
+\item 0010 - Alphanumeric encoding (11 bits per 2 characters)
 \item 0100 - Byte encoding (8 bits per character)
 \end{description}
 
