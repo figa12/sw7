@@ -1,11 +1,11 @@
 %%\subsection*{Serverside Unit Testing}
-We have performed unit testing on the serverside \ac{api} using an open source tool called PHPUnit which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions that you want to test, the new file must have a new class that extends \lstinline|PHPUnit_Framework_TestCase|. All public methods, in this new class, that are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|\citep{phpunit}.
+We have performed unit testing on the server side \ac{api} using an open source tool called PHPUnit which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions which should be tested, the new file must have a new class that extends \lstinline|PHPUnit_Framework_TestCase|. All public methods, in this new class, which are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|\citep{phpunit}.
 
-The testing is performed on a test database that is a copy of the original database, this is done to ensure that we do not interfere with data on the live database that could potentially cause problems or interference. As an example we create new feeds and new users when performing the tests, this could very well interfere with live data. A way of testing the application once it is in production could be to create a copy of the database once a day and run unit tests on the newly created copy and then delete it again.
+The testing is performed on a test database that is a copy of the original database, this is done to ensure that we do not interfere with data on the live database that could potentially cause problems or interference. As an example new feeds and new users are created when performing the tests, this could very well interfere with live data. A way of testing the application once it is in production could be to create a copy of the database once a day and run unit tests on the newly created copy and then delete it again.
 
-We have made tests for every functionality on the server side \ac{api} and each of these does some specific assertions related to the specific function, and furthermore calls another test called \lstinline|checkTemplate()|, see \autoref{lst:checkTemplate}. The purpose of the \lstinline|checkTemplate()| function is to ensure that the format of the result that the server returns is always of the correct format, this includes that the format must be valid JSON, it must have both a ``Data'' and a ``RequestCode'' attribute, and the ``RequestCode'' must be the same as the one that were given as a parameter to the \ac{api} call.
+Tests have been made for every functionality on the server side \ac{api} and each of these can have a number of specific assertions related to the specific function, and furthermore calls another test called \lstinline|checkTemplate()|, see \autoref{lst:checkTemplate}. The purpose of the \lstinline|checkTemplate()| function is to ensure that the format of the result that the server returns is always of the correct format, this includes that the format must be valid JSON, it must have both a ``Data'' and a ``RequestCode'' attribute, and the ``RequestCode'' must be the same as the one that were given as a parameter to the \ac{api} call.
 
-We have created several unit tests of the server's functionalities, the following is a few examples of some of the tests.
+Several unit tests are created to test the server's functionalities, the following is a few examples of some of the tests.
 
 \begin{lstlisting}[language=json, label=lst:jsonFormat, caption={JSON format, in this case an example of the result from \lstinline|CheckFeeds|}]
 {
@@ -111,7 +111,7 @@ public function testCheckFeeds2($args) {
 \item[Line 20] The number of feeds, the current time and the \lstinline|userId| is returned. The test \lstinline|testCheckFeeds2()| is dependent of \lstinline|testCheckFeeds()|.
 \item[Line 23] \lstinline|testCheckFeeds2()| is dependent of \lstinline|testCheckFeeds()|.
 \item[Lines 25-27] The arguments are gathered from the array.
-\item[Line 29] A new feed is made for testing using the current time as timestamp.
+\item[Line 29] A new feed is made for testing using the current time as a time stamp.
 \item[Lines 31-32] \lstinline|testCheckFeeds()| is run again and the new number of feeds is received.
 \item[Line 34] An assert is made to ensure that the new number of feeds are one greater than the initial number of feeds.
 \end{description}

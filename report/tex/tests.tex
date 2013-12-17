@@ -44,7 +44,7 @@ All test cases are presented in the form of a case header consisting of the case
 
 \testcase
 {\casethree}
-{The feed window should close and show the booth on the map}
+{The feed window should close and show the booth on the floor plan}
 {Connected to the internet, tab activity open}
 {Foreground mode}
 
@@ -133,6 +133,7 @@ All test cases are presented in the form of a case header consisting of the case
 2 & Choose your categories and press submit & \textit{The tab activity opens}\\
 \hline
 3 & Exit the application & \\
+\hline
 4 & Open up the application again & The tab activity should open\\
 \hline
 \multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
@@ -141,7 +142,7 @@ All test cases are presented in the form of a case header consisting of the case
 
 \testcase
 {\caseseven}
-{The application should change tab to "Map" and snap to the booth that matches the boothID on the tag}
+{The application should change tab to "Floor plan" and snap to the booth that matches the boothID on the tag}
 {Connected to the Internet,  tab activity open, \ac{nfc} is on}
 {Snap to the booth the user is located at}
 
@@ -150,7 +151,7 @@ All test cases are presented in the form of a case header consisting of the case
 \hline
 \textbf{Step} & \textbf{Procedure} & \textbf{Success Criteria}\\
 \hline
-1 & Scan a booth \ac{nfc} tag& \textit{Change to "Map" tab and snap to booth}\\
+1 & Scan a booth \ac{nfc} tag& \textit{Change to "Floor plan" tab and snap to booth}\\
 \hline
 \multicolumn{3}{c}{} \\% tom multicolumn for at få en snyde linjeafstand
 \end{tabular}
@@ -158,8 +159,8 @@ All test cases are presented in the form of a case header consisting of the case
 
 \testcase
 {\caseeight}
-{The user should get the shortest path from where he last scanned a tag and to the booth he wants to navigate to}
-{Connected to the Internet, be on the "Map" tab}
+{The user should get the shortest path from where the last tag was scanned and to the booth selected for navigation}
+{Connected to the Internet, be on the "Floor plan" tab}
 {Route planner}
 
 \begin{center}
@@ -195,12 +196,12 @@ All test cases are presented in the form of a case header consisting of the case
 
 \subsection*{Case results}
 \begin{description}
-\item[\casetwo] This test was a success. The application does not stall and it loads the old feeds, until there are no more feeds to load
+\item[\casetwo] This test was a success. The application does not stall and it loads the old feeds, until there are no more feeds to load.
 \item[\casethree] This test was a success. When having a feed open and scanning an \ac{nfc} tag, it snaps to the booth as intended.
-\item[\casefour] This test was a success. When a booth creates a new feed, the button shows up and allows the user to manually load the new feed
-\item[\casefive] This test was a success. When subscribing or unsubscribing to booths, their feeds are added and removed accordingly 
-\item[\casesix] This test was a success. The first time the \ac{nfc} tag was scanned the application opened and we had to choose which booths to subscribe to, and after closing and opening the application again it opens up directly in the tab activity without having to choose categories
-\item[\caseseven] This test was a success. When scanning an \ac{nfc} tag with a boothID the "Map" tab opened and snapped to the booth on the floor plan
-\item[\caseeight] This test was a success. When clicking the booth the information box comes up and if  you press the "Navigate to" button a route is drawn from your last known location and to the booth
+\item[\casefour] This test was a success. When a booth creates a new feed, the button shows up and allows the user to manually load the new feed.
+\item[\casefive] This test was a success. When subscribing or unsubscribing to booths, their feeds are added and removed accordingly.
+\item[\casesix] This test was a success. The first time the \ac{nfc} tag was scanned the application opened, we had to choose which booths to subscribe to. After closing and opening the application again it opens up directly in the tab activity without having to choose categories.
+\item[\caseseven] This test was a success. When scanning an \ac{nfc} tag with a boothID the "Floor plan" tab opened and snapped to the booth on the floor plan.
+\item[\caseeight] This test was a success. When clicking the booth the information box comes up and if the "Navigate to" button is pressed, a route is drawn from the last known location and to the desired booth.
 \item[\casenine] This test resulted in success. When scanning a different \ac{nfc} tag the user is signed out and signed in at the new exhibition, getting prompted to choose categories again.
 \end{description}
