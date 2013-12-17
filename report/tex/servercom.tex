@@ -196,9 +196,8 @@ user: & \relation{\underline{id: int}, exhibid $\ra$ exhib: int}
 \label{tab:relations}
 \end{table}
 \todo{why zip == int?}
-\todo{skriv at det er picks relationship fra diagrammet (hedder egentlig userbooths i databasen)}
 \todo{Måske skriv at vi ikke kan bruge foreign keys i vores database}
-A coordinate can be of three different types. If boothid is null and isroad is not null the coordinate is simply a point on the road. If boothid is not null and isroad is null the coordinate is a point used to define where the booth lies. If neither of the two attributes are null the coordinate is an entrance to the booth, i.e. the point lies on the road but is a part of the booth.
+A coordinate can be of three different types. If \textit{boothid} is null and \textit{isroad} is not null the coordinate is simply a point on the road. If \textit{boothid} is not null and \textit{isroad} is null the coordinate is a point used to define where the booth lies. If neither of the two attributes are null the coordinate is an entrance to the booth, i.e. the point lies on the road but is a part of the booth.
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "../master"

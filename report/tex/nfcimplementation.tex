@@ -28,12 +28,14 @@ When an activity uses Foreground Dispatch System, it forces priority over other 
 public NfcForegroundActivity(Context context) { 
     this.nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
     Intent intent = new Intent(this.context, ((Activity) this.context).getClass());
+    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
     this.nfcPendingIntent = PendingIntent.getActivity(this.context, 0, intent ,0);
 }
-\end{lstlisting}\todo{Tjek hvad der sker uden flag i applicationen}
+\end{lstlisting}
 \begin{description}
 \item[Line 2] The default \ac{nfc} adapter is retrieved and saved.
-\item[Line 4] A pending intent is created and saved for later use. This is necessary because the system must have an intent to populate when an \ac{nfc} tag is scanned.
+\item[Lines 3-4] Create the intent which will be used for the pending intent. Add a flag to the intent which ensures that the activity will not open again if it is already showing.
+\item[Line 5] A pending intent is created and saved for later use. This is necessary because the system must have an intent to populate when an \ac{nfc} tag is scanned.
 \end{description}
 
 \begin{lstlisting}[language=java, caption=Enable Foreground Dispatch System]
