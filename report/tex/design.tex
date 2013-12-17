@@ -1,6 +1,4 @@
-This chapter describes the design of our application, ... \todo{Other things than the application?}
-
-The reader is expected to be familiar with standard Android components. Some components are briefly explained here:
+This chapter describes the design of our application. The reader is expected to be familiar with standard Android components. Some components are briefly explained here:
 \begin{description}
 \item[Activity] An activity is a single focused thing that the user can do. You can also say that it is a window which is either full-screen or floating. \citep{activity}
 \item[Fragment] A fragment inherits from activity and thus has its own lifecycle. Fragments are nested in activities, and can be used to build a multi-pane user interface. \citep{fragment}
@@ -232,7 +230,6 @@ You can also press the info icon on each booth, to receive information about thi
 \includegraphics[width=\columnwidth]{img/appFlowchart.pdf}
 \caption{Application actvity flow\label{fig:flowchart}}
 \end{figure}
-\todo{Pictures and description of the finished application}
 
 \section{User ID}
 As mentioned in the previous section, when scanning an \ac{nfc} tag for the first time the user has to choose booth subscriptions. After having chosen these subscriptions, the user ID, the exhibition ID and the IDs of the subscribed booths are saved to the database. A user for this exhibition is now created. If scanning another tag, two different scenarios can occur;
