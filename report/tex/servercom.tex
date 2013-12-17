@@ -1,5 +1,5 @@
 \chapter{Back-end design}
-This chapter describes the communication between server and client, as well as the design choices and implementation of database. %\todo{Bør database være et kapitel for sig selv?}
+This chapter describes the communication between server and client, as well as the design choices and implementation of database.
 
 \section{Communication}
 \label{sec:com}
@@ -18,7 +18,7 @@ Depending on the \textit{Type} of the request, additional parameters may be requ
 \item Limit
 \end{itemize}
 
-The approach is to process the request on the server side, and make the right calls to the database. The server will then return a JSON object containing all the relevant information that was requested. This JSON object can easily be parsed on the client side. The reason why we chose JSON as a format is because it is well supported and easy to generate in both Android and PHP.
+The approach is to process the request server side, and make the right calls to the database. The server will then return a JSON object containing all the relevant information that was requested. This JSON object can easily be parsed on the client side. The reason why we chose JSON as a format is because it is well supported and easy to generate in both Android and PHP.
 
 \begin{lstlisting}[language=phpstyle, caption=getFeeds function call]
 $requestCode = $_POST['RequestCode'];
@@ -34,8 +34,6 @@ switch ($_POST['Type']) {
 \item[Line 1] Get the \lstinline|RequestCode| parameter.
 \item[Lines 3-7] If \lstinline|Type| equals ``GetFeeds'', call the \lstinline|getFeeds()| function.
 \end{description}
-
-%\todo{Nævn de andre cases, måske her?}
 
 \begin{lstlisting}[language=phpstyle, label=lst:getFeeds, caption={getFeeds function}]
 function getFeeds($con, $userId, $limit) {
@@ -114,7 +112,7 @@ As seen on line 29 in \autoref{lst:getFeeds} the result is JSON encoded and then
 
 Note that the result in \autoref{lst:jsonResult} is an object with two attributes, the data and the request code. The result will always be in this format.
 
-All of the requests to the server follows this principle. A request is made, the query is run and data is gathered, and lastly the result is returned as a JSON object that the client reads. Our types of requests are as follows:
+All of the requests to the server follows this principle. When a request is made, the query is run and data is gathered, lastly the result is returned as a JSON object that the client reads. Our types of requests are as follows:
 \begin{description}
 \item[GetFeeds] Will return all the necessary data about a certain number of feeds. They are sorted to return the newest feed first and then the next number of feeds that corresponds to the given limit parameter.
 \item[CreateUser] Creates a new user in the database and returns the user ID.
@@ -128,11 +126,11 @@ All of the requests to the server follows this principle. A request is made, the
 \end{description}
 
 \section{Database}
-We are using a MySQL database with the MyISAM storage engine and which is located at a remote server.
+We are using a MySQL database with the MyISAM storage engine, which is located at a remote server.
 
-The server contains all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and some basic information about the users.
+The server contains all data about each exhibition, the companies at the exhibition, the feeds, the schedule, and basic information about the users.
 
-\autoref{fig:erd} shows the \ac{er} diagram of our database. The diagram does not show the attributes of the entities in order to make the diagram a little smaller.
+\autoref{fig:erd} shows the \ac{er} diagram of our database. The diagram does not show the attributes of the entities.
 
 \begin{figure}[H]
 \centering
@@ -143,11 +141,11 @@ The server contains all data about each exhibition, the companies at the exhibit
 
 \newcommand{\rel}[2]{$(#1:#2)$}
 
-Some of the relationships in the \ac{er} diagram needs a little detailed description, but most of them are self explanatory.
+The relationships in the \ac{er} diagram needs a detailed description, but most of them are self explanatory.
 
 All functional relationship types are total participations, except for the relationship \textit{has} between \textit{coordinate} and \textit{booth}, which is partial participation.
 
-The \textit{attends} relationship between \textit{exhib} and \textit{user} is a \rel{1}{n} because we decided that one person that attends different exhibitions will get a new user for each exhibition he visits. We could also have made it an \rel{n}{m} relationship, but that would require us to make some kind of way to retrieve an existing user for that person and then also subscribe him to that exhibition. The user is not required to give any information when he is registered to an exhibition i.e. the registration is automatic, then we do not need to save any user data to be used at other exhibitions.
+The \textit{attends} relationship between \textit{exhib} and \textit{user} is \rel{1}{n} because it is decided that one person that attends different exhibitions will get a new user for each exhibition he visits. We could also have made it an \rel{n}{m} relationship, but that would require us to make some kind of way to retrieve an existing user for that person and then also subscribe him to that exhibition. The user is not required to give any information when he is registered to an exhibition i.e. the registration is automatic, then we do not need to save any user data to be used at other exhibitions.
 
 The \textit{contain} relationship between edge and \textit{coordinate} is shown to be a \rel{n}{1}, but the \textit{edge} actually contains exactly two coordinates, which can not be shown with Chen notation.
 
