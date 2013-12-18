@@ -41,13 +41,13 @@ In this example d1 is the binary code \textit{11010001}, each of the numbers rep
 \item ME means "message end". The flag is set to 1, which means that this is the last record in the \ac{ndef} message. If this is false, then the application knows there are more records coming.
 \item CF means "chunked message", An application can be split into multiple chunks and carried in different \ac{ndef} records. If this is the case, each record has the CF flag set to 1 except for the last one which is set to 0.
 \item SR means "short record", if the flag is set to 1 it means that the payload length is a single octet. 
-\item IL means "identification length", if the flag is 0 then the $ID\_LENGTH$ field is ommited in the record. The $ID\_LENGTH$ indicates the length of the ID field in bytes\citep{ndefformat}.
+\item IL means "identification length", if the flag is 0 then the $ID\_LENGTH$ field is omitted in the record. The $ID\_LENGTH$ indicates the length of the ID field in bytes\citep{ndefformat}.
 \item The Type Name Format (TNF) value indicates the structure of the TYPE field. It is a 3-bit value that describes the record type\citep{ndefformat}.
 \end{itemize}
 
 When a record like in the example is scanned, the website is launched inside the mobile browser. 
 
-An \ac{ndef} can not only be an URL like in the example, but it could also be a simple textrecord or a package name of an application. 
+An \ac{ndef} can not only be an URL like in the example, but it could also be a simple text record or a package name of an application. 
 
 A text record can contain letters, symbols and numbers. If a record contains a package name and the tag is scanned, if you have the package installed then the application will launch, else it will take you to the Google Play Store where you can install the application. 
 
