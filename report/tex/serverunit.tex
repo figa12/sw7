@@ -1,5 +1,5 @@
 %%\subsection*{Serverside Unit Testing}
-We have performed unit testing on the server side \ac{api} using an open source tool called PHPUnit which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions which should be tested, the new file must have a new class that extends \lstinline|PHPUnit_Framework_TestCase|. All public methods, in this new class, which are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|\citep{phpunit}.
+We have performed unit testing on the server side \ac{api} using an open source tool called PHPUnit which is made for easy and simple unit testing of PHP code. The basic approach of using PHPUnit is to create a new file that includes the functions which should be tested, the new file must have a new class that extends\linebreak \lstinline|PHPUnit_Framework_TestCase|. All public methods, in this new class, which are named with a prefix of \lstinline|test| will be included in the test. Inside each of these methods all kinds of assertions can be made, an example could be \lstinline|$this->assertNotNull($var)|\citep{phpunit}.
 
 The testing is performed on a test database that is a copy of the original database, this is done to ensure that we do not interfere with data on the live database that could potentially cause problems or interference. As an example new feeds and new users are created when performing the tests, this could very well interfere with live data. A way of testing the application once it is in production could be to create a copy of the database once a day and run unit tests on the newly created copy and then delete it again.
 
@@ -102,7 +102,7 @@ public function testCheckFeeds2($args) {
 \end{lstlisting}%$
 \begin{description}
 \item[Line 1] PHPUnit is informed that this test is dependent of \lstinline|testCreateUser()|.
-\item[Line 2] Since this test is dependent of \lstinline|testCreateUser()| it takes the \lstinline|userId| that \lstinline|testCreateUser()| returns as a parameter.
+\item[Line 2] Since this test is dependent of \lstinline|testCreateUser()| it takes the \lstinline|userId| that\linebreak \lstinline|testCreateUser()| returns as a parameter.
 \item[Lines 5-8] The POST variables are set.
 \item[Lines 10-11] The \ac{api} is run and the result is decoded from JSON.
 \item[Line 13] The format of the result is verified.

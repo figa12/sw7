@@ -21,7 +21,7 @@ new ServerSyncService(super.getContext()).execute(
 \item[Line 3] A name/value pair with the name \lstinline|"Type"| and the actual request called \lstinline|"GetExhibitionInfo"| which is the request used to display information about the exhibition in the info tab.
 \item[Line 4] For this type of request the server expects the parameter name/value pair \lstinline|"ExhibId"|. The exhibition ID is saved in the \lstinline|TabActivity|.
 \end{description}
-\autoref{lst:doinbackground} is our implementation of the abstract method \lstinline|doInBackground()|. When \lstinline|execute()| is run it creates a new thread for us and runs our implementation of \lstinline|doInBackground()| on that thread with the provided \lstinline|NameValuePair| array.
+\autoref{lst:doinbackground} is our implementation of the abstract method \lstinline|doInBackground()|. When \lstinline|execute()| is run it creates a new thread for us and runs our implementation of\linebreak \lstinline|doInBackground()| on that thread with the provided \lstinline|NameValuePair| array.
 
 \begin{lstlisting}[language=java, label=lst:doinbackground, caption={The async abstract method \lstinline|doInBackground()|}]
 @Override
@@ -115,7 +115,7 @@ private void readJsonStream(InputStream stream) throws IOException {
 \item[Line 7] \lstinline|nextName()| returns the name of the next property in the JSON stream.
 \item[Lines 9-10] Ensures that we do not get null exceptions.
 \item[Lines 11-12] Check if the name equals the property \lstinline|"RequestCode"| and parse the property to our integer \lstinline|requestCode|.
-\item[Lines 13-18] Check if the name equals the property \lstinline|"Data"|. Note that the \lstinline|"RequestCode"| must always appear before the \lstinline|"Data"| in the JSON object.
+\item[Lines 13-18] Check if the name equals the property \lstinline|"Data"|. Note that the\linebreak \lstinline|"RequestCode"| must always appear before the \lstinline|"Data"| in the JSON object.
 \item[Lines 15-17] This is the case for \lstinline|GET_EXHIBITION_INFO| which calls the appropriate method for reading exhibition information.
 \item[Lines 19-21] If we do not recognise the name from the JSON stream, then skip the value. This should not happen but it can make debugging easier.
 \item[Line 23] Let the JSON stream know that the object should end.
