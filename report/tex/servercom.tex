@@ -123,6 +123,8 @@ All of the requests to the server follows this principle. When a request is made
 \item[GetExhibitionInfo] Returns all information about the exhibition, such as the description and logo.
 \item[GetCategories] Returns a list of categories, and the booths of this category, that are associated with the current exhibition. It also contains a flag that shows whether the user is currently subscribed to a booth or not.
 \item[SetCategories] This request is run when the ``submit'' button is pressed in the category chooser. This updates the booths that the user is subscribed to in the database.
+\item[GetFloorPlan] This request returns all relevant data about the floor plan. This includes the position of booths and the walk path. This is used to construct the floor plan.
+\item[BoothSeen] This requests takes a user ID and a booth ID as additional parameters and increments the \textit{seen} attribute of that booth by one for that particular user. This way we can track how many times a user has seen a specific booth.
 \end{description}
 
 \section{Database}
