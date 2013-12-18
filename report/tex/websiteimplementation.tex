@@ -1,6 +1,5 @@
 \label{sec:websiteimplementation}
-The website is built to allow exhibition organisers to manage their exhibition, as stated in the problem statement \secref{sec:problemstatement}. All concepts of an exhibition can be added from the website, this include feeds, schedule, booths, companies, categories and a floor plan.
-The different tabs manage different concepts of an exhibition:
+The website is built to allow exhibition organisers to manage their exhibition, as stated in the problem statement \secref{sec:problemstatement}. All concepts of an exhibition can be added from the website, this include feeds, schedule, booths, companies, categories and a floor plan. The website is split up into different tabs. The different tabs manage different concepts of an exhibition:
 
 \begin{description}
 	\item[Feeds] In the "Feeds" tab the organiser can add a feed to a booth in the database.
@@ -30,7 +29,7 @@ The following steps are required when creating an exhibition floor plan:
 		\includegraphics[scale=0.5]{img/website/step3.png}
 		\caption{Floor plan walking path.\label{fig:websitestep2}}
 	\end{figure}
-	\item[Step 3] Create a booth by having selected the "Booth" option, and clicking the floor plan in any given position. When the booth positioning and size is correct, the booth can be locked by clicking it again, this will bring up the "Booth information" dialogue. Fill in the booth information, and booth will be saved.
+	\item[Step 3] Create a booth by having selected the "Booth" option, and clicking the floor plan in any given position. When the booth positioning and size is correct, the booth can be locked by clicking it again, this will bring up the "Booth information" dialogue. Fill in the booth information, and the booth will be saved.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.5]{img/website/step4.png}
@@ -54,12 +53,12 @@ For a better overview of creating an floor plan using this feature see \autoref{
 	\caption{Flowchart of creating a floor plan.\label{fig:floorplan}}
 \end{figure}
 
-After creating an exhibition the organiser can add feeds to the exhibition, using the "Feeds" tab, feeds are bound to an existing booth from the database. A schedule can be added using the the "Schedule" tab, here the organiser selects a "Name", "Booth", "Start time" and "End time".
-It is also possible to load an existing exhibition from the database, for the loaded exhibition the floor plan will be shown on the map. This exhibition can then be edited, and saved to the database, reflecting the changes the organiser has made.
+After creating an exhibition the organiser can add feeds to the exhibition, using the "Feeds" tab, feeds are bound to an existing booth from the database. A schedule can be added using the "Schedule" tab, here the organiser selects a "Name", "Booth", "Start time" and "End time".
+It is also possible to load an existing exhibition from the database, for the loaded exhibition the floor plan will be shown on the map. This exhibition can then be edited, and the changes can be saved to the database.
 
 All form requests on the website are handled using the AJAX technology\citep{ajax}. AJAX is a technique allowing a website to be dynamically updated while the user is looking at it. The AJAX scripts post form data to PHP, which handles the database interaction. When connecting to the database prepare statements are used, to make sure no malicious data is inserted into the database.
 
-An important missing feature on the website is the limitation of the background image when making a floor plan. For the time being it is a fixed set of tiles.
+An important missing feature on the website is the limitation of the custom tile set when making a floor plan. For the time being it is a fixed set of tiles.
 
 The design of the website is done using Twitter Bootstrap\citep{twitterbootstrap}, a CSS \ac{ui} supplying a stylish and uniform interface.
-The main focus on the website is functionality and therefore the graphic design and usability is not the main priority.
+Our main focus on the website was functionality and therefore the graphic design and usability was not the main priority.
