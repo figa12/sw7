@@ -23,7 +23,7 @@ Several unit tests are created to test the server's functionalities, the followi
 
 \begin{lstlisting}[language=phpstyle, label=lst:checkTemplate, caption={\lstinline|checkTemplate| unit test}]
 private function checkTemplate($testResult, $requestCode) {
-    // Is the json valid
+    // Is the JSON valid
     $this->assertNotNull($testResult, "Are you missing a Type or RequestCode?");
     // Does RequestCode exist?
     $this->assertTrue(property_exists($testResult, "RequestCode"));
@@ -101,8 +101,8 @@ public function testCheckFeeds2($args) {
 }
 \end{lstlisting}%$
 \begin{description}
-\item[Line 1] PHPUnit is informed that this test is dependant of \lstinline|testCreateUser()|.
-\item[Line 2] Since this test is dependant of \lstinline|testCreateUser()| it takes the \lstinline|userId| that \lstinline|testCreateUser()| returns as a parameter.
+\item[Line 1] PHPUnit is informed that this test is dependent of \lstinline|testCreateUser()|.
+\item[Line 2] Since this test is dependent of \lstinline|testCreateUser()| it takes the \lstinline|userId| that \lstinline|testCreateUser()| returns as a parameter.
 \item[Lines 5-8] The POST variables are set.
 \item[Lines 10-11] The \ac{api} is run and the result is decoded from JSON.
 \item[Line 13] The format of the result is verified.
