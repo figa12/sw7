@@ -156,7 +156,7 @@ We did not create the \lstinline|BoothActivity| which is showed in \autoref{fig:
 \end{minipage}
 \end{figure}
 
-When opening the application the first screen you encounter is one telling the user to scan an \ac{nfc} tag. The screen is shown on \autoref{fig:nfcscreen}. The windows differs from the prototype, as there is no menu in the bottom right to browse recent exhibitions. When the \ac{nfc} tag is scanned, you are signed up to that specific exhibition and a file with a pair of user ID and exhibition ID is saved on the phone, this will be explained in greater detail in the next section. A new screen appears asking the user to choose between different categories and booths, this is to identify the users interests which will be used later by the application. This is shown on \autoref{fig:categories1}. After the user has selected their categories, they press submit. 
+When opening the application the first screen you encounter is one telling the user to scan an \ac{nfc} tag. The screen is shown on \autoref{fig:nfcscreen}. The windows differs from the prototype, as there is no menu in the bottom right to browse recent exhibitions. When the \ac{nfc} tag is scanned, you are signed up to that specific exhibition and a file with a pair of user ID and exhibition ID is saved on the phone, this will be explained in greater detail in the next section. A new screen appears asking the user to choose between different categories and booths, this is to identify the users interests which will be used later by the application. This is shown on \autoref{fig:categories1}. After the user has selected their categories, they press submit. Note that if opening the application without scanning a tag and the user is already registered the user is taken directly to the tab activity.
 
 \begin{figure}[H]
 \begin{minipage}[b]{0.5\columnwidth}
@@ -235,7 +235,6 @@ You can also press the info icon on each booth, to receive information about thi
 \caption{Application actvity flow}
 \label{fig:flowchart}
 \end{figure}
-\todo{dette flow skal lige opdateres, den loader previous exhibition hvis man bare går ind i applikationen}
 
 \section{User ID}
 As mentioned in the previous section, when scanning an \ac{nfc} tag for the first time the user has to choose booth subscriptions. After having chosen these subscriptions, the user ID, the exhibition ID and the IDs of the subscribed booths are saved to the database. A user for this exhibition is now created. If scanning another tag, two different scenarios can occur;
